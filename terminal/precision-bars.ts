@@ -1,5 +1,5 @@
 import { test } from "tst"
-import { bgBlue, green, inverse, red } from "ts-utils"
+import { bgBlue, green, inverse, red } from "../utils.js"
 import { lexAnsi } from "./ansi-parse.js"
 
 // uses "unicode block elements" and such glyphs to render progress bars and other arbitrary time based division type stuff.
