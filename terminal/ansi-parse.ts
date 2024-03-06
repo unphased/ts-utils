@@ -12,7 +12,7 @@ export const lexAnsi = (ansi: string) => {
     const indexs: number[] = [];
     const lens: number[] = [];
 
-    for (const escapeRE = /\x1b\[([0-9;:]*)m/g; match = escapeRE.exec(line);) {
+    for (const escapeRE = /\x1b\[([0-9;:]*)m/g; (match = escapeRE.exec(line));) {
       const index = escapeRE.lastIndex;
       const len = match[0].length;
       const start = index - len;
