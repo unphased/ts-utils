@@ -47,4 +47,7 @@ export const colors = {
   'underline_yellow': '\x1b[58;5;3m',
   'underline_reset': '\x1b[24m',
   'underline_color_reset': '\x1b[59m',
+
+  // not really a color but it's ok for now
+  hyperlink: (url: string, content: string) => `\u001b]8;;${url}\u001b\\${content}\u001b]8;;\u001b\\`
 };

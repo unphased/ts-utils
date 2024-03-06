@@ -83,7 +83,7 @@ export const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, 
 export const format = (...x: any[]) => x.map(item => Buffer.isBuffer(item) ?
   colors.blue + item.toString('utf8') + colors.fg_reset :
   typeof item === 'string' ?
-    item.includes('\x1b') ? item : colors.underline_green + colors.underline + item + colors.underline_reset
+    item.includes('\x1b') ? util.inspect(item) : colors.underline_green + colors.underline + item + colors.underline_reset
     : util.inspect(item, { depth: 7, colors: true })
 ).join(' ');
 // TODO: Have a mode that uses git (???) to work out an initial heuristic to use for displaying the tests that have
