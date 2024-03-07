@@ -80,10 +80,11 @@ export const zipper = (arr1: any[], arr2: any[]) => {
   return result;
 };
 export const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 export const format = (...x: any[]) => x.map(item => Buffer.isBuffer(item) ?
   colors.blue + item.toString('utf8') + colors.fg_reset :
   typeof item === 'string' ?
-    item.includes('\x1b') ? util.inspect(item) : colors.underline_green + colors.underline + item + colors.underline_reset
+    item.includes('\x1b') ? item : colors.underline_green + colors.underline + item + colors.underline_reset
     : util.inspect(item, { depth: 7, colors: true })
 ).join(' ');
 // TODO: Have a mode that uses git (???) to work out an initial heuristic to use for displaying the tests that have
@@ -93,7 +94,14 @@ export const format = (...x: any[]) => x.map(item => Buffer.isBuffer(item) ?
 // pulled up on demand and great for sanity checking even passing tests alongside any logging.
 // TODO reconcile pp with format()
 
+// pretty print 1: single item, grey bg
 export const pp = (x: any) => colors.dark_grey_bg + (Buffer.isBuffer(x) ? x.toString('utf8') : (typeof x === 'string' ? x : util.inspect(x, { colors: true, depth: Infinity, compact: true }))) + colors.bg_reset;
+// pretty print 2: as above but colorize and show if escapes are present
+export const pp2 = (x: any) => colors.dark_grey_bg + (Buffer.isBuffer(x) ? x.toString('utf8') :
+  typeof x === 'string' ?
+    x.includes('\x1b') ? util.inspect(x, {colors: true}) : x :
+    util.inspect(x, { colors: true, depth: Infinity, compact: true })
+) + colors.bg_reset;
 export const red = (s: string) => colors.red + s + colors.fg_reset;
 export const green = (s: string) => colors.green + s + colors.fg_reset;
 export const bold = (s: string) => colors.bold + s + colors.bold_reset;
