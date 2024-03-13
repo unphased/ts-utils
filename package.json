@@ -2,10 +2,13 @@
   "name": "ts-utils",
   "version": "0.1.0",
   "description": "Slu's typescript utils",
-  "main": "index.js",
+  "exports": {
+    ".": "./dist/utils.js",
+    "./terminal": "./dist/terminal.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "esbuild terminal.ts --bundle --minify --sourcemap --platform=node --outfile=dist/terminal.js && esbuild utils.ts --bundle --minify --sourcemap --platform=node --outfile=dist/utils.js"
+    "build": "esbuild terminal.ts --bundle --sourcemap --platform=node --outfile=dist/terminal.js && esbuild utils.ts --bundle --sourcemap --platform=node --outfile=dist/utils.js"
   },
   "repository": {
     "type": "git",
