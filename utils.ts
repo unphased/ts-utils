@@ -25,7 +25,7 @@ export const pathShortName = (pth: string, pathSegments = 1) => {
 // Object.defineProperty(Array.prototype, 'seqMap', {
 //   value:
 
-async function<T, R>(this: T[], asyncFn: (item: T) => Promise<R>): Promise<R[]> {
+export async function seqMap<T, R>(this: T[], asyncFn: (item: T) => Promise<R>): Promise<R[]> {
   // Type checking
   if (typeof asyncFn !== 'function') {
     throw new TypeError('Argument must be a function');
