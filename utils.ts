@@ -13,55 +13,62 @@ export const pathShortName = (pth: string, pathSegments = 1) => {
   return (pth.split(/[/\\]/).slice(-pathSegments)).join('/');
 }
 
-// a somewhat unorthodox experiment to add a way to call map with an async function without resulting in concurrent execution
-declare global {
-  interface Array<T> {
-    seqMap<R>(asyncFn: (item: T) => Promise<R>): Promise<R[]>;
-    uniq(): T[];
-    nullfilter(): NonNullable<T>[];
+// // a somewhat unorthodox experiment to add a way to call map with an async function without resulting in concurrent execution
+// declare global {
+//   interface Array<T> {
+//     seqMap<R>(asyncFn: (item: T) => Promise<R>): Promise<R[]>;
+//     uniq(): T[];
+//     nullfilter(): NonNullable<T>[];
+//   }
+// }
+//
+// Object.defineProperty(Array.prototype, 'seqMap', {
+//   value:
+
+async function<T, R>(this: T[], asyncFn: (item: T) => Promise<R>): Promise<R[]> {
+  // Type checking
+  if (typeof asyncFn !== 'function') {
+    throw new TypeError('Argument must be a function');
   }
+
+  const result: R[] = [];
+  for (const item of this) {
+    // try {
+    // Apply the async function and wait for it
+    const transformedItem = await asyncFn(item);
+    result.push(transformedItem);
+    // } catch (error) {
+    //   // Handle errors gracefully
+    //   console.error(`An error occurred while processing item: ${item}`);
+    //   console.error(error);
+    //   result.push(null as unknown as R);  // or however you wish to represent an error
+    // }
+  }
+  return result;
 }
 
-Object.defineProperty(Array.prototype, 'seqMap', {
-  value: async function<T, R>(this: T[], asyncFn: (item: T) => Promise<R>): Promise<R[]> {
-    // Type checking
-    if (typeof asyncFn !== 'function') {
-      throw new TypeError('Argument must be a function');
-    }
+// , enumerable: false
+// });
 
-    const result: R[] = [];
-    for (const item of this) {
-      // try {
-        // Apply the async function and wait for it
-        const transformedItem = await asyncFn(item);
-        result.push(transformedItem);
-      // } catch (error) {
-      //   // Handle errors gracefully
-      //   console.error(`An error occurred while processing item: ${item}`);
-      //   console.error(error);
-      //   result.push(null as unknown as R);  // or however you wish to represent an error
-      // }
-    }
-    return result;
-  },
-  enumerable: false
-});
+export function uniq<T>(this: T[]): T[] {
+  return [...new Set(this)];
+}
 
-Object.defineProperty(Array.prototype, 'uniq', {
-  value: function<T>(this: T[]): T[] {
-    return [...new Set(this)];
-  },
-  enumerable: false
-});
+// Object.defineProperty(Array.prototype, 'uniq', {
+//   value: function<T>(this: T[]): T[] {
+//     return [...new Set(this)];
+//   },
+//   enumerable: false
+// });
 
-function nullfilter(this: Array<any>): any[] {
+export function nullfilter(this: Array<any>): any[] {
   return this.filter((e): e is NonNullable<typeof e> => !!e);
 }
 
-Object.defineProperty(Array.prototype, 'nullfilter', {
-  value: nullfilter,
-  enumerable: false
-});
+// Object.defineProperty(Array.prototype, 'nullfilter', {
+//   value: nullfilter,
+//   enumerable: false
+// });
 
 export const hrTimeMs = (hrTimeDelta: [number, number]) => hrTimeDelta[0] * 1000 + hrTimeDelta[1] / 1000000;
 
