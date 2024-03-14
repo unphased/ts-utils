@@ -61,8 +61,8 @@ export function uniq<T>(this: T[]): T[] {
 //   enumerable: false
 // });
 
-export function nullfilter(this: Array<any>): any[] {
-  return this.filter((e): e is NonNullable<typeof e> => !!e);
+export function nullfilter(x: Array<any>): any[] {
+  return x.filter((e): e is NonNullable<typeof e> => !!e);
 }
 
 // Object.defineProperty(Array.prototype, 'nullfilter', {
