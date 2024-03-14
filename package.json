@@ -10,6 +10,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "esbuild terminal.ts --bundle --sourcemap --platform=node --format=esm --outfile=dist/terminal.js && esbuild utils.ts --bundle --sourcemap --platform=node --format=esm --outfile=dist/utils.js",
+    "postbuild": "tsc --emitDeclarationOnly",
     "watch": "watchexec --exts ts -- npm run build"
   },
   "repository": {
@@ -30,6 +31,7 @@
   "homepage": "https://github.com/unphased/ts-utils#readme",
   "devDependencies": {
     "@types/node": "^20.11.27",
-    "esbuild": "^0.20.1"
+    "esbuild": "^0.20.1",
+    "typescript": "^5.3.3"
   }
 }
