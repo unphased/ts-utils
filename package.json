@@ -6,9 +6,10 @@
     ".": "./dist/utils.js",
     "./terminal": "./dist/terminal.js"
   },
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "esbuild terminal.ts --bundle --minify --sourcemap --platform=node --outfile=dist/terminal.js && esbuild utils.ts --bundle --minify --sourcemap --platform=node --format=esm --outfile=dist/utils.js"
+    "build": "esbuild terminal.ts --bundle --sourcemap --platform=node --format=esm --outfile=dist/terminal.js && esbuild utils.ts --bundle --sourcemap --platform=node --format=esm --outfile=dist/utils.js"
   },
   "repository": {
     "type": "git",
