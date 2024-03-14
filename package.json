@@ -29,6 +29,7 @@
   },
   "homepage": "https://github.com/unphased/ts-utils#readme",
   "devDependencies": {
+    "@types/node": "^20.11.27",
     "esbuild": "^0.20.1"
   }
 }
