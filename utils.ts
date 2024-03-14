@@ -25,14 +25,14 @@ export const pathShortName = (pth: string, pathSegments = 1) => {
 // Object.defineProperty(Array.prototype, 'seqMap', {
 //   value:
 
-export async function seqMap<T, R>(this: T[], asyncFn: (item: T) => Promise<R>): Promise<R[]> {
-  // Type checking
+export async function seqMap<T, R>(x: T[], asyncFn: (item: T) => Promise<R>): Promise<R[]> {
+  // dynamic type assertion
   if (typeof asyncFn !== 'function') {
-    throw new TypeError('Argument must be a function');
+    throw new TypeError('Argument must be async function');
   }
 
   const result: R[] = [];
-  for (const item of this) {
+  for (const item of x) {
     // try {
     // Apply the async function and wait for it
     const transformedItem = await asyncFn(item);
@@ -50,8 +50,8 @@ export async function seqMap<T, R>(this: T[], asyncFn: (item: T) => Promise<R>):
 // , enumerable: false
 // });
 
-export function uniq<T>(this: T[]): T[] {
-  return [...new Set(this)];
+export function uniq<T>(x: T[]): T[] {
+  return [...new Set(x)];
 }
 
 // Object.defineProperty(Array.prototype, 'uniq', {
