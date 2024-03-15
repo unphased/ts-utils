@@ -190,7 +190,7 @@ export const groupBy = <T, P extends keyof PickByValueTypes<T, PropertyKey>>(
 ) => {
   const result: Record<PropertyKey, T[]> = {};
   arr.forEach(item => {
-    const key: PropertyKey = item[prop] as PropertyKey; // Trust that T[P] is a PropertyKey
+    const key = item[prop] as PropertyKey; // Trust that T[P] is a PropertyKey
     if (!result[key]) {
       result[key] = [];
     }
