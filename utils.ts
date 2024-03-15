@@ -1,6 +1,5 @@
 import * as util from "util";
 import { colors } from './terminal/colors.js';
-import { EnumOrArray } from './utils.js';
 
 export const emph_arrow = (color: string) => `${color}${colors.curly_underline}===>${colors.underline_reset}${colors.reset}\n`;
 
