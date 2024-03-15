@@ -21,14 +21,22 @@
     "type": "git",
     "url": "git+ssh://git@github.com/unphased/ts-utils.git"
   },
-  "keywords": ["typescript", "library", "util", "helpers"],
+  "keywords": [
+    "typescript",
+    "library",
+    "util",
+    "helpers"
+  ],
   "author": "Steven Lu",
   "license": "UNLICENSED",
-  "bugs": {"url": "https://github.com/unphased/ts-utils/issues"},
+  "bugs": {
+    "url": "https://github.com/unphased/ts-utils/issues"
+  },
   "homepage": "https://github.com/unphased/ts-utils#readme",
   "devDependencies": {
     "@types/node": "^20.11.27",
     "esbuild": "^0.20.1",
+    "tsx": "^4.7.1",
     "typescript": "^5.3.3"
   }
 }
