@@ -205,25 +205,19 @@ const mapObjectProps = <T, V>(obj: { [k: string]: T; }, cb: (k: keyof T, v: T) =
 
 type EnumOrArray = { [key: string]: any; } | any[];
 
-export function permutations(...inputs: EnumOrArray[]): any[][] {
-  // Helper function to determine if a value is a numeric enum value
-  function isNumericEnumValue(value: any, enumObject: any): boolean {
-    return typeof value === "number" && enumObject[value] !== undefined;
-  }
-
+export function cartesian(...inputs: EnumOrArray[]): any[][] {
   const itemGroups: any[][] = inputs.map(input => {
     if (Array.isArray(input)) {
       return input; // Directly return if input is an array
     } else {
-      // Extract only the original enum values, skipping reverse mappings
-      const enumValues = Object.values(input);
-      // Filter based on whether the value corresponds to a numeric enum value
-      return enumValues.filter(value => !isNumericEnumValue(value, input));
+      // Only work with the enum's keys (names), then convert them to their numeric values
+      const originalKeys = Object.keys(input).filter(key => isNaN(Number(key)));
+      return originalKeys.map(key => input[key]);
     }
   });
 
-  // Recursive function to generate permutations (remains unchanged)
-  function generatePermutations(groups: any[][], prefix: any[] = []): any[][] {
+  // Recursive function to generate combinations (remains unchanged)
+  function generateCartesianProduct(groups: any[][], prefix: any[] = []): any[][] {
     if (!groups.length) return [prefix];
     const firstGroup = groups[0];
     const restGroups = groups.slice(1);
@@ -231,13 +225,13 @@ export function permutations(...inputs: EnumOrArray[]): any[][] {
     let result: any[][] = [];
 
     firstGroup.forEach(item => {
-      result = result.concat(generatePermutations(restGroups, [...prefix, item]));
+      result = result.concat(generateCartesianProduct(restGroups, [...prefix, item]));
     });
 
     return result;
   }
 
-  return generatePermutations(itemGroups);
+  return generateCartesianProduct(itemGroups);
 }
 
 

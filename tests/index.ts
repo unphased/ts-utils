@@ -1,26 +1,26 @@
 import { LaunchTests, test } from 'tst';
 import { fileURLToPath } from 'url';
-import { permutations } from '../utils.js';
+import { cartesian } from '../utils.js';
 
 export const permutation_simple = test(({l, a:{eq}}) => {
   enum Color {
-    Red,
-    Green,
-    Blue
+    Red = 'red',
+    Green = 'green',
+    Blue = 'blue'
   }
   enum Size {
-    Small,
-    Medium,
-    Large
+    Small = 1,
+    Medium = 10,
+    Large = 100
   }
   const numbers = [1, 2];
-  const perms = permutations(Color, numbers, Size);
-  l(perms);
-  eq(perms.length, 18);
+  const combos = cartesian(Color, numbers, Size);
+  l(combos);
+  eq(combos.length, 18);
 });
 
 const isProgramLaunchContext = () => {
   return fileURLToPath(import.meta.url) === process.argv[1];
 }
 
-isProgramLaunchContext() && LaunchTests('./tests');
+isProgramLaunchContext() && LaunchTests('./tests', {echo_test_logging: true});
