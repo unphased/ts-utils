@@ -203,26 +203,17 @@ const mapObjectProps = <T, V>(obj: { [k: string]: T; }, cb: (k: keyof T, v: T) =
   return Object.entries(obj).map(([k, v]) => cb(k as keyof T, v));
 };
 
-type EnumOrArray = { [key: string]: any; } | any[];
+// works on arrays and enums which are objects
+type ItemOf<A> = A extends Array<infer U> ? U : never;
 
-export function cartesian(...inputs: EnumOrArray[]): any[][] {
-  const itemGroups: any[][] = inputs.map(input => {
-    if (Array.isArray(input)) {
-      return input; // Directly return if input is an array
-    } else {
-      // Only work with the enum's keys (names), then convert them to their numeric values
-      const originalKeys = Object.keys(input).filter(key => isNaN(Number(key)));
-      return originalKeys.map(key => input[key]);
-    }
-  });
-
+export function cartesian<T extends readonly any[][]>(...inputs: T): (ItemOf<T[number]>[])[] {
   // Recursive function to generate combinations (remains unchanged)
-  function generateCartesianProduct(groups: any[][], prefix: any[] = []): any[][] {
+  function generateCartesianProduct(groups, prefix = []) {
     if (!groups.length) return [prefix];
     const firstGroup = groups[0];
     const restGroups = groups.slice(1);
 
-    let result: any[][] = [];
+    let result = [];
 
     firstGroup.forEach(item => {
       result = result.concat(generateCartesianProduct(restGroups, [...prefix, item]));
@@ -231,7 +222,7 @@ export function cartesian(...inputs: EnumOrArray[]): any[][] {
     return result;
   }
 
-  return generateCartesianProduct(itemGroups);
+  return generateCartesianProduct(inputs);
 }
 
 
