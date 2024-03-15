@@ -1,5 +1,6 @@
 import * as util from "util";
 import { colors } from './terminal/colors.js';
+import { EnumOrArray } from './utils.js';
 
 export const emph_arrow = (color: string) => `${color}${colors.curly_underline}===>${colors.underline_reset}${colors.reset}\n`;
 
@@ -202,5 +203,42 @@ export const groupBy = <T, P extends keyof PickByValueTypes<T, PropertyKey>>(
 const mapObjectProps = <T, V>(obj: { [k: string]: T; }, cb: (k: keyof T, v: T) => V): V[] => {
   return Object.entries(obj).map(([k, v]) => cb(k as keyof T, v));
 };
+
+type EnumOrArray = { [key: string]: any; } | any[];
+
+export function permutations(...inputs: EnumOrArray[]): any[][] {
+  // Helper function to determine if a value is a numeric enum value
+  function isNumericEnumValue(value: any, enumObject: any): boolean {
+    return typeof value === "number" && enumObject[value] !== undefined;
+  }
+
+  const itemGroups: any[][] = inputs.map(input => {
+    if (Array.isArray(input)) {
+      return input; // Directly return if input is an array
+    } else {
+      // Extract only the original enum values, skipping reverse mappings
+      const enumValues = Object.values(input);
+      // Filter based on whether the value corresponds to a numeric enum value
+      return enumValues.filter(value => !isNumericEnumValue(value, input));
+    }
+  });
+
+  // Recursive function to generate permutations (remains unchanged)
+  function generatePermutations(groups: any[][], prefix: any[] = []): any[][] {
+    if (!groups.length) return [prefix];
+    const firstGroup = groups[0];
+    const restGroups = groups.slice(1);
+
+    let result: any[][] = [];
+
+    firstGroup.forEach(item => {
+      result = result.concat(generatePermutations(restGroups, [...prefix, item]));
+    });
+
+    return result;
+  }
+
+  return generatePermutations(itemGroups);
+}
 
 
