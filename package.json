@@ -12,7 +12,7 @@
   },
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "tsx tests/index.ts",
     "build": "esbuild terminal.ts --bundle --sourcemap --platform=node --format=esm --outfile=dist/terminal.js && esbuild utils.ts --bundle --sourcemap --platform=node --format=esm --outfile=dist/utils.js",
     "postbuild": "time tsc -p tsconfig.for_decls.json",
     "watch": "watchexec --exts ts,json -- npm run build"
