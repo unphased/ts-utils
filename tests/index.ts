@@ -1,6 +1,6 @@
 import { LaunchTests, test } from 'tst';
 import { fileURLToPath } from 'url';
-import { cartesian, cartesian_enum_vals } from '../utils.js';
+import { cartesian_slow, cartesian_enum_vals_slow, cartesian } from '../utils.js';
 
 export const cartesian_simple = test(({l, a:{eq}}) => {
   const size = ['S', 'M', 'L'];
@@ -8,8 +8,8 @@ export const cartesian_simple = test(({l, a:{eq}}) => {
     Black, White
   }
   const numbers = [1, 2];
-  const combos = cartesian(['r', 'g', 'b'] as const, numbers, size, OtherColors);
-  const combovs = cartesian_enum_vals(['r', 'g', 'b'] as const, numbers, size, OtherColors);
+  const combos = cartesian_slow(['r', 'g', 'b'] as const, numbers, size, OtherColors);
+  const combovs = cartesian_enum_vals_slow(['r', 'g', 'b'] as const, numbers, size, OtherColors);
   l('a', combos);
   l('b', combovs);
   eq(combos.length, 36);
@@ -26,7 +26,7 @@ export const cartesian_simple = test(({l, a:{eq}}) => {
     Medium = 10,
     Large = 100
   }
-  const combos2 = cartesian(Color, numbers, Size);
+  const combos2 = cartesian_slow(Color, numbers, Size);
   l(combos2);
   eq(combos2.length, 18);
 });
@@ -38,20 +38,118 @@ export const cartesian_with_funs = test(({l, a:{eq}}) => {
     (x: number) => x / 3
   ];
 
-  const combos = cartesian(methods, methods, [100, 200, 300, 400] as const);
+  const combos = cartesian_slow(methods, methods, [100, 200, 300, 400] as const);
   l(combos.map(([f, g, x]) => f(g(x))));
   eq(combos.length, 36);
 });
 
-// generators as items to use in a list, which is trivial
-export const cartesian_with_gens = test(({l, a:{eq}}) => {
-  // const 
+// generators as items to use in a list, which is hardly surprising if closures work!
+export const cartesian_with_gens = test(({l, a:{eqO}}) => {
+  const gens = [
+    function*() { yield 1; yield 2; yield 3; },
+    function*() { yield 4; yield 5; yield 6; },
+  ];
+  const combos = cartesian_slow(gens, ['a', 'b', 'c'] as const);
+  const evald = combos.map(([g, x]) => Array.from(g()).map(y => x.repeat(y)));
+  l(evald);
+  eqO(evald, [[1,2,3],[4,5,6]].flatMap(nums => nums.map((num, ni) => nums.map(n2 => 'abc'[ni].repeat(n2)))));
+  // took me WAY TOO LONG to figure out how to construct this
 });
 
 // TODO: a generator cartesian which takes both generators and lists and produces a generator that enumerates the
 // cartesian lazily
 
-// it sounds ridiculous but it's the right way to go about making arbitrarily scalable benchmarks.
+// i should delete this, it's pretty useless (generating cart prod from generators in general...)
+export const cartesian_via_generator_playground = test(({l, t, a:{eqO}}) => {
+  t('exemptFromAsserting', true);
+  /*
+   streaming cartesian product elements uses less memory ...
+  */
+  const generator = cartesianProductSimplified(['a', 'b'], [1, 2, 3, 4], ['x', 'y', 'z']);
+  /* prints
+    [ 'a', 1, 'x' ]
+    [ 'a', 1, 'y' ]
+    [ 'a', 1, 'z' ]
+    [ 'a', 2, 'x' ]
+    [ 'a', 2, 'y' ]
+    [ 'a', 2, 'z' ]
+    [ 'a', 3, 'x' ]
+    [ 'a', 3, 'y' ]
+    [ 'a', 3, 'z' ]
+    [ 'a', 4, 'x' ]
+    [ 'a', 4, 'y' ]
+    [ 'a', 4, 'z' ]
+    [ 'b', 1, 'x' ]
+    [ 'b', 1, 'y' ]
+    [ 'b', 1, 'z' ]
+    [ 'b', 2, 'x' ]
+    [ 'b', 2, 'y' ]
+    [ 'b', 2, 'z' ]
+    [ 'b', 3, 'x' ]
+    [ 'b', 3, 'y' ]
+    [ 'b', 3, 'z' ]
+    [ 'b', 4, 'x' ]
+    [ 'b', 4, 'y' ]
+    [ 'b', 4, 'z' ]
+  */
+  printValues(generator);
+
+  // helper function to print all values from a generator function
+  function printValues(generator) {
+    let iteration = null;
+    while (iteration = generator.next()) {
+      if (iteration.done === true) {
+        break;
+      }
+      l(iteration.value);
+    }
+  }
+
+  // helper function to construct the arguments array for the 'cartesianProduct' class
+  function cartesianProductSimplified(...arrays) {
+    let args = [];
+    for (let i = 1; i < arrays.length; i++) {
+      args = args.concat([cartesianProduct, arrays[i]]);
+    }
+    args.splice(0, 0, arrays[0]);
+    return cartesianProduct(...args);
+  }
+
+  /*
+   call it like this:
+
+   cartesianProduct(['a', 'b'], cartesianProduct, [1, 2, 3, 4], cartesianProduct, ['x', 'y', 'z']);
+
+   use cartesianProductSimplified to simplify it:
+
+   cartesianProductSimplified(['a', 'b'], [1, 2, 3, 4], ['x', 'y', 'z'])
+  */
+  function* cartesianProduct(values, generator, ...generatorArgs) {
+    l('args to cartesianProduct', values, generator, generatorArgs);
+    for (const value of values) {
+      if (generator) {
+        const iterator = generator(...generatorArgs);
+        let iteration = null;
+        while (iteration = iterator.next()) {
+          if (iteration.done === true) {
+            break;
+          }
+          yield [value, ...iteration.value];
+        }
+      } else {
+        yield [value];
+      }
+    }
+  }
+});
+
+export const cartesian_analytic = test(({l, a:{eqO}}) => {
+  enum A {a, b, c}
+  enum B {x, y, z}
+  eqO(cartesian(A, B), [
+    ['a', 'x'], ['a', 'y'], ['a', 'z'], ['b', 'x'], ['b', 'y'], ['b', 'z'], ['c', 'x'], ['c', 'y'], ['c', 'z']
+  ]);
+});
 
 const isProgramLaunchContext = () => {
   return fileURLToPath(import.meta.url) === process.argv[1];
