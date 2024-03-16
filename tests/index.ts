@@ -43,6 +43,16 @@ export const cartesian_with_funs = test(({l, a:{eq}}) => {
   eq(combos.length, 36);
 });
 
+// generators as items to use in a list, which is trivial
+export const cartesian_with_gens = test(({l, a:{eq}}) => {
+  // const 
+});
+
+// TODO: a generator cartesian which takes both generators and lists and produces a generator that enumerates the
+// cartesian lazily
+
+// it sounds ridiculous but it's the right way to go about making arbitrarily scalable benchmarks.
+
 const isProgramLaunchContext = () => {
   return fileURLToPath(import.meta.url) === process.argv[1];
 }

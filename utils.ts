@@ -207,10 +207,10 @@ const mapObjectProps = <T, V>(obj: { [k: string]: T; }, cb: (k: keyof T, v: T) =
 
 type EnumOrArray = { [key: string]: any; } | any[];
 
-type ConvertEnumOrArrayToElement<T extends EnumOrArray> = T extends (infer U)[] ? U :
+type ConvertEnumOrArrayToElement<T extends EnumOrArray> = T extends readonly (infer U)[] ? U :
 { [K in keyof T]: K extends number ? never : T[K] }[keyof T]
 
-type ConvertArrayToElementAndEnumToKey<T extends EnumOrArray> = T extends (infer U)[] ? U :
+type ConvertArrayToElementAndEnumToKey<T extends EnumOrArray> = T extends readonly (infer U)[] ? U :
 // in here we can't just use keyof T in order to eliminate the number keys.
 { [K in keyof T]: K extends number ? never : K }[keyof T]
 
@@ -229,39 +229,43 @@ function generateCartesianProduct(groups: any[][], prefix: any[] = []): any[][] 
   return firstGroup.flatMap(item => generateCartesianProduct(restGroups, [...prefix, item]));
 }
 
-export const cartesian = <T extends readonly EnumOrArray[]>(...inputs: T): { [I in keyof T]: ConvertArrayToElementAndEnumToKey<T[I]> }[] => generateCartesianProduct(inputs.map(inp => Array.isArray(inp) ? inp : enum_to_keys(inp))) as any;
+export const cartesian = <T extends EnumOrArray[]>(...inputs: T): { [I in keyof T]: ConvertArrayToElementAndEnumToKey<T[I]> }[] => generateCartesianProduct(inputs.map(inp => Array.isArray(inp) ? inp : enum_to_keys(inp))) as any;
 
-export const cartesian_enum_vals = <T extends readonly EnumOrArray[]>(...inputs: T): { [I in keyof T]: ConvertEnumOrArrayToElement<T[I]> }[] => generateCartesianProduct(inputs.map(inp => Array.isArray(inp) ? inp : enum_to_values(inp))) as any;
+export const cartesian_enum_vals = <T extends EnumOrArray[]>(...inputs: T): { [I in keyof T]: ConvertEnumOrArrayToElement<T[I]> }[] => generateCartesianProduct(inputs.map(inp => Array.isArray(inp) ? inp : enum_to_values(inp))) as any;
 
-// enum Color {
-//   Red = 'red',
-//   Green = 'green',
-//   Blue = 'blue'
-// }
-// const x = enum_to_values(Color);
-// const y = enum_to_keys(Color);
-// enum ColorNum {
-//   Black, White
-// }
-// const xx = enum_to_values(ColorNum);
-// const yy = enum_to_keys(ColorNum);
-// const xy = generateCartesianProduct([xx,yy, ['a','b','c']]);
-// console.log('xxxyyy', x, y, xx, yy, xy);
-// const z = cartesian(Color, ColorNum, ['a','b','c'] as const);
-// const zz = cartesian_enum_vals(Color, ColorNum, ['a','b','c'] as const);
-// console.log('cartesians', z, zz);
-//
-// // this works
-// const size = ['S', 'M', 'L'];
-// enum OtherColors {
-//   Black, White
-// }
-// const numbers = [1, 2];
-// const combos = cartesian(['r', 'g', 'b'] as const, numbers, size, OtherColors);
-//
-// // the following does work but types are screwed up (produces crazy weird type due to the "as const" declared array)
-// const colsconst = ['r', 'g', 'b'] as const;
-// const combos2 = cartesian(colsconst, numbers, size, OtherColors);
-//
-// console.log('combos', combos)
-// console.log('combos2', combos2)
+enum Color {
+  Red = 'red',
+  Green = 'green',
+  Blue = 'blue'
+}
+const x = enum_to_values(Color);
+const y = enum_to_keys(Color);
+enum ColorNum {
+  Black, White
+}
+const xx = enum_to_values(ColorNum);
+const yy = enum_to_keys(ColorNum);
+const xy = generateCartesianProduct([xx,yy, ['a','b','c']]);
+console.log('xxxyyy', x, y, xx, yy, xy);
+const z = cartesian(Color, ColorNum, ['a','b','c'] as const);
+const zz = cartesian_enum_vals(Color, ColorNum, ['a','b','c'] as const);
+console.log('cartesians', z, zz);
+
+// this works
+const size = ['S', 'M', 'L'];
+enum OtherColors {
+  Black, White
+}
+const numbers = [1, 2];
+const combos = cartesian(['r', 'g', 'b'] as const, numbers, size, OtherColors);
+
+// the following does work but types are screwed up (produces crazy weird type due to the "as const" declared array)
+const colsconst = ['r', 'g', 'b'] as const;
+// simplified utility
+type cc = ConvertEnumOrArrayToElement<typeof colsconst>;
+type ConvertToArrayElement<T> = T extends readonly (infer U)[] ? U : never;
+type ccc = ConvertToArrayElement<typeof colsconst>;
+const combos2 = cartesian(colsconst, numbers, size, OtherColors);
+
+console.log('combos', combos)
+console.log('combos2', combos2)
