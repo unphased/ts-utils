@@ -14,9 +14,6 @@ export const cartesian_simple = test(({l, a:{eq}}) => {
   l('b', combovs);
   eq(combos.length, 36);
   eq(combos.length, combovs.length);
-});
-
-export const cartesian2 = test(({l, a:{eq}}) => {
 
   enum Color {
     Red = 'red',
@@ -29,12 +26,21 @@ export const cartesian2 = test(({l, a:{eq}}) => {
     Medium = 10,
     Large = 100
   }
-  const numbers = [1, 2];
-  const combos = cartesian(Color, numbers, Size);
-  //    ^?
-  l(combos);
-  eq(combos.length, 18);
+  const combos2 = cartesian(Color, numbers, Size);
+  l(combos2);
+  eq(combos2.length, 18);
+});
 
+export const cartesian_with_funs = test(({l, a:{eq}}) => {
+  const methods = [
+    (x: number) => x + 1,
+    (x: number) => x * 2,
+    (x: number) => x / 3
+  ];
+
+  const combos = cartesian(methods, methods, [100, 200, 300, 400] as const);
+  l(combos.map(([f, g, x]) => f(g(x))));
+  eq(combos.length, 36);
 });
 
 const isProgramLaunchContext = () => {
