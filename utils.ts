@@ -206,6 +206,7 @@ const mapObjectProps = <T, V>(obj: { [k: string]: T; }, cb: (k: keyof T, v: T) =
 // thanks to @jcalz https://stackoverflow.com/questions/78169579/how-to-transfer-type-from-variadic-parameters-into-a-different-shape-in-the-retu?noredirect=1#comment137810613_78169579
 
 type EnumOrArray = { [key: string]: any; } | any[];
+
 type ConvertEnumOrArrayToElement<T extends EnumOrArray> = T extends (infer U)[] ? U :
 { [K in keyof T]: K extends number ? never : T[K] }[keyof T]
 
@@ -213,46 +214,54 @@ type ConvertArrayToElementAndEnumToKey<T extends EnumOrArray> = T extends (infer
 // in here we can't just use keyof T in order to eliminate the number keys.
 { [K in keyof T]: K extends number ? never : K }[keyof T]
 
-enum Color {
-  Red, Blue
+function enum_to_values<T extends { [key: string]: any }>(e: T): ConvertEnumOrArrayToElement<T>[] {
+  return Object.keys(e).filter(k => isNaN(Number(k))).map(k => e[k]) as any;
 }
-type x = ConvertArrayToElementAndEnumToKey<typeof Color>;
-type yy = ConvertArrayToElementAndEnumToKey<['b', 'c', 2]>;
-type y = ConvertEnumOrArrayToElement<typeof Color>;
-type xx = ConvertEnumOrArrayToElement<["a", 1]>;
-
-function enum_to_values<T extends { [key: string]: any }>(e: T): T[keyof T][] {
-  return Object.values(e);
+function enum_to_keys<T extends { [key: string]: any }>(e: T): ConvertArrayToElementAndEnumToKey<T>[] {
+  return Object.keys(e).filter(k => isNaN(Number(k))) as any;
 }
-function enum_to_keys<T extends { [key: string]: any }>(e: T): (keyof T)[] {
-  return Object.keys(e);
-}
-
-const z = enum_to_values(Color);
-const zz = enum_to_keys(Color);
 
 // Recursive function to generate combinations (remains unchanged)
-function generateCartesianProduct(groups: any[][], prefix = []) {
+function generateCartesianProduct(groups: any[][], prefix: any[] = []): any[][] {
   if (!groups.length) return [prefix];
   const firstGroup = groups[0];
   const restGroups = groups.slice(1);
-  let result = [];
-  firstGroup.forEach(item => {
-    result = result.concat(generateCartesianProduct(restGroups, [...prefix, item]));
-  });
-  return result;
+  return firstGroup.flatMap(item => generateCartesianProduct(restGroups, [...prefix, item]));
 }
 
-export function cartesian<T extends EnumOrArray[]>(...inputs: T):
-{ [I in keyof T]: ConvertArrayToElementAndEnumToKey<T[I]> }[] {
-  const itemGroups = inputs.map(input => Array.isArray(input) ? input : enum_to_keys(input));
-  console.error('itemGroups', itemGroups);
-  return generateCartesianProduct(itemGroups) as any;
-}
-export function cartesian_enum_vals<T extends EnumOrArray[]>(...inputs: T):
-{ [I in keyof T]: ConvertEnumOrArrayToElement<T[I]> }[] {
-  const itemGroups = inputs.map(input => Array.isArray(input) ? input : enum_to_values(input));
-  console.error('itemGroups', itemGroups);
-  return generateCartesianProduct(itemGroups) as any;
-}
+export const cartesian = <T extends readonly EnumOrArray[]>(...inputs: T): { [I in keyof T]: ConvertArrayToElementAndEnumToKey<T[I]> }[] => generateCartesianProduct(inputs.map(inp => Array.isArray(inp) ? inp : enum_to_keys(inp))) as any;
 
+export const cartesian_enum_vals = <T extends readonly EnumOrArray[]>(...inputs: T): { [I in keyof T]: ConvertEnumOrArrayToElement<T[I]> }[] => generateCartesianProduct(inputs.map(inp => Array.isArray(inp) ? inp : enum_to_values(inp))) as any;
+
+// enum Color {
+//   Red = 'red',
+//   Green = 'green',
+//   Blue = 'blue'
+// }
+// const x = enum_to_values(Color);
+// const y = enum_to_keys(Color);
+// enum ColorNum {
+//   Black, White
+// }
+// const xx = enum_to_values(ColorNum);
+// const yy = enum_to_keys(ColorNum);
+// const xy = generateCartesianProduct([xx,yy, ['a','b','c']]);
+// console.log('xxxyyy', x, y, xx, yy, xy);
+// const z = cartesian(Color, ColorNum, ['a','b','c'] as const);
+// const zz = cartesian_enum_vals(Color, ColorNum, ['a','b','c'] as const);
+// console.log('cartesians', z, zz);
+//
+// // this works
+// const size = ['S', 'M', 'L'];
+// enum OtherColors {
+//   Black, White
+// }
+// const numbers = [1, 2];
+// const combos = cartesian(['r', 'g', 'b'] as const, numbers, size, OtherColors);
+//
+// // the following does work but types are screwed up (produces crazy weird type due to the "as const" declared array)
+// const colsconst = ['r', 'g', 'b'] as const;
+// const combos2 = cartesian(colsconst, numbers, size, OtherColors);
+//
+// console.log('combos', combos)
+// console.log('combos2', combos2)
