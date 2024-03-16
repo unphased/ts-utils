@@ -1,6 +1,6 @@
 import { LaunchTests, test } from 'tst';
 import { fileURLToPath } from 'url';
-import { cartesian_slow, cartesian_enum_vals_slow, cartesian } from '../utils.js';
+import { cartesian_slow, cartesian_enum_vals_slow, cartesianAt } from '../utils.js';
 
 export const cartesian_simple = test(({l, a:{eq}}) => {
   const size = ['S', 'M', 'L'];
@@ -143,16 +143,16 @@ export const cartesian_via_generator_playground = test(({l, t, a:{eqO}}) => {
   }
 });
 
-export const cartesian_analytic = test(({l, a:{eqO}}) => {
+export const cartesian_analytical = test(({l, a:{eqO}}) => {
   enum A {a, b, c}
   enum B {x, y, z}
-  eqO(cartesian(A, B), [
-    ['a', 'x'], ['a', 'y'], ['a', 'z'], ['b', 'x'], ['b', 'y'], ['b', 'z'], ['c', 'x'], ['c', 'y'], ['c', 'z']
-  ]);
+  eqO(cartesianAt([ A, B, [1, 2] ], 0), ['a', 'x']);
+
+  // [ ['a', 'x'], ['a', 'y'], ['a', 'z'], ['b', 'x'], ['b', 'y'], ['b', 'z'], ['c', 'x'], ['c', 'y'], ['c', 'z'] ]
 });
 
 const isProgramLaunchContext = () => {
   return fileURLToPath(import.meta.url) === process.argv[1];
 }
 
-isProgramLaunchContext() && LaunchTests('./tests', {echo_test_logging: true});
+isProgramLaunchContext() && LaunchTests('./dist/', {echo_test_logging: true});

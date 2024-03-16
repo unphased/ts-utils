@@ -234,14 +234,6 @@ export const cartesian_slow = <T extends EnumOrArray[]>(...inputs: T): { [I in k
 
 export const cartesian_enum_vals_slow = <T extends EnumOrArray[]>(...inputs: T): { [I in keyof T]: ConvertEnumOrArrayToElement<T[I]> }[] => recursivelyGenerateCartesianProduct(inputs.map(inp => Array.isArray(inp) ? inp : enum_to_values(inp))) as any;
 
-export const cartesian = <T extends EnumOrArray[]>(...inputs: T): { [I in keyof T]: ConvertArrayToElementAndEnumToKey<T[I]> }[] => {
-  // for enums, yield their keys per usual preference
-  const input_arrs = inputs.map(inp => Array.isArray(inp) ? inp : enum_to_keys(inp));
-  const input_lens = input_arrs.map(arr => arr.length);
-  console.error('input_lens', input_lens);
-  return [];
-}
-
 const sanity_check = () => {
   enum Color {
     Red = 'red',
@@ -280,3 +272,25 @@ const sanity_check = () => {
   console.log('combos', combos)
   console.log('combos2', combos2)
 }
+
+export const cartesianAt = <T extends EnumOrArray[]>(inputs: T, i: number): { [I in keyof T]: ConvertArrayToElementAndEnumToKey<T[I]> } => {
+  // for enums, yield their keys per usual preference
+  const input_arrs = inputs.map(inp => Array.isArray(inp) ? inp : enum_to_keys(inp));
+  const input_lens = input_arrs.map(arr => arr.length);
+  // example [[a, b, c], [1, 2], [i, ii]]
+  console.error('input_lens', input_lens);
+  // ex input_lens [3, 2, 2]
+  // cumulative product counts memoizes the count it takes to increment each group. len 1 less than input
+  // ex cum_prod_counts [2, 4]
+  const cum_prod_counts = input_lens.slice(1).reduce((acc, len) => { acc.push(acc[acc.length - 1] * len); return acc; }, []);
+  console.error('cum_prod_counts', cum_prod_counts);
+  return [] as any;
+}
+
+// suppose you want to sample from some cart product, need the len to be able to do a uniform random sample on the set.
+export const cartesianLen = <T extends EnumOrArray[]>(...inputs: T): number => {
+  return inputs.reduce((acc, inp) => acc * (Array.isArray(inp) ? inp.length : enum_to_keys(inp).length), 1);
+}
+
+// there is still potentially a useful way to produce things like zips and cartesian products and whatever else out of infinite sequence generators, it changes the iteration pattern as well as cart product sequence order to a round robin kind of outward spiral. We can also think about incorporating finite sequences within those contexts where applicable.
+
