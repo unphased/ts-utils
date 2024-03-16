@@ -204,6 +204,7 @@ const mapObjectProps = <T, V>(obj: { [k: string]: T; }, cb: (k: keyof T, v: T) =
 };
 
 // thanks to @jcalz https://stackoverflow.com/questions/78169579/how-to-transfer-type-from-variadic-parameters-into-a-different-shape-in-the-retu?noredirect=1#comment137810613_78169579
+
 type EnumOrArray = { [key: string]: any; } | any[];
 type ConvertEnumOrArrayToElement<T extends EnumOrArray> = T extends (infer U)[] ? U :
 { [K in keyof T]: K extends number ? never : T[K] }[keyof T]
