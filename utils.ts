@@ -206,38 +206,53 @@ const mapObjectProps = <T, V>(obj: { [k: string]: T; }, cb: (k: keyof T, v: T) =
 // thanks to @jcalz https://stackoverflow.com/questions/78169579/how-to-transfer-type-from-variadic-parameters-into-a-different-shape-in-the-retu?noredirect=1#comment137810613_78169579
 
 type EnumOrArray = { [key: string]: any; } | any[];
-
-// my overview: first it tries to infer T as a U[] to grab U, otherwise a replication of T dropping numeric keys, sub keyof (to grab its value types)
 type ConvertEnumOrArrayToElement<T extends EnumOrArray> = T extends (infer U)[] ? U :
 { [K in keyof T]: K extends number ? never : T[K] }[keyof T]
 
-function cartesian<T extends EnumOrArray[]>(...inputs: T):
-{ [I in keyof T]: ConvertEnumOrArrayToElement<T[I]> }[] {
-  const itemGroups: any[][] = inputs.map(input => {
-    if (Array.isArray(input)) {
-      return input; // Directly return if input is an array
-    } else {
-      // Only work with the enum's keys (names), then convert them to their numeric values
-      const originalKeys = Object.keys(input).filter(key => isNaN(Number(key)));
-      return originalKeys.map(key => input[key]);
-    }
+type ConvertArrayToElementAndEnumToKey<T extends EnumOrArray> = T extends (infer U)[] ? U :
+// in here we can't just use keyof T in order to eliminate the number keys.
+{ [K in keyof T]: K extends number ? never : K }[keyof T]
+
+enum Color {
+  Red, Blue
+}
+type x = ConvertArrayToElementAndEnumToKey<typeof Color>;
+type yy = ConvertArrayToElementAndEnumToKey<['b', 'c', 2]>;
+type y = ConvertEnumOrArrayToElement<typeof Color>;
+type xx = ConvertEnumOrArrayToElement<["a", 1]>;
+
+function enum_to_values<T extends { [key: string]: any }>(e: T): T[keyof T][] {
+  return Object.values(e);
+}
+function enum_to_keys<T extends { [key: string]: any }>(e: T): (keyof T)[] {
+  return Object.keys(e);
+}
+
+const z = enum_to_values(Color);
+const zz = enum_to_keys(Color);
+
+// Recursive function to generate combinations (remains unchanged)
+function generateCartesianProduct(groups: any[][], prefix = []) {
+  if (!groups.length) return [prefix];
+  const firstGroup = groups[0];
+  const restGroups = groups.slice(1);
+  let result = [];
+  firstGroup.forEach(item => {
+    result = result.concat(generateCartesianProduct(restGroups, [...prefix, item]));
   });
+  return result;
+}
 
-  // Recursive function to generate combinations (remains unchanged)
-  function generateCartesianProduct(groups: any[][], prefix: any[] = []): any[][] {
-    if (!groups.length) return [prefix];
-    const firstGroup = groups[0];
-    const restGroups = groups.slice(1);
-
-    let result: any[][] = [];
-
-    firstGroup.forEach(item => {
-      result = result.concat(generateCartesianProduct(restGroups, [...prefix, item]));
-    });
-
-    return result;
-  }
-
+export function cartesian<T extends EnumOrArray[]>(...inputs: T):
+{ [I in keyof T]: ConvertArrayToElementAndEnumToKey<T[I]> }[] {
+  const itemGroups = inputs.map(input => Array.isArray(input) ? input : enum_to_keys(input));
+  console.error('itemGroups', itemGroups);
+  return generateCartesianProduct(itemGroups) as any;
+}
+export function cartesian_enum_vals<T extends EnumOrArray[]>(...inputs: T):
+{ [I in keyof T]: ConvertEnumOrArrayToElement<T[I]> }[] {
+  const itemGroups = inputs.map(input => Array.isArray(input) ? input : enum_to_values(input));
+  console.error('itemGroups', itemGroups);
   return generateCartesianProduct(itemGroups) as any;
 }
 

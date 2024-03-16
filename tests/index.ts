@@ -1,19 +1,21 @@
 import { LaunchTests, test } from 'tst';
 import { fileURLToPath } from 'url';
-import { cartesian } from '../utils.js';
+import { cartesian, cartesian_enum_vals } from '../utils.js';
 
 export const cartesian_simple = test(({l, a:{eq}}) => {
-  const colors = ['red', 'green', 'blue'] as const;
+  const colors = ['red', 'green', 'blue']
   const size = ['Small', 'Medium', 'Large'] as const;
+  enum OtherColors {
+    Black, White
+  }
   const numbers = [1, 2];
-  const combos = cartesian(colors, numbers, size);
+  const combos = cartesian(colors, numbers, size, OtherColors);
+  const combos2 = cartesian_enum_vals(colors, numbers, size, OtherColors);
   l(combos);
-  const x = combos[0][1]
-  eq(combos.length, 18);
+  eq(combos.length, 36);
 });
 
 export const cartesian2 = test(({l, a:{eq}}) => {
-
 
   enum Color {
     Red = 'red',
@@ -27,7 +29,7 @@ export const cartesian2 = test(({l, a:{eq}}) => {
     Large = 100
   }
   const numbers = [1, 2];
-  const combos = cartesian(Color, numbers, Size);
+  const combos = cartesian_enum_vals(Color, numbers, Size);
   //    ^?
   l(combos);
 
