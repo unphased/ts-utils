@@ -278,17 +278,15 @@ export const cartesianAt = <T extends EnumOrArray[]>(inputs: T, i: number): { [I
   const input_arrs = inputs.map(inp => Array.isArray(inp) ? inp : enum_to_keys(inp));
   const input_lens = input_arrs.map(arr => arr.length);
   // example [[a, b, c], [1, 2], [i, ii]]
-  console.error('input_lens', input_lens);
   // ex input_lens [3, 2, 2]
   // cumulative product counts memoizes the count it takes to increment each group.
   // ex cum_prod_counts [2, 4]
   const cum_prod_counts: number[] = []; // = input_lens.slice(1).reduce((acc, len) => { acc.push((acc[acc.length - 1] ?? 1) * len); return acc; }, []);
   let mult = 1;
-  for (let j = 0; j < input_lens.length - 1; j++) {
+  for (let j = input_lens.length - 1; j > 0; j--) {
     mult *= input_lens[j];
-    cum_prod_counts[j] = mult;
+    cum_prod_counts.push(mult);
   }
-  console.error('cum_prod_counts', cum_prod_counts);
   // progressively modulo index walking backward in cpc
   const quots: number[] = [];
   let curi = i
@@ -298,11 +296,10 @@ export const cartesianAt = <T extends EnumOrArray[]>(inputs: T, i: number): { [I
     curi %= cpcj;
   }
   quots.push(curi);
-  console.error('quots', quots);
   const ret: any = [];
   const l = input_lens.length;
   for (let j = 0; j < l; j++) {
-    ret[j] = input_arrs[j][quots[l-1-j]];
+    ret[j] = input_arrs[j][quots[j]];
   }
   return ret;
 }
