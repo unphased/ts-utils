@@ -88,11 +88,21 @@ export const zipper = (arr1: any[], arr2: any[]) => {
 };
 export const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-export const format = (...x: any[]) => x.map(item => Buffer.isBuffer(item) ?
-  colors.blue + item.toString('utf8') + colors.fg_reset :
+// a twist on util.inspect
+const inspectShowFunctions = (...x: any[]) => x.map(item => 'unimplemented');
+// brainstorm: need another helper that will perform a deep object traversal. It will return a copy of the object but
+// with functions inside replaced with some kind of rendered placeholder which includes their serializations. Pass THAT
+// into util.inspect et voila!
+
+// A sane default for showing multiple items. Will space-delimited render buffers in blue text, green underlines on any plain string items to clarify their boundaries, functions get serialized!, and typical util.inspect for anything else (objects, arrays).
+export const format = (...x: any[]) => x.map(item => 
+  Buffer.isBuffer(item) ?
+    colors.blue + item.toString('utf8') + colors.fg_reset :
   typeof item === 'string' ?
-    item.includes('\x1b') ? item : colors.underline_green + colors.underline + item + colors.underline_reset + colors.underline_color_reset
-    : util.inspect(item, { depth: 7, colors: true })
+    item.includes('\x1b') ? item : colors.underline_green + colors.underline + item + colors.underline_reset + colors.underline_color_reset :
+  typeof item === 'function' ?
+    item.toString() :
+  util.inspect(item, { depth: 7, colors: true, compact: true })
 ).join(' ');
 // TODO: Have a mode that uses git (???) to work out an initial heuristic to use for displaying the tests that have
 // been touched in the last X hours. This is probably even more streamlined than providing a manual control around
@@ -103,10 +113,10 @@ export const format = (...x: any[]) => x.map(item => Buffer.isBuffer(item) ?
 
 // pretty print 1: single item, grey bg
 export const pp = (x: any) => colors.dark_grey_bg + (Buffer.isBuffer(x) ? x.toString('utf8') : (typeof x === 'string' ? x : util.inspect(x, { colors: true, depth: Infinity, compact: true }))) + colors.bg_reset;
-// pretty print 2: as above but colorize and show if escapes are present
+// pretty print 2: as above but colorize and show string broken down if escapes are present
 export const pp2 = (x: any) => colors.dark_grey_bg + (Buffer.isBuffer(x) ? x.toString('utf8') :
   typeof x === 'string' ?
-    x.includes('\x1b') ? util.inspect(x, {colors: true}) : x :
+    x.includes('\x1b') ? util.inspect(x, {colors: true, compact: true}) : x :
     util.inspect(x, { colors: true, depth: Infinity, compact: true })
 ) + colors.bg_reset;
 export const red = (s: string) => colors.red + s + colors.fg_reset;

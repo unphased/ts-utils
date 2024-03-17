@@ -1,6 +1,7 @@
 import { LaunchTests, test } from 'tst';
 import { fileURLToPath } from 'url';
-import { cartesian_slow, cartesian_enum_vals_slow, cartesianAt, cartesianAll } from '../utils.js';
+import { cartesian_slow, cartesian_enum_vals_slow, cartesianAt, cartesianAll, format } from '../utils.js';
+import { colors } from '../terminal.js';
 
 export const cartesian_simple = test(({l, a:{eq}}) => {
   const size = ['S', 'M', 'L'];
@@ -169,6 +170,15 @@ export const cartesian_with_gens = test(({l, a:{eqO}}) => {
   const evald = combos.map(([g, x]) => Array.from(g()).map(y => x.repeat(y)));
   l(evald);
   eqO(evald, [[1,2,3],[4,5,6]].flatMap(nums => nums.map((num, ni) => nums.map(n2 => 'abc'[ni].repeat(n2)))));
+});
+
+// this one might be a little bit volatile when runtimes can implement util.inspect in any way, but we can adjust it
+// later if that becomes relevant.
+export const format_sanity = test('format', ({l, a:{eqO}}) => {
+  const a = [1, 'x'];
+  const sq = (x: number) => x ** 2;
+  function dbl(x: number) { return x * 2; }
+  eqO(format(a, sq, dbl), `[ ${colors.yellow + '1' + colors.fg_reset}, ${colors.green + "'x'" + colors.fg_reset} ] (x) => x ** 2 function dbl(x) {\n    return x * 2;\n  }`);
 });
 
 const isProgramLaunchContext = () => {
