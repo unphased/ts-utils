@@ -1,6 +1,6 @@
 import { LaunchTests, test } from 'tst';
 import { fileURLToPath } from 'url';
-import { cartesian_slow, cartesian_enum_vals_slow, cartesianAt } from '../utils.js';
+import { cartesian_slow, cartesian_enum_vals_slow, cartesianAt, cartesianAll } from '../utils.js';
 
 export const cartesian_simple = test(({l, a:{eq}}) => {
   const size = ['S', 'M', 'L'];
@@ -143,12 +143,26 @@ export const cartesian_via_generator_playground = test(({l, t, a:{eqO}}) => {
   }
 });
 
+enum A {a, b, c}
+enum B {x, y, z}
 export const cartesian_analytical = test(({l, a:{eqO}}) => {
-  enum A {a, b, c}
-  enum B {x, y, z}
-  eqO(cartesianAt([ A, B, [1, 2] ], 0), ['a', 'x']);
+  eqO(cartesianAll(A, B), [
+    ['a', 'x'],
+    ['a', 'y'],
+    ['a', 'z'],
+    ['b', 'x'],
+    ['b', 'y'],
+    ['b', 'z'],
+    ['c', 'x'],
+    ['c', 'y'],
+    ['c', 'z']
+  ]);
+});
 
-  // [ ['a', 'x'], ['a', 'y'], ['a', 'z'], ['b', 'x'], ['b', 'y'], ['b', 'z'], ['c', 'x'], ['c', 'y'], ['c', 'z'] ]
+export const cartesian_analytical_2 = test(({l, a:{eqO}}) => {
+  l(cartesianAll(A, B));
+  l(cartesianAll(['x', 'y', 'z', 'w'], A, [1, 2]));
+  l(cartesianAll(A, ['x', 'y', 'z', 'w'], [1, 2]));
 });
 
 const isProgramLaunchContext = () => {

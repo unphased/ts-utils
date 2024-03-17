@@ -282,22 +282,44 @@ export const cartesianAt = <T extends EnumOrArray[]>(inputs: T, i: number): { [I
   // ex input_lens [3, 2, 2]
   // cumulative product counts memoizes the count it takes to increment each group.
   // ex cum_prod_counts [2, 4]
-  const cum_prod_counts = input_lens.slice(1).reduce((acc, len) => { acc.push((acc[acc.length - 1] ?? 1) * len); return acc; }, []);
+  const cum_prod_counts: number[] = []; // = input_lens.slice(1).reduce((acc, len) => { acc.push((acc[acc.length - 1] ?? 1) * len); return acc; }, []);
+  let mult = 1;
+  for (let j = 0; j < input_lens.length - 1; j++) {
+    mult *= input_lens[j];
+    cum_prod_counts[j] = mult;
+  }
   console.error('cum_prod_counts', cum_prod_counts);
   // progressively modulo index walking backward in cpc
-  for (let j = input_lens.length - 1; j >= 0; j--) {
-    if (i < cum_prod_counts[j]) {
-      const idx = Math.floor(i / (cum_prod_counts[j] / input_lens[j]));
-      console.error('idx', idx);
-      return input_arrs.map(arr => arr[idx]);
-    }
+  const quots: number[] = [];
+  let curi = i
+  for (let j = cum_prod_counts.length - 1; j >= 0; j--) {
+    const cpcj = cum_prod_counts[j];
+    quots.push(Math.floor(curi / cpcj));
+    curi %= cpcj;
   }
-  return [] as any;
+  quots.push(curi);
+  console.error('quots', quots);
+  const ret: any = [];
+  const l = input_lens.length;
+  for (let j = 0; j < l; j++) {
+    ret[j] = input_arrs[j][quots[l-1-j]];
+  }
+  return ret;
 }
 
 // suppose you want to sample from some cart product, need the len to be able to do a uniform random sample on the set.
 export const cartesianLen = <T extends EnumOrArray[]>(...inputs: T): number => {
   return inputs.reduce((acc, inp) => acc * (Array.isArray(inp) ? inp.length : enum_to_keys(inp).length), 1);
+}
+
+export const cartesianAll = <T extends EnumOrArray[]>(...inputs: T): { [I in keyof T]: ConvertArrayToElementAndEnumToKey<T[I]> }[] => {
+  const len = cartesianLen(...inputs);
+  console.error('len', len);
+  const result: { [I in keyof T]: ConvertArrayToElementAndEnumToKey<T[I]> }[] = [];
+  for (let i = 0; i < len; i++) {
+    result.push(cartesianAt(inputs, i));
+  }
+  return result;
 }
 
 // there is still potentially a useful way to produce things like zips and cartesian products and whatever else out of infinite sequence generators, it changes the iteration pattern as well as cart product sequence order to a round robin kind of outward spiral. We can also think about incorporating finite sequences within those contexts where applicable.
