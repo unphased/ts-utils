@@ -91,7 +91,7 @@ export const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, 
 export const format = (...x: any[]) => x.map(item => Buffer.isBuffer(item) ?
   colors.blue + item.toString('utf8') + colors.fg_reset :
   typeof item === 'string' ?
-    item.includes('\x1b') ? item : colors.underline_green + colors.underline + item + colors.underline_reset
+    item.includes('\x1b') ? item : colors.underline_green + colors.underline + item + colors.underline_reset + colors.underline_color_reset
     : util.inspect(item, { depth: 7, colors: true })
 ).join(' ');
 // TODO: Have a mode that uses git (???) to work out an initial heuristic to use for displaying the tests that have
@@ -280,10 +280,18 @@ export const cartesianAt = <T extends EnumOrArray[]>(inputs: T, i: number): { [I
   // example [[a, b, c], [1, 2], [i, ii]]
   console.error('input_lens', input_lens);
   // ex input_lens [3, 2, 2]
-  // cumulative product counts memoizes the count it takes to increment each group. len 1 less than input
+  // cumulative product counts memoizes the count it takes to increment each group.
   // ex cum_prod_counts [2, 4]
-  const cum_prod_counts = input_lens.slice(1).reduce((acc, len) => { acc.push(acc[acc.length - 1] * len); return acc; }, []);
+  const cum_prod_counts = input_lens.slice(1).reduce((acc, len) => { acc.push((acc[acc.length - 1] ?? 1) * len); return acc; }, []);
   console.error('cum_prod_counts', cum_prod_counts);
+  // progressively modulo index walking backward in cpc
+  for (let j = input_lens.length - 1; j >= 0; j--) {
+    if (i < cum_prod_counts[j]) {
+      const idx = Math.floor(i / (cum_prod_counts[j] / input_lens[j]));
+      console.error('idx', idx);
+      return input_arrs.map(arr => arr[idx]);
+    }
+  }
   return [] as any;
 }
 
