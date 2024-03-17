@@ -31,31 +31,7 @@ export const cartesian_simple = test(({l, a:{eq}}) => {
   eq(combos2.length, 18);
 });
 
-export const cartesian_with_funs = test(({l, a:{eq}}) => {
-  const methods = [
-    (x: number) => x + 1,
-    (x: number) => x * 2,
-    (x: number) => x / 3
-  ];
-
-  const combos = cartesian_slow(methods, methods, [100, 200, 300, 400] as const);
-  l(combos.map(([f, g, x]) => f(g(x))));
-  eq(combos.length, 36);
-});
-
 // generators as items to use in a list, which is hardly surprising if closures work!
-export const cartesian_with_gens = test(({l, a:{eqO}}) => {
-  const gens = [
-    function*() { yield 1; yield 2; yield 3; },
-    function*() { yield 4; yield 5; yield 6; },
-  ];
-  const combos = cartesian_slow(gens, ['a', 'b', 'c'] as const);
-  const evald = combos.map(([g, x]) => Array.from(g()).map(y => x.repeat(y)));
-  l(evald);
-  eqO(evald, [[1,2,3],[4,5,6]].flatMap(nums => nums.map((num, ni) => nums.map(n2 => 'abc'[ni].repeat(n2)))));
-  // took me WAY TOO LONG to figure out how to construct this
-});
-
 // TODO: a generator cartesian which takes both generators and lists and produces a generator that enumerates the
 // cartesian lazily
 
@@ -159,10 +135,40 @@ export const cartesian_analytical = test(({l, a:{eqO}}) => {
   ]);
 });
 
-export const cartesian_analytical_2 = test(({l, a:{eqO}}) => {
-  l(cartesianAll(A, B));
-  l(cartesianAll(['x', 'y', 'z', 'w'], A, [1, 2]));
-  l(cartesianAll(A, ['x', 'y', 'z', 'w'], [1, 2]));
+export const cartesian_analytical_2 = test(({l, a:{eq}}) => {
+  const a = cartesianAll(['x', 'y', 'z', 'w'], A, [1, 2]);
+  l(a);
+  eq(a.length, 24);
+  const b = cartesianAll(A, ['x', 'y', 'z', 'w'], [1, 2]);
+  l(b);
+  eq(b.length, 24);
+});
+
+export const cartesian_with_funs = test(({l, a:{eq, eqO}}) => {
+  const methods = [
+    (x: number) => x + 1,
+    (x: number) => x * 2,
+    (x: number) => x / 3
+  ];
+
+  const combos = cartesian_slow(methods, methods, [100, 200, 300, 400] as const);
+  const combos_a = cartesianAll(methods, methods, [100, 200, 300, 400] as const);
+  eqO(combos, combos_a);
+  l(combos.map(([f, g, x]) => f(g(x))));
+  eq(combos.length, 36);
+});
+
+export const cartesian_with_gens = test(({l, a:{eqO}}) => {
+  const gens = [
+    function*() { yield 1; yield 2; yield 3; },
+    function*() { yield 4; yield 5; yield 6; },
+  ];
+  const combos = cartesian_slow(gens, ['a', 'b', 'c'] as const);
+  const combos_a = cartesianAll(gens, ['a', 'b', 'c'] as const);
+  eqO(combos, combos_a);
+  const evald = combos.map(([g, x]) => Array.from(g()).map(y => x.repeat(y)));
+  l(evald);
+  eqO(evald, [[1,2,3],[4,5,6]].flatMap(nums => nums.map((num, ni) => nums.map(n2 => 'abc'[ni].repeat(n2)))));
 });
 
 const isProgramLaunchContext = () => {
