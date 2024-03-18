@@ -172,6 +172,14 @@ export const cartesian_with_gens = test(({l, a:{eqO}}) => {
   eqO(evald, [[1,2,3],[4,5,6]].flatMap(nums => nums.map((num, ni) => nums.map(n2 => 'abc'[ni].repeat(n2)))));
 });
 
+export const cartesian_with_ones = test(({l, a:{eqO}}) => {
+  // sanity check for one-length sets to be treated properly
+  const combos = cartesian_slow([1], A, [3]);
+  const combos_a = cartesianAll([1], A, [3]);
+  eqO(combos, combos_a);
+  l(combos);
+});
+
 // this one might be a little bit volatile when runtimes can implement util.inspect in any way, but we can adjust it
 // later if that becomes relevant.
 export const format_sanity = test('format', ({l, a:{eqO}}) => {
