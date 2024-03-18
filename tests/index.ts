@@ -1,6 +1,6 @@
 import { LaunchTests, test } from 'tst';
 import { fileURLToPath } from 'url';
-import { cartesian_slow, cartesian_enum_vals_slow, cartesianAt, cartesianAll, format } from '../utils.js';
+import { cartesian_slow, cartesian_enum_vals_slow, cartesianAt, cartesianAll, format, identical } from '../utils.js';
 import { colors } from '../terminal.js';
 
 export const cartesian_simple = test(({l, a:{eq}}) => {
@@ -187,6 +187,13 @@ export const format_sanity = test('format', ({l, a:{eqO}}) => {
   const sq = (x: number) => x ** 2;
   function dbl(x: number) { return x * 2; }
   eqO(format(a, sq, dbl), `[ ${colors.yellow + '1' + colors.fg_reset}, ${colors.green + "'x'" + colors.fg_reset} ] (x) => x ** 2 function dbl(x) {\n    return x * 2;\n  }`);
+});
+
+export const identical_simple = test(({l, a:{is}}) => {
+  is(identical([1, 1, 1]));
+  is(!identical([1, 1, 2]));
+  is(identical([[1, 1, 1], [1, 1, 1]]));
+  is(!identical([[1, 1, 1], [1, 1, 2]]));
 });
 
 const isProgramLaunchContext = () => {

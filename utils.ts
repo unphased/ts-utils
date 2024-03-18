@@ -209,8 +209,14 @@ export const groupBy = <T, P extends keyof PickByValueTypes<T, PropertyKey>>(
   return result;
 };
 
-const mapObjectProps = <T, V>(obj: { [k: string]: T; }, cb: (k: keyof T, v: T) => V): V[] => {
+export const mapObjectProps = <T, V>(obj: { [k: string]: T; }, cb: (k: keyof T, v: T) => V): V[] => {
   return Object.entries(obj).map(([k, v]) => cb(k as keyof T, v));
+};
+
+// TODO make it use a deep equal
+export const identical = <T>(a: T[]) => {
+  const v0 = JSON.stringify(a[0]);
+  return a.every((v) => JSON.stringify(v) === v0);
 };
 
 // thanks to @jcalz https://stackoverflow.com/questions/78169579/how-to-transfer-type-from-variadic-parameters-into-a-different-shape-in-the-retu?noredirect=1#comment137810613_78169579
