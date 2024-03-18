@@ -337,3 +337,23 @@ export const cartesianAll = <T extends EnumOrArray[]>(...inputs: T): { [I in key
 
 // there is still potentially a useful way to produce things like zips and cartesian products and whatever else out of infinite sequence generators, it changes the iteration pattern as well as cart product sequence order to a round robin kind of outward spiral. We can also think about incorporating finite sequences within those contexts where applicable.
 
+export const memoized = <T extends any[], U>(fn: (...args: T) => U) => {
+  const cache = new Map<string, U>();
+  const VOID_KEY = Symbol('void'); // Unique symbol for functions without arguments
+
+  return (...args: T): U => {
+    // Determine the cache key
+    // Use a special symbol for no arguments, otherwise serialize arguments for key
+    const key = args.length === 0 ? VOID_KEY : JSON.stringify(args);
+
+    if (cache.has(key)) {
+      return cache.get(key)!;
+    }
+
+    const result = fn(...args);
+    cache.set(key, result);
+    return result;
+  };
+};
+
+

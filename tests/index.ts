@@ -1,6 +1,6 @@
 import { LaunchTests, test } from 'tst';
 import { fileURLToPath } from 'url';
-import { cartesian_slow, cartesian_enum_vals_slow, cartesianAt, cartesianAll, format, identical } from '../utils.js';
+import { cartesian_slow, cartesian_enum_vals_slow, cartesianAt, cartesianAll, format, identical, memoized } from '../utils.js';
 import { colors } from '../terminal.js';
 
 export const cartesian_simple = test(({l, a:{eq}}) => {
@@ -194,6 +194,14 @@ export const identical_simple = test(({l, a:{is}}) => {
   is(!identical([1, 1, 2]));
   is(identical([[1, 1, 1], [1, 1, 1]]));
   is(!identical([[1, 1, 1], [1, 1, 2]]));
+});
+
+export const memoized_random_values = test('memoize', ({l, a:{eq, eqO, neO}}) => {
+  const random_maker = () => Array.from({length: 100}, () => Math.random());
+  neO(random_maker(), random_maker());
+  const memo_random = memoized(random_maker);
+  eqO(memo_random(), memo_random());
+  eq(memo_random(), memo_random()); // also should be referentially equal due to memoization
 });
 
 const isProgramLaunchContext = () => {
