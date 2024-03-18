@@ -357,11 +357,11 @@ export const memoized = <T extends any[], U>(fn: (...args: T) => U) => {
 };
 
 export const timed = <T extends any[], U>(fn: (...args: T) => U) => {
-  return (...args: T): [U, number] => {
+  return (...args: T): [U, string] => {
     const start = process.hrtime();
     const result = fn(...args);
     const end = process.hrtime(start);
-    return [result, hrTimeMs(end)];
+    return [result, `${hrTimeMs(end)}ms`];
   };
 }
 
