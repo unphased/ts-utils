@@ -337,23 +337,32 @@ export const cartesianAll = <T extends EnumOrArray[]>(...inputs: T): { [I in key
 
 // there is still potentially a useful way to produce things like zips and cartesian products and whatever else out of infinite sequence generators, it changes the iteration pattern as well as cart product sequence order to a round robin kind of outward spiral. We can also think about incorporating finite sequences within those contexts where applicable.
 
+// This is not going to be useful for the common case of the target function being a recursive function. we
+// generally cannot modify recursive calls to inject memoization. Be warned.
 export const memoized = <T extends any[], U>(fn: (...args: T) => U) => {
   const cache = new Map<string, U>();
-  const VOID_KEY = Symbol('void'); // Unique symbol for functions without arguments
 
   return (...args: T): U => {
     // Determine the cache key
-    // Use a special symbol for no arguments, otherwise serialize arguments for key
-    const key = args.length === 0 ? VOID_KEY : JSON.stringify(args);
-
+    // Use a special symbol for no arguments, otherwise serialize arguments for key. Being clever here since VOID_KEY
+    // cannot be valid JSON, so it's safe to use it as a key for the void case.
+    const key = args.length === 0 ? 'VOID_KEY' : JSON.stringify(args);
     if (cache.has(key)) {
-      return cache.get(key)!;
+      return cache.get(key);
     }
-
     const result = fn(...args);
     cache.set(key, result);
     return result;
   };
 };
+
+export const timed = <T extends any[], U>(fn: (...args: T) => U) => {
+  return (...args: T): [U, number] => {
+    const start = process.hrtime();
+    const result = fn(...args);
+    const end = process.hrtime(start);
+    return [result, hrTimeMs(end)];
+  };
+}
 
 

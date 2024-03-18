@@ -1,6 +1,6 @@
 import { LaunchTests, test } from 'tst';
 import { fileURLToPath } from 'url';
-import { cartesian_slow, cartesian_enum_vals_slow, cartesianAt, cartesianAll, format, identical, memoized } from '../utils.js';
+import { cartesian_slow, cartesian_enum_vals_slow, cartesianAt, cartesianAll, format, identical, memoized, timed } from '../utils.js';
 import { colors } from '../terminal.js';
 
 export const cartesian_simple = test(({l, a:{eq}}) => {
@@ -196,13 +196,16 @@ export const identical_simple = test(({l, a:{is}}) => {
   is(!identical([[1, 1, 1], [1, 1, 2]]));
 });
 
-export const memoized_random_values = test('memoize', ({l, a:{eq, eqO, neO}}) => {
+export const memoized_void_fn_with_random_values = test('memoize', ({l, a:{eq, eqO, neO}}) => {
   const random_maker = () => Array.from({length: 100}, () => Math.random());
   neO(random_maker(), random_maker());
   const memo_random = memoized(random_maker);
   eqO(memo_random(), memo_random());
   eq(memo_random(), memo_random()); // also should be referentially equal due to memoization
 });
+
+// TODO when i can think up of a good example of an expensive function that is worth memoizing but isnt recursive i
+// will make another test for memoization
 
 const isProgramLaunchContext = () => {
   return fileURLToPath(import.meta.url) === process.argv[1];
