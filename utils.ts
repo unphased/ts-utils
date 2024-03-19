@@ -95,15 +95,18 @@ const inspectShowFunctions = (...x: any[]) => x.map(item => 'unimplemented');
 // into util.inspect et voila!
 
 // A sane default for showing multiple items. Will space-delimited render buffers in blue text, green underlines on any plain string items to clarify their boundaries, functions get serialized!, and typical util.inspect for anything else (objects, arrays).
-export const format = (...x: any[]) => x.map(item => 
+export const format_opt = (x: any[], opts?: util.InspectOptions) => x.map(item =>
   Buffer.isBuffer(item) ?
     colors.blue + item.toString('utf8') + colors.fg_reset :
   typeof item === 'string' ?
     item.includes('\x1b') ? item : colors.underline_green + colors.underline + item + colors.underline_reset + colors.underline_color_reset :
   typeof item === 'function' ?
     item.toString() :
-  util.inspect(item, { depth: 7, colors: true, compact: true })
+  util.inspect(item, { depth: 7, colors: true, compact: true, maxArrayLength: 15, maxStringLength: 120, ...opts})
 ).join(' ');
+
+export const format = (...x: any[]) => format_opt(x)
+
 // TODO: Have a mode that uses git (???) to work out an initial heuristic to use for displaying the tests that have
 // been touched in the last X hours. This is probably even more streamlined than providing a manual control around
 // which tests to enable autorun for.
