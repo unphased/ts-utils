@@ -344,17 +344,20 @@ export const cartesianAll = <T extends EnumOrArray[]>(...inputs: T): { [I in key
 // generally cannot modify recursive calls to inject memoization. Be warned.
 export const memoized = <T extends any[], U>(fn: (...args: T) => U) => {
   const cache = new Map<string, U>();
-
+  // let hits = 0
   return (...args: T): U => {
     // Determine the cache key
     // Use a special symbol for no arguments, otherwise serialize arguments for key. Being clever here since VOID_KEY
     // cannot be valid JSON, so it's safe to use it as a key for the void case.
-    const key = args.length === 0 ? 'VOID_KEY' : JSON.stringify(args);
+    const key = args.length === 0 ? 'VOID_KEY' : (args.length === 1 && typeof args[0] !== 'object') ? args[0].toString() : JSON.stringify(args);
     if (cache.has(key)) {
+      // hits++;
+      // console.error('cache hit', fn.toString().slice(0,20), key, hits)
       return cache.get(key);
     }
     const result = fn(...args);
     cache.set(key, result);
+    // console.error('cache size hits', cache.size, hits);
     return result;
   };
 };

@@ -207,6 +207,63 @@ export const memoized_void_fn_with_random_values = test('memoize', ({l, a:{eq, e
 // TODO when i can think up of a good example of an expensive function that is worth memoizing but isnt recursive i
 // will make another test for memoization
 
+export const memoizer_check_via_prime_computation = test('memoize', ({l, a:{eq, eqO, neO}}) => {
+  // define simple prime checking methods
+  const is_prime = (n: number) => {
+    if (n < 2) return false;
+    if (n === 2) return true;
+    if (n % 2 === 0) return false;
+    for (let i = 3; i <= Math.sqrt(n); i+=2) {
+      if (n % i === 0) return false;
+    }
+    return true;
+  }
+  // sanity check on simple sieve
+  const primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43];
+
+  for (let i = 1; i < 47; i++) {
+    eq(is_prime(i), primes.includes(i), i);
+  }
+
+  const is_prime_memo = memoized(is_prime);
+
+  const primes_under = (n: number, cached = false) => {
+    const primes = [];
+    for (let i = 2; i < n; i++) {
+      if ((cached ? is_prime_memo : is_prime)(i)) primes.push(i);
+    }
+    return primes;
+  }
+
+  l('first listing prime checks arent memoized:', timed(primes_under)(1000000, true));
+  l('second listing prime checks are memoized:', timed(primes_under)(1000000, true));
+  l('third listing prime checks are memoized (faster from cache?):', timed(primes_under)(1000000, true));
+
+  const primes_under_memo = memoized(primes_under);
+  l('same as above but this run will save the value', timed(primes_under_memo)(1000000, true));
+  l('and this retrieves that value instantly', timed(primes_under_memo)(1000000, true));
+
+  // The above seems smart but it's really not. the memoization HOF is far from being powerful enough to do actually
+  // intelligent things. Also this is still trial division which is inferior to all sieves for prime enumeration.
+  function actual_good_primes_under(n: number) {
+    const primes = [2, 3]; // mutable array tracking primes seen so far. start with a better base case
+    const prime = (n: number) => { // sieve leverages same prime list as we generate them
+      const sqrt = Math.sqrt(n);
+      for (let i = 1; primes[i] <= sqrt; i++) {
+        if (n % primes[i] === 0) return false;
+      }
+      return true;
+    }
+    for (let i = 5; i < n; i+=2) {
+      if (prime(i)) primes.push(i);
+    }
+    return primes;
+  }
+  eqO(primes_under(100000, true), actual_good_primes_under(100000));
+  l('smart prime listing 1:', timed(actual_good_primes_under)(1000000));
+
+});
+
 const isProgramLaunchContext = () => {
   return fileURLToPath(import.meta.url) === process.argv[1];
 }
