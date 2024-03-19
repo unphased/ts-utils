@@ -209,8 +209,8 @@ export const groupBy = <T, P extends keyof PickByValueTypes<T, PropertyKey>>(
   return result;
 };
 
-export const mapObjectProps = <T, V>(obj: { [k: string]: T; }, cb: (k: keyof T, v: T) => V): V[] => {
-  return Object.entries(obj).map(([k, v]) => cb(k as keyof T, v));
+export const mapObjectProps = <T, V>(obj: { [k: string]: T; }, cb: (k: string, v: T) => V): V[] => {
+  return Object.entries(obj).map(([k, v]) => cb(k, v));
 };
 
 // TODO make it use a deep equal
