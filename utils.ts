@@ -219,7 +219,7 @@ export const mapObjectProps = <T, V>(obj: { [k: string]: T; }, cb: (k: string, v
 };
 
 // a bit like json but more readable
-export const shortString = (x: { [k: PropertyKey]: any }) => mapObjectProps(x, (k, v) => `${k}=${v}`).join(' ');
+export const kvString = (x: { [k: PropertyKey]: any }) => mapObjectProps(x, (k, v) => `${k}=${v}`).join(' ');
 
 // TODO make it use a deep equal
 export const identical = <T>(a: T[]) => {
