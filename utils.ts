@@ -212,9 +212,14 @@ export const groupBy = <T, P extends keyof PickByValueTypes<T, PropertyKey>>(
   return result;
 };
 
-export const mapObjectProps = <T, V>(obj: { [k: string]: T; }, cb: (k: string, v: T) => V): V[] => {
-  return Object.entries(obj).map(([k, v]) => cb(k, v));
+export const mapObjectProps = <T, V>(obj: { [k: string]: T; }, cb: (k: string, v: T) => V, filter = (k, v) => k !== undefined): V[] => {
+  let e = Object.entries(obj)
+  if (filter) e = e.filter(([k, v]) => filter(k, v));
+  return e.map(([k, v]) => cb(k, v));
 };
+
+// a bit like json but more readable
+export const shortString = (x: { [k: PropertyKey]: any }) => mapObjectProps(x, (k, v) => `${k}=${v}`).join(' ');
 
 // TODO make it use a deep equal
 export const identical = <T>(a: T[]) => {
