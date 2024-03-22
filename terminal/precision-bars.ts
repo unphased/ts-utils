@@ -6,6 +6,7 @@ import { bgBlue, green, inverse, red } from "../utils.js"
 const full_block = '█'
 const left_block = '▏▎▍▌▋▊▉█'
 const bottom_block = '▁▂▃▄▅▆▇█'
+export const half_block = '▌';
 
 // low level bar rendering
 export const renderHorizBar = (ratio: number, width: number) => {

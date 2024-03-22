@@ -52,7 +52,7 @@ export const colors = {
   hyperlink: (url: string, content: string) => `\u001b]8;;${url}\u001b\\${content}\u001b]8;;\u001b\\`,
 
   // note, does not do clamping or rounding which may be necessary
-  truecolor: (r: number, g: number, b: number) => `\u001b[38;2;${r};${g};${b}m`,
-  truecolor_bg: (r: number, g: number, b: number) => `\u001b[48;2;${r};${g};${b}m`,
+  truecolor: (r: number, g: number, b: number) => `\u001b[38;2;${Math.round(r)};${Math.round(g)};${Math.round(b)}m`,
+  truecolor_bg: (r: number, g: number, b: number) => `\u001b[48;2;${Math.round(r)};${Math.round(g)};${Math.round(b)}m`,
 
 };
