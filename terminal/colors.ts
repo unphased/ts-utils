@@ -49,5 +49,10 @@ export const colors = {
   'underline_color_reset': '\x1b[59m',
 
   // not really a color but it's ok for now
-  hyperlink: (url: string, content: string) => `\u001b]8;;${url}\u001b\\${content}\u001b]8;;\u001b\\`
+  hyperlink: (url: string, content: string) => `\u001b]8;;${url}\u001b\\${content}\u001b]8;;\u001b\\`,
+
+  // note, does not do clamping or rounding which may be necessary
+  truecolor: (r: number, g: number, b: number) => `\u001b[38;2;${r};${g};${b}m`,
+  truecolor_bg: (r: number, g: number, b: number) => `\u001b[48;2;${r};${g};${b}m`,
+
 };

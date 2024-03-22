@@ -3,6 +3,8 @@ import { fileURLToPath } from 'url';
 import { cartesian_slow, cartesian_enum_vals_slow, cartesianAt, cartesianAll, format, identical, memoized, timed } from '../utils.js';
 import { colors } from '../terminal.js';
 
+// this tests/index.ts body is generally for testing stuff from utils. For simplicity, has the entry point for testing and re-export of other deps using tests at the bottom.
+
 export const cartesian_simple = test(({l, a:{eq}}) => {
   const size = ['S', 'M', 'L'];
   enum OtherColors {
@@ -263,6 +265,8 @@ export const memoizer_check_via_prime_computation = test('memoize', ({l, a:{eq, 
   l('smart prime listing 1:', timed(actual_good_primes_under)(1000000));
 
 });
+
+export * from '../color/math.js';
 
 const isProgramLaunchContext = () => {
   return fileURLToPath(import.meta.url) === process.argv[1];

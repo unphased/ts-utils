@@ -94,12 +94,15 @@ const inspectShowFunctions = (...x: any[]) => x.map(item => 'unimplemented');
 // with functions inside replaced with some kind of rendered placeholder which includes their serializations. Pass THAT
 // into util.inspect et voila!
 
+type AdditionalFormatOpts = {
+  inspectStrings?: boolean;
+};
 // A sane default for showing multiple items. Will space-delimited render buffers in blue text, green underlines on any plain string items to clarify their boundaries, functions get serialized!, and typical util.inspect for anything else (objects, arrays).
-export const format_opt = (x: any[], opts?: util.InspectOptions) => x.map(item =>
+export const format_opt = (x: any[], opts?: util.InspectOptions | AdditionalFormatOpts) => x.map(item =>
   Buffer.isBuffer(item) ?
     colors.blue + item.toString('utf8') + colors.fg_reset :
   typeof item === 'string' ?
-    item.includes('\x1b') ? item : colors.underline_green + colors.underline + item + colors.underline_reset + colors.underline_color_reset :
+    opts.inspectStrings ? util.inspect(item, {colors: yes, compact: true}) : item.includes('\x1b') ? item : colors.underline_green + colors.underline + item + colors.underline_reset + colors.underline_color_reset :
   typeof item === 'function' ?
     item.toString() :
   util.inspect(item, { depth: 7, colors: true, compact: true, maxArrayLength: 15, maxStringLength: 120, ...opts})
