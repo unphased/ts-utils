@@ -40,7 +40,7 @@ export const hsluv_space_demo = test(({l, lo, a: {eqO}}) => {
   // horiz for hue and vertical for lightness
   l(Array.from({length: 101}, (_, j) => Array.from({length: 360}, (_,i) => {
     const even = i % 2 == 0;
-    const rgb = hsluv2rgb(i, 75, j);
+    const rgb = hsluv2rgb(i, 100, j);
     if (even) {
       return colors.truecolor(...rgb);
     } else {
@@ -51,7 +51,7 @@ export const hsluv_space_demo = test(({l, lo, a: {eqO}}) => {
   // vertical for saturation
   l(Array.from({length: 101}, (_, j) => Array.from({length: 360}, (_,i) => {
     const even = i % 2 == 0;
-    const rgb = hsluv2rgb(i, j, 70);
+    const rgb = hsluv2rgb(i, j, 75);
     if (even) {
       return colors.truecolor(...rgb);
     } else {
@@ -65,9 +65,42 @@ export const hsluv_small_hue_palette_and_rotation = test(({t, l, a: {eq}}) => {
   const NUM = 6;
   const HUE_ROTATE_INTVL = 12;
   l('hues:', Array.from({length: Math.floor(360/NUM/HUE_ROTATE_INTVL)}, (_, j) => Array.from({length: NUM}, (_, i) => 360/NUM * i + j * HUE_ROTATE_INTVL)));
-  l('\n' + Array.from({length: Math.floor(360/NUM/HUE_ROTATE_INTVL)}, (_, j) => Array.from({length: NUM}, (_, i) => colors.truecolor_bg(...hsluv2rgb(360/NUM * i + j * HUE_ROTATE_INTVL, 100, 75)) + '  ').join('')).join(colors.bg_reset + '\n') + colors.bg_reset);
+  l('\n' + Array.from({length: Math.floor(360/NUM/HUE_ROTATE_INTVL)}, (_, j) => Array.from({length: NUM}, (_, i) => colors.truecolor_bg(...hsluv2rgb(360/NUM * i + j * HUE_ROTATE_INTVL, 100, 75)) + '    ').join('')).join(colors.bg_reset + '\n') + colors.bg_reset);
 });
 
 export const hsluv_palette_and_variant_spaces = test(({l}) => {
-  const NUM = 8;
+  const NUM = 5;
+  
+  l('light going down')
+  l(Array.from({length: NUM}, (_, i) => colors.truecolor_bg(...hsluv2rgb(360/NUM * i, 100, 85)) + '    ').join('') + colors.bg_reset);
+  l(Array.from({length: NUM}, (_, i) => colors.truecolor_bg(...hsluv2rgb(360/NUM * i, 100, 80)) + '    ').join('') + colors.bg_reset);
+  l(Array.from({length: NUM}, (_, i) => colors.truecolor_bg(...hsluv2rgb(360/NUM * i, 100, 75)) + '    ').join('') + colors.bg_reset);
+  l(Array.from({length: NUM}, (_, i) => colors.truecolor_bg(...hsluv2rgb(360/NUM * i, 100, 70)) + '    ').join('') + colors.bg_reset);
+  l(Array.from({length: NUM}, (_, i) => colors.truecolor_bg(...hsluv2rgb(360/NUM * i, 100, 65)) + '    ').join('') + colors.bg_reset);
+
+  l('sat going down')
+  l(Array.from({length: NUM}, (_, i) => colors.truecolor_bg(...hsluv2rgb(360/NUM * i, 100, 75)) + '    ').join('') + colors.bg_reset);
+  l(Array.from({length: NUM}, (_, i) => colors.truecolor_bg(...hsluv2rgb(360/NUM * i, 80, 75)) + '    ').join('') + colors.bg_reset);
+  l(Array.from({length: NUM}, (_, i) => colors.truecolor_bg(...hsluv2rgb(360/NUM * i, 60, 75)) + '    ').join('') + colors.bg_reset);
+  l(Array.from({length: NUM}, (_, i) => colors.truecolor_bg(...hsluv2rgb(360/NUM * i, 50, 75)) + '    ').join('') + colors.bg_reset);
+
+  l('sat up light up (this looks the best to me)')
+  l(Array.from({length: NUM}, (_, i) => colors.truecolor_bg(...hsluv2rgb(360/NUM * i, 65, 60)) + '    ').join('') + colors.bg_reset);
+  l(Array.from({length: NUM}, (_, i) => colors.truecolor_bg(...hsluv2rgb(360/NUM * i, 70, 65)) + '    ').join('') + colors.bg_reset);
+  l(Array.from({length: NUM}, (_, i) => colors.truecolor_bg(...hsluv2rgb(360/NUM * i, 80, 70)) + '    ').join('') + colors.bg_reset);
+  l(Array.from({length: NUM}, (_, i) => colors.truecolor_bg(...hsluv2rgb(360/NUM * i, 90, 75)) + '    ').join('') + colors.bg_reset);
+  l(Array.from({length: NUM}, (_, i) => colors.truecolor_bg(...hsluv2rgb(360/NUM * i, 97, 78)) + '    ').join('') + colors.bg_reset);
+
+  l('sat down light up');
+  l(Array.from({length: NUM}, (_, i) => colors.truecolor_bg(...hsluv2rgb(360/NUM * i, 100, 65)) + '    ').join('') + colors.bg_reset);
+  l(Array.from({length: NUM}, (_, i) => colors.truecolor_bg(...hsluv2rgb(360/NUM * i, 90, 70)) + '    ').join('') + colors.bg_reset);
+  l(Array.from({length: NUM}, (_, i) => colors.truecolor_bg(...hsluv2rgb(360/NUM * i, 80, 75)) + '    ').join('') + colors.bg_reset);
+  l(Array.from({length: NUM}, (_, i) => colors.truecolor_bg(...hsluv2rgb(360/NUM * i, 70, 80)) + '    ').join('') + colors.bg_reset);
+  l(Array.from({length: NUM}, (_, i) => colors.truecolor_bg(...hsluv2rgb(360/NUM * i, 60, 85)) + '    ').join('') + colors.bg_reset);
+
+  l('sat down light down different pairing')
+  l(Array.from({length: NUM}, (_, i) => colors.truecolor_bg(...hsluv2rgb(360/NUM * i, 100, 75)) + '    ').join('') + colors.bg_reset);
+  l(Array.from({length: NUM}, (_, i) => colors.truecolor_bg(...hsluv2rgb(360/NUM * i, 90, 70)) + '    ').join('') + colors.bg_reset);
+  l(Array.from({length: NUM}, (_, i) => colors.truecolor_bg(...hsluv2rgb(360/NUM * i, 80, 65)) + '    ').join('') + colors.bg_reset);
+
 });
