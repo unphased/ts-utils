@@ -17,19 +17,23 @@ export const rgb2hsluv = (r: number, g: number, b: number) => {
   hsluv_instance.rgb_r = r/255;
   hsluv_instance.rgb_g = g/255;
   hsluv_instance.rgb_b = b/255;
+  hsluv_instance.rgbToHsluv();
+  const {hsluv_h: h, hsluv_s: s, hsluv_l: l} = hsluv_instance;
+  return [h, s, l] as const;
 };
  
-// export const hsluv_rgb_round_trip = test({a: {eq}} => {
-//   for (let i = 0; i < 10000; ++i) {
-//     const random_rgb_color = Math.random() * ;
-//     eq()
-//   } 
-// });
+export const hsluv_rgb_round_trip = test(({a: {eqE}}) => {
+  for (let i = 0; i < 10000; ++i) {
+    const [r, g, b] = Array.from({length: 3}, _ => Math.random() * 255);
+    const [rr, gg, bb] = hsluv2rgb(...rgb2hsluv(r, g, b));
+    eqE(r, rr, 1e-10); // seems like 1e-10 is as good as we can expect
+    eqE(g, gg, 1e-10);
+    eqE(b, bb, 1e-10);
+  } 
+});
 
-export const hsluv_space_demo = test(({l, lo}) => {
-  l(hsluv2rgb(0,0,0));
-  l(hsluv2rgb(100,50,50));
-  l(hsluv2rgb(0,50,0));
+export const hsluv_space_demo = test(({l, lo, a: {eqO}}) => {
+  eqO(hsluv2rgb(100,50,50), [112.08375883742715, 123.77985010235344, 81.94029770580472]);
   // establishing a proof of concept of the trick to use bg and fg color with half block glyph to cram two colors into a single character.
   l(colors.bg_red + colors.green + half_block + colors.bg_blue + colors.yellow + half_block + colors.reset);
 
