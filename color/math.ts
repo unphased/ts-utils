@@ -59,3 +59,15 @@ export const hsluv_space_demo = test(({l, lo, a: {eqO}}) => {
     }
   }).join('') + colors.bg_reset + colors.fg_reset).join('\n'));
 });
+
+export const hsluv_small_hue_palette_and_rotation = test(({t, l, a: {eq}}) => {
+  t('exemptFromAsserting', true);
+  const NUM = 6;
+  const HUE_ROTATE_INTVL = 12;
+  l('hues:', Array.from({length: Math.floor(360/NUM/HUE_ROTATE_INTVL)}, (_, j) => Array.from({length: NUM}, (_, i) => 360/NUM * i + j * HUE_ROTATE_INTVL)));
+  l('\n' + Array.from({length: Math.floor(360/NUM/HUE_ROTATE_INTVL)}, (_, j) => Array.from({length: NUM}, (_, i) => colors.truecolor_bg(...hsluv2rgb(360/NUM * i + j * HUE_ROTATE_INTVL, 100, 75)) + '  ').join('')).join(colors.bg_reset + '\n') + colors.bg_reset);
+});
+
+export const hsluv_palette_and_variant_spaces = test(({l}) => {
+  const NUM = 8;
+});
