@@ -61,7 +61,7 @@ export const hsluv_space_demo = test(({l, lo, a: {eqO}}) => {
 });
 
 export const hsluv_small_hue_palette_and_rotation = test(({t, l, a: {eq}}) => {
-  t('exemptFromAsserting', true);
+  t('exemptFromAsserting');
   const NUM = 6;
   const HUE_ROTATE_INTVL = 12;
   l('hues:', Array.from({length: Math.floor(360/NUM/HUE_ROTATE_INTVL)}, (_, j) => Array.from({length: NUM}, (_, i) => 360/NUM * i + j * HUE_ROTATE_INTVL)));
