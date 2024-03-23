@@ -68,7 +68,8 @@ export const hsluv_small_hue_palette_and_rotation = test(({t, l, a: {eq}}) => {
   l('\n' + Array.from({length: Math.floor(360/NUM/HUE_ROTATE_INTVL)}, (_, j) => Array.from({length: NUM}, (_, i) => colors.truecolor_bg(...hsluv2rgb(360/NUM * i + j * HUE_ROTATE_INTVL, 100, 75)) + '    ').join('')).join(colors.bg_reset + '\n') + colors.bg_reset);
 });
 
-export const hsluv_palette_and_variant_spaces = test(({l}) => {
+export const hsluv_palette_and_variant_spaces = test(({t, l}) => {
+  t('exemptFromAsserting');
   const NUM = 5;
   
   l('light going down')
@@ -103,4 +104,5 @@ export const hsluv_palette_and_variant_spaces = test(({l}) => {
   l(Array.from({length: NUM}, (_, i) => colors.truecolor_bg(...hsluv2rgb(360/NUM * i, 90, 70)) + '    ').join('') + colors.bg_reset);
   l(Array.from({length: NUM}, (_, i) => colors.truecolor_bg(...hsluv2rgb(360/NUM * i, 80, 65)) + '    ').join('') + colors.bg_reset);
 
+  // in summary, this approach is not bad at all for generating palettes out of thin air, but some zones in the hue distribution are problematic at certain other levels in this colorspace, the most salient issue is cyan. I may introduce a hack to modify this color space because it is otherwise really beautiful.
 });
