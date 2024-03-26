@@ -379,4 +379,12 @@ export const timed = <T extends any[], U>(fn: (...args: T) => U) => {
   };
 }
 
+export const timedMs = <T extends any[], U>(fn: (...args: T) => U) => {
+  return (...args: T): [U, number] => {
+    const start = process.hrtime();
+    const result = fn(...args);
+    const end = process.hrtime(start);
+    return [result, hrTimeMs(end)];
+  };
+}
 
