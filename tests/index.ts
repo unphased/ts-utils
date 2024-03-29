@@ -266,6 +266,56 @@ export const memoizer_check_via_prime_computation = test('memoize', ({l, a:{eq, 
 
 });
 
+import { renderHorizBar, renderBarRatioComparisonLowerIsBetter } from '../terminal/precision-bars.js';
+import { lexAnsi } from '../terminal/ansi-parse.js';
+
+export const visual_check_comparison = test('terminal precision bar rendering', ({ t, l, a: { eq } }) => {
+  t('exemptFromAsserting', true);
+  const WIDTH = 20;
+  for (let i = 1; i <= 200; i *= 1.05) {
+    const r = renderBarRatioComparisonLowerIsBetter(i, 10, WIDTH);
+    const ansi = lexAnsi(r);
+    l(r, i/10);
+    eq(ansi.cleaned.length, 1);
+    eq(ansi.cleaned[0].length, WIDTH);
+  }
+});
+
+export const visual_check = test('terminal precision bar rendering', ({ t, l, a: { eq } }) => {
+  t('exemptFromAsserting', true);
+  l(renderHorizBar(0.5, 10) + '<<<');
+  l(renderHorizBar(0.5, 5) + '<<<');
+  for(let i = 0; i <= 10; i += 1/8) {
+    const r = renderHorizBar(i/10, 10);
+    l(r + '<<<', i);
+    eq(r.length, 10, 'length of bar');
+  }
+  for (let i = 0; i <= 50; i += 1) {
+    const r = renderHorizBar(i/50, 3)
+    l(r + '<<<', i);
+    eq(r.length, 3, 'length of bar');
+  }
+})
+
+// there are 9 possible levels showable with a single bar. the bar comes in 8 states of fill, so there is a 9th first state
+// representing 0. however if we have 3 chars for example, that makes for 25 states and not 27 states.
+export const aliasing_check = test('terminal precision bar rendering', ({t, l, a: {eq}}) => {
+  const bars = '▏▎▍▌▋▊▉█';
+  eq(renderHorizBar(0, 1), ' ');
+  eq(renderHorizBar(0.000001, 1), ' ');
+  eq(renderHorizBar(1/16 - 0.000001, 1), ' ');
+  eq(renderHorizBar(1/16 + 0.000001, 1), bars[0]);
+  eq(renderHorizBar(3/16 - 0.000001, 1), bars[0]);
+  eq(renderHorizBar(3/16 + 0.000001, 1), bars[1]);
+
+  eq(renderHorizBar(11/16 - 0.000001, 1), bars[4]);
+  eq(renderHorizBar(11/16 + 0.000001, 1), bars[5]);
+
+  eq(renderHorizBar(1/32 - 0.000001, 2), '  ');
+  eq(renderHorizBar(1/32 + 0.000001, 2), bars[0] + ' ');
+});
+
+
 export * from '../color/math.js';
 
 const isProgramLaunchContext = () => {
