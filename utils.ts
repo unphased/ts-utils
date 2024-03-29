@@ -146,6 +146,7 @@ export function weightedAverageFromBackByLUT(values: number[]) {
   return sum_weighted / sum_weights;
 }
 
+// TODO replace wholesale with simple-statistics
 export class Statistics {
   private data: number[];
   private cache: {
