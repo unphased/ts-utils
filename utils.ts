@@ -197,6 +197,10 @@ export class Statistics {
   }
 }
 
+export type VoidTakingMethodsOf<T> = {
+  [P in keyof T]: T[P] extends () => unknown ? P : never;
+}[keyof T];
+
 type PickByValueTypes<T, ValueType> = {
   [K in keyof T as T[K] extends ValueType ? K : never]: T[K]
 };
