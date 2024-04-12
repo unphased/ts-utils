@@ -315,8 +315,8 @@ export const aliasing_check = test('terminal precision bar rendering', ({t, l, a
   eq(renderHorizBar(1/32 + 0.000001, 2), bars[0] + ' ');
 });
 
-
 export * from '../color/math.js';
+export * from './test_minimatch_regex.js';
 
 const isProgramLaunchContext = () => {
   return fileURLToPath(import.meta.url) === process.argv[1];

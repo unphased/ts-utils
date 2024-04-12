@@ -17,7 +17,7 @@
     "build": "esbuild terminal.ts --bundle --sourcemap --platform=node --format=esm --outfile=dist/terminal.js && esbuild utils.ts --bundle --sourcemap --platform=node --format=esm --outfile=dist/utils.js",
     "postbuild": "time tsc -p tsconfig.for_decls.json",
     "watch": "watchexec --exts ts,json -- npm run build",
-    "watch-test": "bash -c 'watchexec --exts ts --only-emit-events --emit-events-to=json-stdio | while read line; do echo received: $line; echo \"Skipped $(timeout 1 cat | wc -l) further events\"; npm run test $1; done' _",
+    "watch-test": "bash -c 'watchexec --exts ts --only-emit-events --emit-events-to=json-stdio | while read line; do echo received: $line; echo \"Skipped $(timeout 1 cat | wc -l) further events\"; npm run test \"$@\"; done' _",
     "debug": "node --enable-source-maps --inspect-brk dist/tests.js --import-js-only"
   },
   "repository": {
@@ -43,6 +43,7 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "hsluv": "^1.0.1"
+    "hsluv": "^1.0.1",
+    "minimatch": "^9.0.4"
   }
 }
