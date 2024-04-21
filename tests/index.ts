@@ -315,6 +315,14 @@ export const aliasing_check = test('terminal precision bar rendering', ({t, l, a
   eq(renderHorizBar(1/32 + 0.000001, 2), bars[0] + ' ');
 });
 
+export const plot_test = test('plot', ({plot}) => {
+  plot('uplot', [{
+    title: 'a',
+    y_axes: ['y'],
+    data: [[1, 2, 3, 4], [1, 4, 9, 16]]
+  }]);
+});
+
 export * from '../color/math.js';
 export * from './test_minimatch_regex.js';
 
