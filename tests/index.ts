@@ -1,7 +1,9 @@
 import { LaunchTests, test } from 'tst';
 import { fileURLToPath } from 'url';
-import { cartesian_slow, cartesian_enum_vals_slow, cartesianAt, cartesianAll, format, identical, memoized, timed } from '../utils.js';
+import { cartesian_slow, cartesian_enum_vals_slow, cartesianAt, cartesianAll, identical, memoized, timed } from '../utils.js';
+import { format } from "../node/format.js";
 import { colors } from '../terminal.js';
+import { Chainable } from 'ts-utils';
 
 // this tests/index.ts body is generally for testing stuff from utils. For simplicity, has the entry point for testing and re-export of other deps using tests at the bottom.
 
@@ -322,6 +324,46 @@ export const plot_test = test('plot', ({plot}) => {
     data: [[1, 2, 3, 4], [1, 4, 9, 16]]
   }]);
 });
+
+export const bootstrap_array_experiment2_test = test('object chaining', ({ l, a: { eqO } }) => {
+  // confirm we can directly use the helpers to flexibly populate complex structures to a suitable degree of precision
+  type Type2 = {
+    a?: {
+      aa?: number;
+      b: {
+        c: number;
+      }[];
+    }[];
+  };
+
+  type Type3 = {
+    z?: {
+      y: number[];
+    };
+    x?: {
+      w: Type2;
+    };
+  };
+
+  const z = new Chainable<Type3>({});
+
+  // z.obj('x').obj('w').arr('a', { b: [], aa: 1 })[0].b.push({ c: 1 });
+  // const x = z.obj('x').obj('w').arr('a', { b: [], aa: 1 }).sub(0).arr('b', { c: 1 });
+  const x = z.obj('x').obj('w').arr('a', { b: [], aa: 1 }).sub(0).arr('b', { c: 1 });
+  l('z', z);
+  eqO(z.getRaw(), {
+    x: {
+      w: {
+        a: [{ b: [{ c: 1 }], aa: 1 }]
+      }
+    }
+  });
+
+  const y = new Chainable({ a: [] });
+  y.arr('a', 1, { z: 'z' }, 3).sub(1).obj('bb b b b b b', { c: 1 });
+  l('y', y);
+});
+
 
 export * from '../color/math.js';
 export * from './test_minimatch_regex.js';

@@ -1,4 +1,3 @@
-import * as util from "util";
 import { colors } from './terminal/colors.js';
 
 export const emph_arrow = (color: string) => `${color}${colors.curly_underline}===>${colors.underline_reset}${colors.reset}\n`;
@@ -90,41 +89,6 @@ export const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, 
 
 // a twist on util.inspect
 const inspectShowFunctions = (...x: any[]) => x.map(item => 'unimplemented');
-// brainstorm: need another helper that will perform a deep object traversal. It will return a copy of the object but
-// with functions inside replaced with some kind of rendered placeholder which includes their serializations. Pass THAT
-// into util.inspect et voila!
-
-type AdditionalFormatOpts = {
-  inspectStrings?: boolean;
-};
-// A sane default for showing multiple items. Will space-delimited render buffers in blue text, green underlines on any plain string items to clarify their boundaries, functions get serialized!, and typical util.inspect for anything else (objects, arrays).
-export const format_opt = (x: any[], opts?: util.InspectOptions & AdditionalFormatOpts) => x.map(item =>
-  Buffer.isBuffer(item) ?
-    colors.blue + item.toString('utf8') + colors.fg_reset :
-  typeof item === 'string' ?
-    (opts && opts.inspectStrings) ? util.inspect(item, {colors: true, compact: true}) : item.includes('\x1b') ? item : colors.underline_green + colors.underline + item + colors.underline_reset + colors.underline_color_reset :
-  typeof item === 'function' ?
-    item.toString() :
-  util.inspect(item, { depth: 7, colors: true, compact: true, maxArrayLength: 15, maxStringLength: 120, ...opts})
-).join(' ');
-
-export const format = (...x: any[]) => format_opt(x)
-
-// TODO: Have a mode that uses git (???) to work out an initial heuristic to use for displaying the tests that have
-// been touched in the last X hours. This is probably even more streamlined than providing a manual control around
-// which tests to enable autorun for.
-// TODO Also consider schlepping this ring buffer contents after a run of a test, into a test 'ephemeris' file. This can be
-// pulled up on demand and great for sanity checking even passing tests alongside any logging.
-// TODO reconcile pp with format()
-
-// pretty print 1: single item, grey bg
-export const pp = (x: any) => colors.dark_grey_bg + (Buffer.isBuffer(x) ? x.toString('utf8') : (typeof x === 'string' ? x : util.inspect(x, { colors: true, depth: Infinity, compact: true }))) + colors.bg_reset;
-// pretty print 2: as above but colorize and show string broken down if escapes are present
-export const pp2 = (x: any) => colors.dark_grey_bg + (Buffer.isBuffer(x) ? x.toString('utf8') :
-  typeof x === 'string' ?
-    x.includes('\x1b') ? util.inspect(x, {colors: true, compact: true}) : x :
-    util.inspect(x, { colors: true, depth: Infinity, compact: true })
-) + colors.bg_reset;
 export const red = (s: string) => colors.red + s + colors.fg_reset;
 export const green = (s: string) => colors.green + s + colors.fg_reset;
 export const bold = (s: string) => colors.bold + s + colors.bold_reset;
@@ -391,5 +355,70 @@ export const timedMs = <T extends any[], U>(fn: (...args: T) => U) => {
     const end = process.hrtime(start);
     return [result, hrTimeMs(end)];
   };
+}
+
+// debating if i should rename this to Drill or something.
+export class Chainable<T> {
+  private object: T;
+
+  constructor(object: T) {
+    this.object = object;
+  }
+
+  // the R suffix indicates a notion of "raw" where it will not return a Chainable instance, just the thing inside
+  // (which is drilled down into the structure by however many levels were chained).
+  objR<K extends keyof T, V extends T[K]>(
+    key: K,
+    objToMerge?: V
+  ) {
+    const entry: Partial<T[K]> = this.object[key] || {};
+    const merged = objToMerge ? { ...entry, ...objToMerge } : entry;
+    this.object[key] = merged as Required<T>[K];
+    return this.object[key] as Required<T>[K];
+  }
+
+  obj<K extends keyof T, V extends T[K]>(
+    key: K,
+    objToMerge?: V
+  ) {
+    return new Chainable(this.objR(key, objToMerge));
+  }
+
+  arrR<K extends keyof T>(
+    key: K,
+    ...elements: NonNullable<T[K]> extends (infer R)[] ? R[] : never
+  ) {
+    if (!this.object[key] || !Array.isArray(this.object[key])) {
+      this.object[key] = [] as T[K];
+    }
+    (this.object[key] as any).push(...elements);
+    return this.object[key];
+  }
+
+  arr<K extends keyof T>(
+    key: K,
+    ...elements: NonNullable<T[K]> extends (infer R)[] ? R[] : never
+  ) {
+    return new Chainable(this.arrR(key, ...elements));
+  }
+
+  // unfortunately this way of chaining prevents native syntax since we hace to stay in a chain of Chainable return
+  // values. so sub is used to perform array indexing.
+  subR<I extends number>(index: I): T extends (infer U)[] ? U : never {
+    if (Array.isArray(this.object)) {
+      return this.object[index] as T extends (infer U)[] ? U : never;
+    } else {
+      throw new Error('Operation `sub` is not valid on non-array types.');
+    }
+  }
+
+  sub(index: number) {
+    return new Chainable(this.subR(index));
+  }
+
+  // Method to access the encapsulated object, if direct manipulation or retrieval is necessary.
+  getRaw(): T {
+    return this.object;
+  }
 }
 
