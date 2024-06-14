@@ -364,6 +364,9 @@ export const bootstrap_array_experiment2_test = test('object chaining', ({ l, a:
   l('y', y);
 });
 
+export const simple_array_chainable = test('object chaining', ({ l, a: {}}) => {
+
+});
 
 export * from '../color/math.js';
 export * from './test_minimatch_regex.js';

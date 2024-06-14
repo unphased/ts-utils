@@ -3,7 +3,8 @@
     "emitDeclarationOnly": true,
     "declaration": true,
     "outDir": "./dist",
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "removeComments": false
   },
   "files": [
     "utils.ts",

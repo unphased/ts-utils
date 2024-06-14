@@ -395,11 +395,25 @@ export class Chainable<T> {
     return this.object[key];
   }
 
+  // specify an array to exist on this key, with any elements provided appended
   arr<K extends keyof T>(
     key: K,
     ...elements: NonNullable<T[K]> extends (infer R)[] ? R[] : never
   ) {
     return new Chainable(this.arrR(key, ...elements));
+  }
+
+  // specify an array to exist on this key, with an element provided at a specific index
+  arrAt<K extends keyof T, I extends number>(
+    key: K,
+    index: I,
+    element: T[K] extends (infer R)[] ? R : never
+  ) {
+    if (!this.object[key] || !Array.isArray(this.object[key])) {
+      this.object[key] = [] as T[K];
+    }
+    (this.object[key] as any)[index] = element;
+    return this.object[key];
   }
 
   // unfortunately this way of chaining prevents native syntax since we hace to stay in a chain of Chainable return
