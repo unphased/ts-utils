@@ -377,6 +377,8 @@ export class Chainable<T> {
     return this.object[key] as Required<T>[K];
   }
 
+  // calling obj either gets the value of the key given, or when given an objToMerge, will merge that into (or set
+  // from nothing) into an object at that key.
   obj<K extends keyof T, V extends T[K]>(
     key: K,
     objToMerge?: V
@@ -395,7 +397,8 @@ export class Chainable<T> {
     return this.object[key];
   }
 
-  // specify an array to exist on this key, with any elements provided appended
+  // specify an array to exist on this key, with any elements provided initialized or inserted in. Returning the
+  // array.
   arr<K extends keyof T>(
     key: K,
     ...elements: NonNullable<T[K]> extends (infer R)[] ? R[] : never
@@ -404,17 +407,18 @@ export class Chainable<T> {
   }
 
   // specify an array to exist on this key, with an element provided at a specific index
-  arrAt<K extends keyof T, I extends number>(
-    key: K,
-    index: I,
-    element: T[K] extends (infer R)[] ? R : never
-  ) {
-    if (!this.object[key] || !Array.isArray(this.object[key])) {
-      this.object[key] = [] as T[K];
-    }
-    (this.object[key] as any)[index] = element;
-    return this.object[key];
-  }
+  // arrSet<K extends keyof T, I extends number>(
+  //   key: K,
+  //   index: I,
+  //   element: T[K] extends (infer R)[] ? R : never
+  // ) {
+  //   if (!this.object[key] || !Array.isArray(this.object[key])) {
+  //     this.object[key] = [] as T[K];
+  //   }
+  //
+  //   (this.object[key] as any)[index] = element;
+  //   return new Chainable(this.object[key]);
+  // }
 
   // unfortunately this way of chaining prevents native syntax since we hace to stay in a chain of Chainable return
   // values. so sub is used to perform array indexing.

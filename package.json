@@ -12,7 +12,7 @@
   },
   "type": "module",
   "scripts": {
-    "test": "npm run build && node --enable-source-maps dist/tests.js --import-js-only",
+    "test": "npm run build-test && node --enable-source-maps dist/tests.js --import-js-only",
     "build-test": "esbuild tests/index.ts --bundle --sourcemap --platform=node --format=esm --outfile=dist/tests.js --external:tst",
     "build": "esbuild terminal.ts --bundle --sourcemap --platform=node --format=esm --outfile=dist/terminal.js && esbuild utils.ts --bundle --sourcemap --platform=node --format=esm --outfile=dist/utils.js",
     "postbuild": "time tsc -p tsconfig.for_decls.json",

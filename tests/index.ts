@@ -364,8 +364,15 @@ export const bootstrap_array_experiment2_test = test('object chaining', ({ l, a:
   l('y', y);
 });
 
-export const simple_array_chainable = test('object chaining', ({ l, a: {}}) => {
+export const simple_array_chainable = test('object chaining', ({ l, a: {eqO}}) => {
+  const x = new Chainable<{arr?: (number | string | { hmmm?: any[] })[]}>({});
+  x.arr('arr', 1, 2, {}, 4, 'abc').sub(2).arr('hmmm');
+  eqO(x.getRaw(), { arr: [1, 2, { hmmm: [] }, 4, 'abc'] } as any);
 
+  const y = new Chainable<{ a?: any[] }>({});
+  l('uh', y.arr('a', 'aa', 'bb').sub(1).getRaw());
+  l('y', y.getRaw());
+  // eqO(y.getRaw(), { a: [undefined, { p: { z: 'a' } }] });
 });
 
 export * from '../color/math.js';
