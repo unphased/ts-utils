@@ -374,6 +374,39 @@ export const simple_array_chainable = test('object chaining', ({ l, a: {eqO}}) =
   l('y', y.getRaw());
   // eqO(y.getRaw(), { a: [undefined, { p: { z: 'a' } }] });
 });
+export const chainable_exhaustive_manual = test('object chaining', ({ l, a: {eqO}}) => {
+  const un2 = []; un2[2] = 2;
+  // [0]: spec, [1]: cb that takes obj starting state to evaluate the chain, we are validating the side effects,
+  // [2]: optional value to validate against the return of the chain.
+  const subtests = [
+    [{a: []}, (o) => new Chainable(o).arr('a').getRaw(), []],
+    [{a: [1]}, (o) => new Chainable(o).arr('a', 1).getRaw(), [1]],
+    [{a: [1]}, (o) => new Chainable(o).arr('a', 1).subR(0), 1],
+    [{a: [1, 2]}, (o) => new Chainable(o).arr('a', 1, 2).getRaw(), [1, 2]],
+    [{a: [1, 2, 3]}, (o) => new Chainable(o).arrR('a', 1, 2, 3), [1, 2, 3]],
+    [{a: {}}, o => new Chainable(o).objR('a'), {}],
+    [{b: {a: 'c'}}, o => new Chainable(o).objR('b')['a'] = 'c', 'c'],
+    [{b: {a: 'c'}}, o => { const x = new Chainable(o).objR('b'); x['a'] = 'c'; return x; }, { a: 'c' }],
+    [{c: [0]}, o => new Chainable(o).arr('c', 0).subR(0), 0],
+    [{c: [1]}, o => new Chainable(o).arr('c', 1).subR(0), 1],
+    [{c: un2}, o => new Chainable(o).arr('c').getRaw()[2] = 2, 2],
+    [{d: [0], e: [1]}, o => { const x = new Chainable(o); x.arr('d', 0); return x.arrR('e', 1) }, [1]],
+    [{d: [0, 1, 2]}, o => new Chainable(o).arrR('d', 0, 1, 2).map(e => 9 - e), [9, 8, 7]],
+
+    [{d: [{}, {a: {x: 'x'}}, {}]}, o => new Chainable(o).arr('d', {}, {}, {}).sub(1).objR('a').x = 'x', 'x'],
+    [{d: [{}, {a: 'a'}]}, o => new Chainable(o).arr('d', {}, {}).subR(1).a = 'a', 'a'],
+
+  ];
+  const check = <T, S>(a: [T, ({}) => S, S]) => {
+    const init = {};
+    const ret = a[1](init);
+    eqO(a[0], init);
+    if (a[2] !== undefined) {
+      eqO(a[2], ret);
+    }
+  }
+  l(subtests.map(check));
+});
 
 export * from '../color/math.js';
 export * from './test_minimatch_regex.js';
