@@ -422,16 +422,38 @@ export class Chainable<T> {
 
   // unfortunately this way of chaining prevents native syntax since we hace to stay in a chain of Chainable return
   // values. so sub is used to perform array indexing.
-  subR<I extends number>(index: I): T extends (infer U)[] ? U : never {
+
+  subR<I extends number>(index: I): T extends (infer U)[] ? U : never;
+  subR<I extends number>(index: I, value: T extends (infer U)[] ? U : never): T extends (infer U)[] ? U : never;
+  subR<I extends number>(index: I, value?: T extends (infer U)[] ? U : never): any {
     if (Array.isArray(this.object)) {
-      return this.object[index] as T extends (infer U)[] ? U : never;
+      if (value !== undefined) {
+        this.object[index] = value;
+      }
+      return this.object[index];
     } else {
       throw new Error('Operation `sub` is not valid on non-array types.');
     }
   }
 
-  sub(index: number) {
+  sub<I extends number>(index: I): T extends (infer U)[] ? Chainable<U> : never;
+  sub<I extends number>(index: I, value: T extends (infer U)[] ? U : never): T extends (infer U)[] ? Chainable<U> : never;
+  sub<I extends number>(index: I, value?: T extends (infer U)[] ? U : never): any {
+    if (value !== undefined) {
+      return new Chainable(this.subR(index, value));
+    }
     return new Chainable(this.subR(index));
+  }
+
+  subArrR<I extends number>(
+    index: I,
+    ...elements: T extends (infer R)[] ? R[] : never
+  ): any {
+    if (!this.object[index] || !Array.isArray(this.object[index])) {
+      this.object[index] = [];
+    }
+    this.object[index].push(...elements);
+    return this.object[key];
   }
 
   // Method to access the encapsulated object, if direct manipulation or retrieval is necessary.

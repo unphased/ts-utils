@@ -396,6 +396,11 @@ export const chainable_exhaustive_manual = test('object chaining', ({ l, a: {eqO
     [{d: [{}, {a: {x: 'x'}}, {}]}, o => new Chainable(o).arr('d', {}, {}, {}).sub(1).objR('a').x = 'x', 'x'],
     [{d: [{}, {a: 'a'}]}, o => new Chainable(o).arr('d', {}, {}).subR(1).a = 'a', 'a'],
 
+    [{e: [['abc', 'def'], [1, 2, 3, 4], [99, 98, 97]]}, o => {
+      const x = new Chainable(o).arr('e');
+      x.sub(0).('abc', 'def');
+    }]
+
   ];
   const check = <T, S>(a: [T, ({}) => S, S]) => {
     const init = {};
