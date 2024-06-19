@@ -393,7 +393,9 @@ export class Chainable<T> {
     if (!this.object[key] || !Array.isArray(this.object[key])) {
       this.object[key] = [] as T[K];
     }
-    (this.object[key] as any).push(...elements);
+    if (elements.length) {
+      (this.object[key] as any).push(...elements);
+    }
     return this.object[key];
   }
 
@@ -445,16 +447,16 @@ export class Chainable<T> {
     return new Chainable(this.subR(index));
   }
 
-  subArrR<I extends number>(
-    index: I,
-    ...elements: T extends (infer R)[] ? R[] : never
-  ): any {
-    if (!this.object[index] || !Array.isArray(this.object[index])) {
-      this.object[index] = [];
-    }
-    this.object[index].push(...elements);
-    return this.object[key];
-  }
+  // subArrR<I extends number>(
+  //   index: I,
+  //   ...elements: T extends (infer R)[] ? R[] : never
+  // ): any {
+  //   if (!this.object[index] || !Array.isArray(this.object[index])) {
+  //     this.object[index] = [];
+  //   }
+  //   this.object[index].push(...elements);
+  //   return this.object[key];
+  // }
 
   // Method to access the encapsulated object, if direct manipulation or retrieval is necessary.
   getRaw(): T {

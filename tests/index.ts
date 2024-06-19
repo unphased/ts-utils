@@ -398,7 +398,7 @@ export const chainable_exhaustive_manual = test('object chaining', ({ l, a: {eqO
 
     [{e: [['abc', 'def'], [1, 2, 3, 4], [99, 98, 97]]}, o => {
       const x = new Chainable(o).arr('e');
-      x.sub(0).('abc', 'def');
+      // x.sub(0).('abc', 'def');
     }]
 
   ];
