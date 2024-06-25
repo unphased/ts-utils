@@ -41,7 +41,8 @@
     "@types/node": "^20.11.27",
     "esbuild": "^0.20.1",
     "tsx": "^4.7.1",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "tst": "file:../tst"
   },
   "dependencies": {
     "hsluv": "^1.0.1",
