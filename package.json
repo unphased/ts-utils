@@ -23,7 +23,7 @@
     "watch-test-old": "bash -c 'watchexec --exts ts --only-emit-events --emit-events-to=json-stdio | while read line; do echo received: $line; echo \"Skipped $(timeout 1 cat | wc -l) further events\"; npm run test \"$@\"; done' _",
     "debug": "node --enable-source-maps --inspect-brk dist/tests.js --import-js-only",
     "lint": "eslint . --ext .ts",
-    "install-hooks": "cp .git/hooks/pre-commit.sample .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit"
+    "install-hooks": "echo '#!/bin/sh\nnpm run lint' > .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit"
   },
   "repository": {
     "type": "git",
