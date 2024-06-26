@@ -416,6 +416,30 @@ export const chainable_exhaustive_manual = test('object chaining', ({ l, a: {eqO
 export * from '../color/math.js';
 export * from './test_minimatch_regex.js';
 
+export const chainable_tests = test('Chainable class', ({l, a: {eqO}}) => {
+  const chain = new Chainable({});
+  
+  // Test obj method
+  chain.obj('user', {name: 'John'});
+  eqO(chain.getRaw(), {user: {name: 'John'}});
+
+  // Test arr method
+  chain.obj('user').arr('hobbies', 'reading', 'cycling');
+  eqO(chain.getRaw(), {user: {name: 'John', hobbies: ['reading', 'cycling']}});
+
+  // Test sub method
+  chain.obj('user').arr('hobbies').sub(1, 'swimming');
+  eqO(chain.getRaw(), {user: {name: 'John', hobbies: ['reading', 'swimming']}});
+
+  // Test objR method
+  const userObj = chain.objR('user');
+  eqO(userObj, {name: 'John', hobbies: ['reading', 'swimming']});
+
+  // Test arrR method
+  const hobbiesArr = chain.obj('user').arrR('hobbies');
+  eqO(hobbiesArr, ['reading', 'swimming']);
+});
+
 const isProgramLaunchContext = () => {
   return fileURLToPath(import.meta.url) === process.argv[1];
 }
