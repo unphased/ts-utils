@@ -1,5 +1,4 @@
 import { colors } from './terminal/colors.js';
-export * from './node/format.js';
 
 export const emph_arrow = (color: string) => `${color}${colors.curly_underline}===>${colors.underline_reset}${colors.reset}\n`;
 

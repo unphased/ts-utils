@@ -4,17 +4,19 @@
   "description": "Slu's typescript utils",
   "exports": {
     ".": "./dist/utils.js",
-    "./terminal": "./dist/terminal.js"
+    "./terminal": "./dist/terminal.js",
+    "./node/format": "./dist/node/format.js"
   },
   "types": {
     ".": "./dist/utils.d.ts",
-    "./terminal": "./dist/terminal.d.ts"
+    "./terminal": "./dist/terminal.d.ts",
+    "./node/format": "./dist/node/format.d.ts"
   },
   "type": "module",
   "scripts": {
     "test": "npm run build-test && node --enable-source-maps dist/tests.js --import-js-only",
     "build-test": "esbuild tests/index.ts --bundle --sourcemap --platform=node --format=esm --outfile=dist/tests.js --external:tst",
-    "build": "esbuild terminal.ts --bundle --sourcemap --platform=node --format=esm --outfile=dist/terminal.js && esbuild utils.ts --bundle --sourcemap --platform=node --format=esm --outfile=dist/utils.js",
+    "build": "esbuild terminal.ts --bundle --sourcemap --platform=node --format=esm --outfile=dist/terminal.js && esbuild utils.ts --bundle --sourcemap --platform=node --format=esm --outfile=dist/utils.js && esbuild ./node/format.ts --bundle --sourcemap --platform=node --format=esm --outfile=dist/node/format.ts",
     "postbuild": "time tsc -p tsconfig.for_decls.json",
     "watch": "watchexec --exts ts,json -- npm run build",
     "watch-test": "watchexec -e ts,js -r --stop-signal=INT -- npm run test \"$@\"",
