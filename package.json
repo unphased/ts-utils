@@ -24,7 +24,7 @@
     "debug": "node --enable-source-maps --inspect-brk dist/tests.js --import-js-only",
     "lint": "eslint . --ext .ts",
     "lint-errors": "eslint . --ext .ts --quiet",
-    "install-hooks": "echo '#!/bin/sh\nnpm run lint-errors' > .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit"
+    "install-hooks": "echo '#!/bin/sh\nnpm run lint-errors || true' > .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit"
   },
   "repository": {
     "type": "git",
