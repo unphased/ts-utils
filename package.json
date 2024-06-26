@@ -21,7 +21,9 @@
     "watch": "watchexec --exts ts,json -- npm run build",
     "watch-test": "watchexec -e ts,js -r --stop-signal=INT -- npm run test \"$@\"",
     "watch-test-old": "bash -c 'watchexec --exts ts --only-emit-events --emit-events-to=json-stdio | while read line; do echo received: $line; echo \"Skipped $(timeout 1 cat | wc -l) further events\"; npm run test \"$@\"; done' _",
-    "debug": "node --enable-source-maps --inspect-brk dist/tests.js --import-js-only"
+    "debug": "node --enable-source-maps --inspect-brk dist/tests.js --import-js-only",
+    "lint": "eslint . --ext .ts",
+    "precommit": "npm run lint && npm run test"
   },
   "repository": {
     "type": "git",
