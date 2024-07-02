@@ -5,6 +5,7 @@
     "target": "ESNext",
     "lib": [ "ES2021" ], /* Specify a set of bundled library declaration files that describe the target runtime environment. */
     "outDir": "./dist",
+    "rootDir": ".",
     "moduleResolution": "nodenext",
     // "baseUrl": "./", /* Specify the base directory to resolve non-relative module names. */
     "downlevelIteration": true

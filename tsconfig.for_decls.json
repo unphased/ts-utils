@@ -1,14 +1,15 @@
 {
   "compilerOptions": {
+    "removeComments": false,
     "emitDeclarationOnly": true,
     "declaration": true,
     "outDir": "./dist",
-    "downlevelIteration": true,
-    "removeComments": false
+    "downlevelIteration": true
   },
   "files": [
     "utils.ts",
-    "terminal.ts"
+    "terminal.ts",
+    "node/format.ts"
   ]
 }
 

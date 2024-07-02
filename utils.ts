@@ -365,8 +365,9 @@ export class Chainable<T> {
     this.object = object;
   }
 
-  // the R suffix indicates a notion of "raw" where it will not return a Chainable instance, just the thing inside
-  // (which is drilled down into the structure by however many levels were chained).
+  /* the R suffix indicates a notion of "raw" where it will not return a Chainable instance, just the thing inside
+  (which is drilled down into the structure by however many levels were chained).
+  */
   objR<K extends keyof T, V extends T[K]>(
     key: K,
     objToMerge?: V
@@ -377,8 +378,9 @@ export class Chainable<T> {
     return this.object[key] as Required<T>[K];
   }
 
-  // calling obj either gets the value of the key given, or when given an objToMerge, will merge that into (or set
-  // from nothing) into an object at that key.
+  /** calling obj either gets the value of the key given, or when given an objToMerge, will merge that into (or set
+   from nothing) into an object at that key.
+   */
   obj<K extends keyof T, V extends T[K]>(
     key: K,
     objToMerge?: V
@@ -399,8 +401,9 @@ export class Chainable<T> {
     return this.object[key];
   }
 
-  // specify an array to exist on this key, with any elements provided initialized or inserted in. Returning the
-  // array.
+  /** specify an array to exist on this key, with any elements provided initialized or inserted in. Returning the
+  array.
+  */
   arr<K extends keyof T>(
     key: K,
     ...elements: NonNullable<T[K]> extends (infer R)[] ? R[] : never
@@ -424,6 +427,8 @@ export class Chainable<T> {
 
   // unfortunately this way of chaining prevents native syntax since we have to stay in a chain of Chainable return
   // values. so sub is used to perform array indexing.
+  
+  /** raw form of sub */
   subR<I extends number>(index: I): T extends (infer U)[] ? U : never;
   subR<I extends number>(index: I, value: T extends (infer U)[] ? U : never): T extends (infer U)[] ? U : never;
   subR<I extends number>(index: I, value?: T extends (infer U)[] ? U : never): any {
@@ -437,7 +442,8 @@ export class Chainable<T> {
     }
   }
 
-  // retrieves the value at the index, optionally with a value to assign to it that will only be set if that slot is undefined.
+  /** retrieves the value at the index, optionally with a value to assign to it that will only be set if that slot is undefined.
+  */
   sub<I extends number>(index: I): T extends (infer U)[] ? Chainable<U> : never;
   sub<I extends number>(index: I, value: T extends (infer U)[] ? U : never): T extends (infer U)[] ? Chainable<U> : never;
   sub<I extends number>(index: I, value?: T extends (infer U)[] ? U : never): any {
@@ -458,7 +464,8 @@ export class Chainable<T> {
   //   return this.object[key];
   // }
 
-  // Method to access the encapsulated object, if direct manipulation or retrieval is necessary.
+  /** Method to access the encapsulated object, if direct manipulation or retrieval is necessary.
+  */
   getRaw(): T {
     return this.object;
   }
