@@ -428,13 +428,14 @@ export class Chainable<T> {
   // unfortunately this way of chaining prevents native syntax since we have to stay in a chain of Chainable return
   // values. so sub is used to perform array indexing.
   
-  /** raw form of sub */
+  /** raw form of sub
+  */
   subR<I extends number>(index: I): T extends (infer U)[] ? U : never;
-  subR<I extends number>(index: I, value: T extends (infer U)[] ? U : never): T extends (infer U)[] ? U : never;
-  subR<I extends number>(index: I, value?: T extends (infer U)[] ? U : never): any {
+  subR<I extends number>(index: I, defaultValue: T extends (infer U)[] ? U : never): T extends (infer U)[] ? U : never;
+  subR<I extends number>(index: I, defaultValue?: T extends (infer U)[] ? U : never): any {
     if (Array.isArray(this.object)) {
-      if (value !== undefined) {
-        this.object[index] = value;
+      if (this.object[index] === undefined) {
+        this.object[index] = defaultValue;
       }
       return this.object[index];
     } else {
@@ -445,12 +446,9 @@ export class Chainable<T> {
   /** retrieves the value at the index, optionally with a value to assign to it that will only be set if that slot is undefined.
   */
   sub<I extends number>(index: I): T extends (infer U)[] ? Chainable<U> : never;
-  sub<I extends number>(index: I, value: T extends (infer U)[] ? U : never): T extends (infer U)[] ? Chainable<U> : never;
-  sub<I extends number>(index: I, value?: T extends (infer U)[] ? U : never): any {
-    if (value !== undefined) {
-      return new Chainable(this.subR(index, value));
-    }
-    return new Chainable(this.subR(index));
+  sub<I extends number>(index: I, defaultValue: T extends (infer U)[] ? U : never): T extends (infer U)[] ? Chainable<U> : never;
+  sub<I extends number>(index: I, defaultValue?: T extends (infer U)[] ? U : never): any {
+    return new Chainable(this.subR(index, defaultValue));
   }
 
   // subArrR<I extends number>(

@@ -415,6 +415,7 @@ export const chainable_exhaustive_manual = test('object chaining', ({ l, a: {eqO
 
 export const chainable_exhaustive_arr = test('object chaining', ({ l, a: {eqO}}) => {
   const Ch = (x) => new Chainable(x);
+  const spl = (x) => x.split('');
   const subtests = [
     [[1], o => Ch(o).subR(0, 1), 1],
     [[, 1], o => Ch(o).subR(1, 1), 1],
@@ -422,6 +423,12 @@ export const chainable_exhaustive_arr = test('object chaining', ({ l, a: {eqO}})
     [[, {a: 'a'}], o => Ch(o).subR(1, {}).a = 'a'],
     [[, {a: [1,2, { 'three': 3 }]}], o => Ch(o).sub(1, {}).arr('a', 1, 2).sub(2, { 'three': 3 })],
     [[, {a: [1,2, { 'four': 4 }]}], o => Ch(o).sub(1, {}).arr('a', 1, 2).subR(2, {}).four = 4],
+    [[,,{refl: [,,spl('bar')]},{vel: [, 'v'], refl: [,spl('foo')]}], o => {
+      const c = Ch(o);
+      c.sub(3, {}).arr('refl').subR(1, ['f','o','o']);
+      c.sub(3, {}).arr('vel').subR(1, 'v');
+      c.sub(2, {}).arr('refl').subR(2, ['b','a','r']);
+    }]
   ];
   const check = <T, S>(a: [T, ([]) => S, S]) => {
     const init = [];
@@ -461,16 +468,16 @@ export const chainable_tests = test('Chainable class', ({l, a: {eqO}}) => {
   eqO(chain.getRaw(), {user: {name: 'John', hobbies: ['reading', 'cycling']}});
 
   // Test sub method
-  chain.obj('user').arr('hobbies').sub(1, 'swimming');
-  eqO(chain.getRaw(), {user: {name: 'John', hobbies: ['reading', 'swimming']}});
+  chain.obj('user').arr('hobbies').sub(1, 'swimming'); // 2nd arg to sub is a defaultvalue, and will not override here.
+  eqO(chain.getRaw(), {user: {name: 'John', hobbies: ['reading', 'cycling']}});
 
   // Test objR method
   const userObj = chain.objR('user');
-  eqO(userObj, {name: 'John', hobbies: ['reading', 'swimming']});
+  eqO(userObj, {name: 'John', hobbies: ['reading', 'cycling']});
 
   // Test arrR method
   const hobbiesArr = chain.obj('user').arrR('hobbies');
-  eqO(hobbiesArr, ['reading', 'swimming']);
+  eqO(hobbiesArr, ['reading', 'cycling']);
 });
 
 const isProgramLaunchContext = () => {
