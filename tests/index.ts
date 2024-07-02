@@ -375,7 +375,6 @@ export const simple_array_chainable = test('object chaining', ({ l, a: {eqO}}) =
   // eqO(y.getRaw(), { a: [undefined, { p: { z: 'a' } }] });
 });
 export const chainable_exhaustive_manual = test('object chaining', ({ l, a: {eqO}}) => {
-  const un2 = []; un2[2] = 2;
   // [0]: spec, [1]: cb that takes obj starting state to evaluate the chain, we are validating the side effects,
   // [2]: optional value to validate against the return of the chain.
   const subtests = [
@@ -389,17 +388,18 @@ export const chainable_exhaustive_manual = test('object chaining', ({ l, a: {eqO
     [{b: {a: 'c'}}, o => { const x = new Chainable(o).objR('b'); x['a'] = 'c'; return x; }, { a: 'c' }],
     [{c: [0]}, o => new Chainable(o).arr('c', 0).subR(0), 0],
     [{c: [1]}, o => new Chainable(o).arr('c', 1).subR(0), 1],
-    [{c: un2}, o => new Chainable(o).arrR('c')[2] = 2, 2],
+    [{c: [,,2]}, o => new Chainable(o).arrR('c')[2] = 2, 2],
     [{d: [0], e: [1]}, o => { const x = new Chainable(o); x.arr('d', 0); return x.arrR('e', 1) }, [1]],
     [{d: [0, 1, 2]}, o => new Chainable(o).arrR('d', 0, 1, 2).map(e => 9 - e), [9, 8, 7]],
 
     [{d: [{}, {a: {x: 'x'}}, {}]}, o => new Chainable(o).arr('d', {}, {}, {}).sub(1).objR('a').x = 'x', 'x'],
     [{d: [{}, {a: 'a'}]}, o => new Chainable(o).arr('d', {}, {}).subR(1).a = 'a', 'a'],
 
-    [{e: [['abc', 'def'], [1, 2, 3, 4], [99, 98, 97]]}, o => {
-      const x = new Chainable(o).arr('e');
-      // x.sub(0).('abc', 'def');
-    }]
+
+    // [{e: [['abc', 'def'], [1, 2, 3, 4], [99, 98, 97]]}, o => {
+    //   const x = new Chainable(o).arr('e');
+    //   // x.sub(0).('abc', 'def');
+    // }]
 
   ];
   const check = <T, S>(a: [T, ({}) => S, S]) => {
@@ -408,6 +408,27 @@ export const chainable_exhaustive_manual = test('object chaining', ({ l, a: {eqO
     eqO(a[0], init);
     if (a[2] !== undefined) {
       eqO(a[2], ret);
+    }
+  }
+  l(subtests.map(check));
+});
+
+export const chainable_exhaustive_arr = test('object chaining', ({ l, a: {eqO}}) => {
+  const Ch = (x) => new Chainable(x);
+  const subtests = [
+    [[1], o => Ch(o).subR(0, 1), 1],
+    [[, 1], o => Ch(o).subR(1, 1), 1],
+    [[, {}], o => Ch(o).subR(1, {}), {}],
+    [[, {a: 'a'}], o => Ch(o).subR(1, {}).a = 'a'],
+    [[, {a: [1,2, { 'three': 3 }]}], o => Ch(o).sub(1, {}).arr('a', 1, 2).sub(2, { 'three': 3 })],
+    [[, {a: [1,2, { 'four': 4 }]}], o => Ch(o).sub(1, {}).arr('a', 1, 2).subR(2, {}).four = 4],
+  ];
+  const check = <T, S>(a: [T, ([]) => S, S]) => {
+    const init = [];
+    const ret = a[1](init);
+    eqO(a[0], init);
+    if (a[2] !== undefined) {
+      eqO(ret, a[2]);
     }
   }
   l(subtests.map(check));
