@@ -422,9 +422,8 @@ export class Chainable<T> {
   //   return new Chainable(this.object[key]);
   // }
 
-  // unfortunately this way of chaining prevents native syntax since we hace to stay in a chain of Chainable return
+  // unfortunately this way of chaining prevents native syntax since we have to stay in a chain of Chainable return
   // values. so sub is used to perform array indexing.
-
   subR<I extends number>(index: I): T extends (infer U)[] ? U : never;
   subR<I extends number>(index: I, value: T extends (infer U)[] ? U : never): T extends (infer U)[] ? U : never;
   subR<I extends number>(index: I, value?: T extends (infer U)[] ? U : never): any {
@@ -438,6 +437,7 @@ export class Chainable<T> {
     }
   }
 
+  // retrieves the value at the index, optionally with a value to assign to it that will only be set if that slot is undefined.
   sub<I extends number>(index: I): T extends (infer U)[] ? Chainable<U> : never;
   sub<I extends number>(index: I, value: T extends (infer U)[] ? U : never): T extends (infer U)[] ? Chainable<U> : never;
   sub<I extends number>(index: I, value?: T extends (infer U)[] ? U : never): any {

@@ -413,6 +413,18 @@ export const chainable_exhaustive_manual = test('object chaining', ({ l, a: {eqO
   l(subtests.map(check));
 });
 
+export const time_rendering_for_date_picker = test('date', ({t, l, a: {eq}}) => {
+  const d = new Date();
+  function toDateInputValue(dateObject: Date){
+    const local = new Date(dateObject);
+    local.setMinutes(dateObject.getMinutes() - dateObject.getTimezoneOffset());
+    return local.toJSON().slice(0,16);
+  }
+
+  l(d, toDateInputValue(d));
+  eq(d.toISOString().slice(13, 16), toDateInputValue(d).slice(13)); // chceks the minutes lines up as that's all that's guaranteed
+});
+
 export * from '../color/math.js';
 export * from './test_minimatch_regex.js';
 
