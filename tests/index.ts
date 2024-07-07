@@ -453,6 +453,41 @@ export const time_rendering_for_date_picker = test('date', ({t, l, a: {eq}}) => 
   eq(d.toISOString().slice(13, 16), toDateInputValue(d).slice(13)); // chceks the minutes lines up as that's all that's guaranteed
 });
 
+export const statistics_class_tests = test('Statistics class', ({l, a: {eq, approx}}) => {
+  const stats = new Statistics([1, 2, 3, 4, 5]);
+
+  // Test mean
+  eq(stats.mean(), 3);
+
+  // Test variance
+  approx(stats.variance(), 2, 0.0001);
+
+  // Test standard deviation
+  approx(stats.standardDeviation(), Math.sqrt(2), 0.0001);
+
+  // Test max
+  eq(stats.max(), 5);
+
+  // Test with empty data
+  const emptyStats = new Statistics();
+  eq(emptyStats.mean(), 0);
+  eq(emptyStats.variance(), 0);
+  eq(emptyStats.standardDeviation(), 0);
+  eq(emptyStats.max(), 0);
+
+  // Test setData and getData
+  stats.setData([10, 20, 30, 40, 50]);
+  eq(stats.mean(), 30);
+  eq(stats.getData(), [10, 20, 30, 40, 50]);
+
+  // Test caching
+  const cachedStats = new Statistics([2, 4, 6, 8, 10]);
+  eq(cachedStats.mean(), 6);
+  eq(cachedStats.mean(), 6); // Should use cached value
+  cachedStats.setData([1, 3, 5, 7, 9]);
+  eq(cachedStats.mean(), 5); // Should recalculate
+});
+
 export * from '../color/math.js';
 export * from './test_minimatch_regex.js';
 
