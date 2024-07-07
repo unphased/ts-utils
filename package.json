@@ -44,16 +44,17 @@
   "homepage": "https://github.com/unphased/ts-utils#readme",
   "devDependencies": {
     "@types/node": "^20.11.27",
-    "esbuild": "^0.20.1",
-    "tsx": "^4.7.1",
-    "typescript": "^5.3.3",
-    "tst": "file:../tst",
-    "eslint": "^8.57.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
-    "@typescript-eslint/eslint-plugin": "^7.0.0"
+    "esbuild": "^0.20.1",
+    "eslint": "^8.57.0",
+    "tst": "file:../tst",
+    "tsx": "^4.7.1",
+    "typescript": "^5.3.3"
   },
   "dependencies": {
     "hsluv": "^1.0.1",
-    "minimatch": "^9.0.4"
+    "minimatch": "^9.0.4",
+    "simple-statistics": "^7.8.3"
   }
 }
