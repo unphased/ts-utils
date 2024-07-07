@@ -453,17 +453,17 @@ export const time_rendering_for_date_picker = test('date', ({t, l, a: {eq}}) => 
   eq(d.toISOString().slice(13, 16), toDateInputValue(d).slice(13)); // chceks the minutes lines up as that's all that's guaranteed
 });
 
-export const statistics_class_tests = test('Statistics class', ({l, a: {eq, approx}}) => {
+export const statistics_class_tests = test('Statistics class', ({l, a: {eq}}) => {
   const stats = new Statistics([1, 2, 3, 4, 5]);
 
   // Test mean
   eq(stats.mean(), 3);
 
   // Test variance
-  approx(stats.variance(), 2, 0.0001);
+  eq(approx(stats.variance(), 2), true);
 
   // Test standard deviation
-  approx(stats.standardDeviation(), Math.sqrt(2), 0.0001);
+  eq(approx(stats.standardDeviation(), Math.sqrt(2)), true);
 
   // Test max
   eq(stats.max(), 5);
