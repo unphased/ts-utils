@@ -515,6 +515,22 @@ export const chainable_tests = test('Chainable class', ({l, a: {eqO}}) => {
   eqO(hobbiesArr, ['reading', 'cycling']);
 });
 
+export const pick_tests = test('pick function', ({l, a: {eqO}}) => {
+  const obj = { a: 1, b: 'string', c: true, d: [1, 2, 3] };
+  
+  // Test picking multiple properties
+  const picked1 = pick(obj, 'a', 'c', 'd');
+  eqO(picked1, { a: 1, c: true, d: [1, 2, 3] });
+
+  // Test picking a single property
+  const picked2 = pick(obj, 'b');
+  eqO(picked2, { b: 'string' });
+
+  // Test picking no properties
+  const picked3 = pick(obj);
+  eqO(picked3, {});
+});
+
 const isProgramLaunchContext = () => {
   return fileURLToPath(import.meta.url) === process.argv[1];
 }

@@ -187,6 +187,13 @@ export const groupBy = <T, P extends keyof PickByValueTypes<T, PropertyKey>>(
   return result;
 };
 
+export function pick<T extends object, K extends keyof T>(obj: T, ...keys: K[]): Pick<T, K> {
+  return keys.reduce((result, key) => {
+    result[key] = obj[key];
+    return result;
+  }, {} as Pick<T, K>);
+}
+
 export const mapObjectProps = <T, V>(obj: { [k: string]: T; }, cb: (k: string, v: T) => V, filter = (k, v) => k !== undefined): V[] => {
   let e = Object.entries(obj)
   if (filter) e = e.filter(([k, v]) => filter(k, v));
