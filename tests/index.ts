@@ -525,7 +525,7 @@ export const pick_tests = test('pick function', ({l, a: {eqO, eq}}) => {
 
   // Test case 2: Empty object
   const obj2 = {};
-  eqO(pick(obj2, 'a', 'b'), {});
+  eqO(pick(obj2, 'a' as any, 'b' as any), {});
 
   // Test case 3: Object with Symbol keys
   const symbol1 = Symbol('sym1');

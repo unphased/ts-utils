@@ -189,7 +189,9 @@ export const groupBy = <T, P extends keyof PickByValueTypes<T, PropertyKey>>(
 
 export function pick<T extends object, K extends keyof T>(obj: T, ...keys: K[]): Pick<T, K> {
   return keys.reduce((result, key) => {
-    result[key] = obj[key];
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      result[key] = obj[key];
+    }
     return result;
   }, {} as Pick<T, K>);
 }
