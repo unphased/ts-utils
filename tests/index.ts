@@ -1,6 +1,6 @@
 import { LaunchTests, test } from 'tst';
 import { fileURLToPath } from 'url';
-import { cartesian_slow, cartesian_enum_vals_slow, cartesianAt, cartesianAll, identical, memoized, timed, Statistics, approx } from '../utils.js';
+import { cartesian_slow, cartesian_enum_vals_slow, cartesianAt, cartesianAll, identical, memoized, timed, Statistics } from '../utils.js';
 import { format } from "../node/format.js";
 import { colors } from '../terminal.js';
 import { Chainable } from 'ts-utils';
@@ -460,10 +460,10 @@ export const statistics_class_tests = test('Statistics class', ({l, a: {eq}}) =>
   eq(stats.mean(), 3);
 
   // Test variance
-  eq(approx(stats.variance(), 2), true);
+  eq(Math.abs(stats.variance() - 2) < 0.0001, true);
 
   // Test standard deviation
-  eq(approx(stats.standardDeviation(), Math.sqrt(2)), true);
+  eq(Math.abs(stats.standardDeviation() - Math.sqrt(2)) < 0.0001, true);
 
   // Test max
   eq(stats.max(), 5);

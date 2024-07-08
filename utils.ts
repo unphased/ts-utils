@@ -74,7 +74,6 @@ export const hrTimeMs = (hrTimeDelta: [number, number]) => hrTimeDelta[0] * 1000
 export const avg = (arr: number[]) => arr.reduce((a, b) => a + b, 0) / arr.length;
 export const sum = (arr: number[]) => arr.reduce((a, b) => a + b, 0);
 
-export const approx = (a: number, b: number, epsilon = 0.0001) => Math.abs(a - b) < epsilon;
 
 // first array needs to be one larger than second array. join into one array like zipping a zipper. First array becomes
 // even indices. Final array length is always odd
