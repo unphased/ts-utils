@@ -146,6 +146,7 @@ export class Statistics {
   public variance(): number {
     if (this.cache.variance !== undefined) return this.cache.variance;
 
+    if (this.data.length === 0) return 0;
     const mean = this.mean();
     const varianceSum = this.data.reduce((acc, val) => acc + (val - mean) ** 2, 0);
     const varianceValue = varianceSum / this.data.length;
@@ -155,6 +156,7 @@ export class Statistics {
   public standardDeviation(): number {
     if (this.cache.standardDeviation !== undefined) return this.cache.standardDeviation;
 
+    if (this.data.length === 0) return 0;
     const variance = this.variance();
     const stdDevValue = Math.sqrt(variance);
     this.cache.standardDeviation = stdDevValue; // Cache result
