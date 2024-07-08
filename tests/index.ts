@@ -478,7 +478,7 @@ export const statistics_class_tests = test('Statistics class', ({l, a: {eq}}) =>
   // Test setData and getData
   stats.setData([10, 20, 30, 40, 50]);
   eq(stats.mean(), 30);
-  eq(stats.getData(), [10, 20, 30, 40, 50]);
+  eqO(stats.getData(), [10, 20, 30, 40, 50]);
 
   // Test caching
   const cachedStats = new Statistics([2, 4, 6, 8, 10]);

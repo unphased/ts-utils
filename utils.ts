@@ -128,7 +128,7 @@ export class Statistics {
     this.cache = {}; // Clear cache when data changes
   }
   public getData(): number[] {
-    return this.data;
+    return [...this.data]; // Return a copy of the data array
   }
   public max(): number {
     if (this.data.length === 0) return 0;
