@@ -515,20 +515,58 @@ export const chainable_tests = test('Chainable class', ({l, a: {eqO}}) => {
   eqO(hobbiesArr, ['reading', 'cycling']);
 });
 
-export const pick_tests = test('pick function', ({l, a: {eqO}}) => {
-  const obj = { a: 1, b: 'string', c: true, d: [1, 2, 3] };
+export const pick_tests = test('pick function', ({l, a: {eqO, eq}}) => {
+  // Test case 1: Basic object with various types
+  const obj1 = { a: 1, b: 'string', c: true, d: [1, 2, 3], e: { nested: 'object' }, f: null, g: undefined };
   
-  // Test picking multiple properties
-  const picked1 = pick(obj, 'a', 'c', 'd');
-  eqO(picked1, { a: 1, c: true, d: [1, 2, 3] });
+  eqO(pick(obj1, 'a', 'c', 'd'), { a: 1, c: true, d: [1, 2, 3] });
+  eqO(pick(obj1, 'b', 'e'), { b: 'string', e: { nested: 'object' } });
+  eqO(pick(obj1, 'f', 'g'), { f: null, g: undefined });
 
-  // Test picking a single property
-  const picked2 = pick(obj, 'b');
-  eqO(picked2, { b: 'string' });
+  // Test case 2: Empty object
+  const obj2 = {};
+  eqO(pick(obj2, 'a', 'b'), {});
 
-  // Test picking no properties
-  const picked3 = pick(obj);
-  eqO(picked3, {});
+  // Test case 3: Object with Symbol keys
+  const symbol1 = Symbol('sym1');
+  const symbol2 = Symbol('sym2');
+  const obj3 = { [symbol1]: 'symbol value', [symbol2]: 42, normalKey: 'normal value' };
+  
+  eqO(pick(obj3, symbol1 as any, 'normalKey'), { [symbol1]: 'symbol value', normalKey: 'normal value' });
+
+  // Test case 4: Picking non-existent keys
+  const obj4 = { a: 1, b: 2 };
+  eqO(pick(obj4, 'a', 'c', 'd'), { a: 1 });
+
+  // Test case 5: Picking from object with inherited properties
+  const proto = { inheritedProp: 'inherited' };
+  const obj5 = Object.create(proto);
+  obj5.ownProp = 'own';
+  
+  eqO(pick(obj5, 'ownProp', 'inheritedProp'), { ownProp: 'own' });
+
+  // Test case 6: Picking with duplicate keys
+  const obj6 = { a: 1, b: 2, c: 3 };
+  eqO(pick(obj6, 'a', 'b', 'a', 'c', 'b'), { a: 1, b: 2, c: 3 });
+
+  // Test case 7: Performance test for large objects
+  const largeObj = {};
+  for (let i = 0; i < 10000; i++) {
+    largeObj[`key${i}`] = i;
+  }
+  const start = performance.now();
+  const pickedLarge = pick(largeObj, 'key0', 'key9999');
+  const end = performance.now();
+  
+  eqO(pickedLarge, { key0: 0, key9999: 9999 });
+  eq(Object.keys(pickedLarge).length, 2);
+  l(`Performance test took ${end - start} ms`);
+
+  // Test case 8: Picking no properties
+  eqO(pick(obj1), {});
+
+  // Test case 9: Picking all properties
+  eqO(pick(obj1, 'a', 'b', 'c', 'd', 'e', 'f', 'g'), obj1);
 });
 
 const isProgramLaunchContext = () => {
