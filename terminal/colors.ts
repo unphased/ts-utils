@@ -35,6 +35,7 @@ export const colors = {
 
   'bg_red': '\x1b[41m',
   'bg_blue': '\x1b[44m',
+  'bg_green': '\x1b[42m',
   'underline': '\x1b[4m',
 
   'double_underline': '\x1b[4:2m',
