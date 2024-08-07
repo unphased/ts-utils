@@ -738,7 +738,7 @@ export const LRUCache_12 = test('LRUCache', ({l, a: {eq}}) => {
   eq(cache.size(), 4, "Cache should contain all valid entries");
 });
 
-export const LRUCache_013_zero_capacity = test('LRUCache', ({l, a: {eq}}) => {
+export const LRUCache_13_zero_capacity = test('LRUCache', ({l, a: {eq}}) => {
   // Test 13: Cache with capacity 0
   const cache = new LRUCache<number, number>(0);
 
@@ -750,7 +750,7 @@ export const LRUCache_013_zero_capacity = test('LRUCache', ({l, a: {eq}}) => {
 });
 
 
-export const LRUCache_014_capacity_change = test('LRUCache', ({l, a: {eq}}) => {
+export const LRUCache_14_capacity_change = test('LRUCache', ({l, a: {eq}}) => {
   // Test 14: Changing cache capacity
   const cache = new LRUCache<string, number>(3);
   cache.put("a", 1);
@@ -774,7 +774,7 @@ export const LRUCache_014_capacity_change = test('LRUCache', ({l, a: {eq}}) => {
   eq(cache.get("b"), 2, "Previously added items should still be present");
 });
 
-export const LRUCache_015_concurrent_operations = test('LRUCache', ({l, a: {eq, is}}) => {
+export const LRUCache_15_concurrent_operations = test('LRUCache', ({l, a: {eq, is}}) => {
   // Test 15: Simulating concurrent operations
   const cache = new LRUCache<string, number>(3);
 
@@ -793,7 +793,7 @@ export const LRUCache_015_concurrent_operations = test('LRUCache', ({l, a: {eq, 
   eq(cache.get("d"), 4, "Item 'd' should be present and have correct value");
 });
 
-export const LRUCache_016_large_capacity = test('LRUCache', ({l, a: {eq, is}}) => {
+export const LRUCache_16_large_capacity = test('LRUCache', ({l, a: {eq, is}}) => {
   // Test 16: Performance with large capacity
   const largeCapacity = 1000000;
   const cache = new LRUCache<number, number>(largeCapacity);
@@ -810,7 +810,7 @@ export const LRUCache_016_large_capacity = test('LRUCache', ({l, a: {eq, is}}) =
   eq(cache.get(1), 2, "Second item should still be present");
 });
 
-export const LRUCache_017_stress_test = test('LRUCache', ({l, a: {eq}}) => {
+export const LRUCache_17_stress_test = test('LRUCache', ({l, a: {eq}}) => {
   // Test 17: Stress test with repeated operations
   const cache = new LRUCache<number, number>(1000);
   const operations = 1000000;
@@ -827,7 +827,7 @@ export const LRUCache_017_stress_test = test('LRUCache', ({l, a: {eq}}) => {
   eq(cache.size(), 1000, "Cache size should be at capacity after stress test");
 });
 
-export const LRUCache_018_complex_keys_values = test('LRUCache', ({l, a: {eqO, eq}}) => {
+export const LRUCache_18_complex_keys_values = test('LRUCache', ({l, a: {eqO, eq}}) => {
   // Test 18: Complex object keys and values
   const cache = new LRUCache<{id: number}, {data: string[]}>(2);
 
@@ -849,7 +849,7 @@ export const LRUCache_018_complex_keys_values = test('LRUCache', ({l, a: {eqO, e
   eq(cache.get(key1), undefined, "First inserted complex key-value should be evicted");
 });
 
-export const LRUCache_019_entries_order = test('LRUCache', ({l, a: {eqO}}) => {
+export const LRUCache_19_entries_order = test('LRUCache', ({l, a: {eqO}}) => {
   // Test 19: Verify entries() method order
   const cache = new LRUCache<string, number>(3);
 
@@ -862,7 +862,7 @@ export const LRUCache_019_entries_order = test('LRUCache', ({l, a: {eqO}}) => {
   eqO(entries, [["b", 2], ["c", 3], ["a", 1]], "Entries should be in order from least to most recently used");
 });
 
-export const LRUCache_020_non_string_keys = test('LRUCache', ({l, a: {eq, is}}) => {
+export const LRUCache_20_non_string_keys = test('LRUCache', ({l, a: {eq, is}}) => {
   // Test 20: Non-string, non-numeric keys
   const cache = new LRUCache<symbol, string>(2);
 
@@ -881,7 +881,7 @@ export const LRUCache_020_non_string_keys = test('LRUCache', ({l, a: {eq, is}}) 
   eq(cache.get(key1), undefined, "First inserted symbol key should be evicted");
 });
 
-export const LRUCache_021_performance_benchmark = test('LRUCache', ({l, a: {is}}) => {
+export const LRUCache_21_performance_benchmark = test('LRUCache', ({l, a: {is}}) => {
   // Test 21: Performance benchmark to confirm O(1) operation runtime
   const cache = new LRUCache<number, number>(50000);
   const iterations = 30000;
