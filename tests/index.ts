@@ -884,7 +884,7 @@ export const LRUCache_20_non_string_keys = test('LRUCache', ({l, a: {eq, is}}) =
 export const LRUCache_21_performance_benchmark = test('LRUCache', ({l, a: {is}}) => {
   // Test 21: Performance benchmark to confirm O(1) operation runtime
   const cache = new LRUCache<number, number>(50000);
-  const iterations = 30000;
+  const iterations = 100000;
 
   // Measure put operation
   const startPut = performance.now();
@@ -910,13 +910,13 @@ export const LRUCache_21_performance_benchmark = test('LRUCache', ({l, a: {is}})
   l(`Average get time: ${avgGetTime.toFixed(9)} ms`);
 
   // Check if operations are roughly constant time
-  // We'll consider it constant time if the average operation time is less than 0.001 ms
-  is(avgPutTime < 0.01, "Put operation should be roughly constant time (O(1))");
-  is(avgGetTime < 0.01, "Get operation should be roughly constant time (O(1))");
+  // We'll consider it constant time if the average operation time is less than 0.0001 ms
+  is(avgPutTime < 0.0001, "Put operation should be constant time (O(1))");
+  is(avgGetTime < 0.0001, "Get operation should be constant time (O(1))");
 
   // Additional check: Perform operations on a smaller cache and compare times
   const smallCache = new LRUCache<number, number>(100);
-  const smallIterations = 1000;
+  const smallIterations = 10000;
 
   const startSmallPut = performance.now();
   for (let i = 0; i < smallIterations; i++) {
@@ -936,11 +936,11 @@ export const LRUCache_21_performance_benchmark = test('LRUCache', ({l, a: {is}})
   l(`Average small cache get time: ${smallGetTime.toFixed(9)} ms`);
 
   // Check if the operation times for the small cache are similar to the large cache
-  // We'll consider them similar if they're within an order of magnitude
-  is(avgPutTime / smallPutTime < 20 && avgPutTime / smallPutTime > 0.05, 
-     "Put operation time should be roughly similar for different cache sizes");
-  is(avgGetTime / smallGetTime < 20 && avgGetTime / smallGetTime > 0.05, 
-     "Get operation time should be roughly similar for different cache sizes");
+  // We'll consider them similar if they're within a smaller range
+  is(avgPutTime / smallPutTime < 2 && avgPutTime / smallPutTime > 0.5, 
+     "Put operation time should be very similar for different cache sizes");
+  is(avgGetTime / smallGetTime < 2 && avgGetTime / smallGetTime > 0.5, 
+     "Get operation time should be very similar for different cache sizes");
 });
 
 
