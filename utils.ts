@@ -500,6 +500,7 @@ export class LRUCache<K, V> {
   }
 
   get(key: K): V | undefined {
+    this.ensureCapacity();
     if (!this.cache.has(key)) return undefined;
 
     // Move the accessed key to the end of the keys array (most recently used)
@@ -511,6 +512,9 @@ export class LRUCache<K, V> {
   }
 
   put(key: K, value: V): void {
+    this.ensureCapacity();
+    if (this.capacity === 0) return;
+
     if (this.cache.has(key)) {
       // If the key exists, update its value and move it to the end
       this.cache.set(key, value);
