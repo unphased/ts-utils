@@ -544,7 +544,7 @@ export class LRUCache<K, V> {
   }
 
   entries(): [K, V][] {
-    return Array.from(this.cache.entries()).map(([key, item]) => [key, item.value]);
+    return this.list.toArray().map(key => [key, this.cache.get(key)!.value]);
   }
 
   private ensureCapacity(): void {
@@ -601,5 +601,15 @@ class DoublyLinkedList<T> {
 
   clear(): void {
     this.head = this.tail = null;
+  }
+
+  toArray(): T[] {
+    const result: T[] = [];
+    let current = this.head;
+    while (current) {
+      result.push(current.value);
+      current = current.next;
+    }
+    return result;
   }
 }
