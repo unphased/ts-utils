@@ -544,7 +544,7 @@ export class LRUCache<K, V> {
   }
 
   entries(): [K, V][] {
-    return this.list.toArray().map(key => [key, this.cache.get(key)!.value]);
+    return this.list.toArray().reverse().map(key => [key, this.cache.get(key)!.value]);
   }
 
   private ensureCapacity(): void {
