@@ -680,7 +680,7 @@ export const LRUCache_9 = test('LRUCache', ({l, a: {eq}}) => {
   eq(cache.get(1), 2, "Second item should still be present");
 });
 
-export const LRUCache_10 = test('LRUCache', ({l, a: {eq, ok}}) => {
+export const LRUCache_10 = test('LRUCache', ({l, a: {eq, is}}) => {
   // Test 10: Random operations
   const cache = new LRUCache<number, number>(100);
   const operations = 10000;
@@ -702,7 +702,7 @@ export const LRUCache_10 = test('LRUCache', ({l, a: {eq, ok}}) => {
     }
   }
 
-  ok(cache.size() <= 100, "Cache size should not exceed capacity");
+  is(cache.size() <= 100, "Cache size should not exceed capacity");
   l(`Put: ${putCount}, Get: ${getCount}, Delete: ${deleteCount}`);
 });
 
