@@ -557,8 +557,8 @@ export class LRUCache<K, V> {
     return this.cache.size;
   }
 
-  // Optional: Method to get all entries (for debugging or other purposes)
+  // Method to get all entries (from least recently used to most recently used)
   entries(): [K, V][] {
-    return Array.from(this.cache.entries());
+    return this.keys.map(key => [key, this.cache.get(key)!]);
   }
 }
