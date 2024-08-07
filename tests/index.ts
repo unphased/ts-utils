@@ -569,7 +569,7 @@ export const pick_tests = test('pick function', ({l, a: {eqO, eq}}) => {
   eqO(pick(obj1, 'a', 'b', 'c', 'd', 'e', 'f', 'g'), obj1);
 });
 
-export const LRUCache_unit = test('LRUCache', ({l, a: {eq}}) => {
+export const LRUCache_unit = test('LRUCache', ({l, a: {eq, is}}) => {
   // Test 1: Basic functionality
   {
     const cache = new LRUCache<string, number>(3);
@@ -663,9 +663,9 @@ export const LRUCache_unit = test('LRUCache', ({l, a: {eq}}) => {
 
     const entries = cache.entries();
     eq(entries.length, 3, "Entries should return all items");
-    eq(entries.some(([k, v]) => k === "a" && v === 1), true, "Entries should contain ['a', 1]");
-    eq(entries.some(([k, v]) => k === "b" && v === 2), true, "Entries should contain ['b', 2]");
-    eq(entries.some(([k, v]) => k === "c" && v === 3), true, "Entries should contain ['c', 3]");
+    is(entries.some(([k, v]) => k === "a" && v === 1), "Entries should contain ['a', 1]");
+    is(entries.some(([k, v]) => k === "b" && v === 2), "Entries should contain ['b', 2]");
+    is(entries.some(([k, v]) => k === "c" && v === 3), "Entries should contain ['c', 3]");
   }
 
   l("All LRUCache tests completed");

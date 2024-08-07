@@ -481,3 +481,68 @@ export class Chainable<T> {
   }
 }
 
+export class LRUCache<K, V> {
+  private capacity: number;
+  private cache: Map<K, V>;
+  private keys: K[];
+
+  constructor(capacity: number) {
+    this.capacity = capacity;
+    this.cache = new Map<K, V>();
+    this.keys = [];
+  }
+
+  get(key: K): V | undefined {
+    if (!this.cache.has(key)) return undefined;
+
+    // Move the accessed key to the end of the keys array (most recently used)
+    const index = this.keys.indexOf(key);
+    this.keys.splice(index, 1);
+    this.keys.push(key);
+
+    return this.cache.get(key);
+  }
+
+  put(key: K, value: V): void {
+    if (this.cache.has(key)) {
+      // If the key exists, update its value and move it to the end
+      this.cache.set(key, value);
+      const index = this.keys.indexOf(key);
+      this.keys.splice(index, 1);
+      this.keys.push(key);
+    } else {
+      // If the cache is at capacity, remove the least recently used item
+      if (this.keys.length >= this.capacity) {
+        const lruKey = this.keys.shift()!;
+        this.cache.delete(lruKey);
+      }
+
+      // Add the new item
+      this.cache.set(key, value);
+      this.keys.push(key);
+    }
+  }
+
+  delete(key: K): boolean {
+    if (!this.cache.has(key)) return false;
+
+    this.cache.delete(key);
+    const index = this.keys.indexOf(key);
+    this.keys.splice(index, 1);
+    return true;
+  }
+
+  clear(): void {
+    this.cache.clear();
+    this.keys = [];
+  }
+
+  size(): number {
+    return this.cache.size;
+  }
+
+  // Optional: Method to get all entries (for debugging or other purposes)
+  entries(): [K, V][] {
+    return Array.from(this.cache.entries());
+  }
+}
