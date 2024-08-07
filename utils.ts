@@ -483,20 +483,13 @@ export class Chainable<T> {
 
 export class LRUCache<K, V> {
   private capacity: number;
-  private cache: Map<K, V>;
-  private keys: K[];
+  private cache: Map<K, { value: V; node: Node<K> }>;
+  private list: DoublyLinkedList<K>;
 
   constructor(capacity: number) {
     this.capacity = Math.max(0, capacity);
-    this.cache = new Map<K, V>();
-    this.keys = [];
-  }
-
-  private ensureCapacity() {
-    while (this.keys.length > this.capacity) {
-      const lruKey = this.keys.shift()!;
-      this.cache.delete(lruKey);
-    }
+    this.cache = new Map();
+    this.list = new DoublyLinkedList<K>();
   }
 
   setCapacity(newCapacity: number): void {
@@ -505,60 +498,108 @@ export class LRUCache<K, V> {
   }
 
   get(key: K): V | undefined {
-    this.ensureCapacity();
-    if (!this.cache.has(key)) return undefined;
+    const item = this.cache.get(key);
+    if (!item) return undefined;
 
-    // Move the accessed key to the end of the keys array (most recently used)
-    const index = this.keys.indexOf(key);
-    this.keys.splice(index, 1);
-    this.keys.push(key);
-
-    return this.cache.get(key);
+    // Move accessed item to front of list
+    this.list.moveToFront(item.node);
+    return item.value;
   }
 
   put(key: K, value: V): void {
-    this.ensureCapacity();
     if (this.capacity === 0) return;
 
     if (this.cache.has(key)) {
-      // If the key exists, update its value and move it to the end
-      this.cache.set(key, value);
-      const index = this.keys.indexOf(key);
-      this.keys.splice(index, 1);
-      this.keys.push(key);
+      // Update existing item
+      const item = this.cache.get(key)!;
+      item.value = value;
+      this.list.moveToFront(item.node);
     } else {
-      // If the cache is at capacity, remove the least recently used item
-      if (this.keys.length >= this.capacity) {
-        const lruKey = this.keys.shift()!;
-        this.cache.delete(lruKey);
+      // Add new item
+      if (this.cache.size >= this.capacity) {
+        // Remove least recently used item
+        const lruKey = this.list.removeLast();
+        if (lruKey !== undefined) this.cache.delete(lruKey);
       }
-
-      // Add the new item
-      this.cache.set(key, value);
-      this.keys.push(key);
+      const node = this.list.addToFront(key);
+      this.cache.set(key, { value, node });
     }
   }
 
   delete(key: K): boolean {
-    if (!this.cache.has(key)) return false;
+    const item = this.cache.get(key);
+    if (!item) return false;
 
-    this.cache.delete(key);
-    const index = this.keys.indexOf(key);
-    this.keys.splice(index, 1);
-    return true;
+    this.list.remove(item.node);
+    return this.cache.delete(key);
   }
 
   clear(): void {
     this.cache.clear();
-    this.keys = [];
+    this.list.clear();
   }
 
   size(): number {
     return this.cache.size;
   }
 
-  // Method to get all entries (from least recently used to most recently used)
   entries(): [K, V][] {
-    return this.keys.map(key => [key, this.cache.get(key)!]);
+    return Array.from(this.cache.entries()).map(([key, item]) => [key, item.value]);
+  }
+
+  private ensureCapacity(): void {
+    while (this.cache.size > this.capacity) {
+      const lruKey = this.list.removeLast();
+      if (lruKey !== undefined) this.cache.delete(lruKey);
+    }
+  }
+}
+
+class Node<T> {
+  constructor(public value: T, public prev: Node<T> | null = null, public next: Node<T> | null = null) {}
+}
+
+class DoublyLinkedList<T> {
+  private head: Node<T> | null = null;
+  private tail: Node<T> | null = null;
+
+  addToFront(value: T): Node<T> {
+    const newNode = new Node(value);
+    if (!this.head) {
+      this.head = this.tail = newNode;
+    } else {
+      newNode.next = this.head;
+      this.head.prev = newNode;
+      this.head = newNode;
+    }
+    return newNode;
+  }
+
+  moveToFront(node: Node<T>): void {
+    if (node === this.head) return;
+    this.remove(node);
+    node.next = this.head;
+    node.prev = null;
+    if (this.head) this.head.prev = node;
+    this.head = node;
+    if (!this.tail) this.tail = node;
+  }
+
+  removeLast(): T | undefined {
+    if (!this.tail) return undefined;
+    const value = this.tail.value;
+    this.remove(this.tail);
+    return value;
+  }
+
+  remove(node: Node<T>): void {
+    if (node.prev) node.prev.next = node.next;
+    if (node.next) node.next.prev = node.prev;
+    if (node === this.head) this.head = node.next;
+    if (node === this.tail) this.tail = node.prev;
+  }
+
+  clear(): void {
+    this.head = this.tail = null;
   }
 }
