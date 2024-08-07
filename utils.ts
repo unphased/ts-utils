@@ -493,10 +493,15 @@ export class LRUCache<K, V> {
   }
 
   private ensureCapacity() {
-    if (this.capacity === 0) {
-      this.cache.clear();
-      this.keys = [];
+    while (this.keys.length > this.capacity) {
+      const lruKey = this.keys.shift()!;
+      this.cache.delete(lruKey);
     }
+  }
+
+  setCapacity(newCapacity: number): void {
+    this.capacity = Math.max(0, newCapacity);
+    this.ensureCapacity();
   }
 
   get(key: K): V | undefined {
