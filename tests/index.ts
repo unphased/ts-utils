@@ -667,6 +667,77 @@ export const LRUCache_8 = test('LRUCache', ({l, a: {eq, is}}) => {
   is(entries.some(([k, v]) => k === "c" && v === 3), "Entries should contain ['c', 3]");
 });
 
+export const LRUCache_9 = test('LRUCache', ({l, a: {eq}}) => {
+  // Test 9: Large capacity
+  const cache = new LRUCache<number, number>(1000);
+  for (let i = 0; i < 1000; i++) {
+    cache.put(i, i * 2);
+  }
+  eq(cache.size(), 1000, "Cache should be full");
+  eq(cache.get(500), 1000, "Should retrieve correct value");
+  cache.put(1000, 2000);
+  eq(cache.get(0), undefined, "Least recently used item should be evicted");
+  eq(cache.get(1), 2, "Second item should still be present");
+});
+
+export const LRUCache_10 = test('LRUCache', ({l, a: {eq, ok}}) => {
+  // Test 10: Random operations
+  const cache = new LRUCache<number, number>(100);
+  const operations = 10000;
+  let putCount = 0, getCount = 0, deleteCount = 0;
+
+  for (let i = 0; i < operations; i++) {
+    const op = Math.floor(Math.random() * 3);
+    const key = Math.floor(Math.random() * 200);
+    
+    if (op === 0) {
+      cache.put(key, i);
+      putCount++;
+    } else if (op === 1) {
+      cache.get(key);
+      getCount++;
+    } else {
+      cache.delete(key);
+      deleteCount++;
+    }
+  }
+
+  ok(cache.size() <= 100, "Cache size should not exceed capacity");
+  l(`Put: ${putCount}, Get: ${getCount}, Delete: ${deleteCount}`);
+});
+
+export const LRUCache_11 = test('LRUCache', ({l, a: {eq}}) => {
+  // Test 11: Edge cases
+  const cache1 = new LRUCache<string, number>(1);
+  cache1.put("key1", 1);
+  cache1.put("key2", 2);
+  eq(cache1.get("key1"), undefined, "First key should be evicted");
+  eq(cache1.get("key2"), 2, "Second key should be present");
+
+  const zeroCache = new LRUCache<string, number>(0);
+  zeroCache.put("key", 1);
+  eq(zeroCache.size(), 0, "Zero capacity cache should always be empty");
+  eq(zeroCache.get("key"), undefined, "Zero capacity cache should not store items");
+
+  const negativeCache = new LRUCache<string, number>(-5);
+  negativeCache.put("key", 1);
+  eq(negativeCache.size(), 0, "Negative capacity should be treated as zero");
+});
+
+export const LRUCache_12 = test('LRUCache', ({l, a: {eq}}) => {
+  // Test 12: Type safety
+  const cache = new LRUCache<string, number | string>(5);
+  cache.put("num", 42);
+  cache.put("str", "hello");
+  eq(cache.get("num"), 42, "Should store and retrieve number correctly");
+  eq(cache.get("str"), "hello", "Should store and retrieve string correctly");
+
+  // Note: TypeScript errors cannot be checked at runtime, so we're just ensuring the operations are valid
+  cache.put("valid", 123);
+  cache.put("alsoValid", "world");
+  eq(cache.size(), 4, "Cache should contain all valid entries");
+});
+
 const isProgramLaunchContext = () => {
   return fileURLToPath(import.meta.url) === process.argv[1];
 }
