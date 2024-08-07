@@ -487,9 +487,16 @@ export class LRUCache<K, V> {
   private keys: K[];
 
   constructor(capacity: number) {
-    this.capacity = capacity;
+    this.capacity = Math.max(0, capacity);
     this.cache = new Map<K, V>();
     this.keys = [];
+  }
+
+  private ensureCapacity() {
+    if (this.capacity === 0) {
+      this.cache.clear();
+      this.keys = [];
+    }
   }
 
   get(key: K): V | undefined {
