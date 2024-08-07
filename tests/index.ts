@@ -570,118 +570,105 @@ export const pick_tests = test('pick function', ({l, a: {eqO, eq}}) => {
 });
 
 export const LRUCache_unit = test('LRUCache', ({l, a: {eq}}) => {
-  function runLRUCacheTests() {
-    // Helper function for assertions
-    function assert(condition: boolean, message: string) {
-      if (!condition) {
-        throw new Error(`Test failed: ${message}`);
-      }
-    }
-
-    // Test 1: Basic functionality
+  // Test 1: Basic functionality
   {
-      const cache = new LRUCache<string, number>(3);
-      cache.put("a", 1);
-      cache.put("b", 2);
-      cache.put("c", 3);
+    const cache = new LRUCache<string, number>(3);
+    cache.put("a", 1);
+    cache.put("b", 2);
+    cache.put("c", 3);
 
-      assert(cache.get("a") === 1, "Should retrieve correct value for 'a'");
-      assert(cache.get("b") === 2, "Should retrieve correct value for 'b'");
-      assert(cache.get("c") === 3, "Should retrieve correct value for 'c'");
-      assert(cache.size() === 3, "Cache size should be 3");
-    }
-
-    // Test 2: Eviction of least recently used item
-  {
-      const cache = new LRUCache<string, number>(3);
-      cache.put("a", 1);
-      cache.put("b", 2);
-      cache.put("c", 3);
-      cache.put("d", 4);
-
-      assert(cache.get("a") === undefined, "'a' should have been evicted");
-      assert(cache.get("d") === 4, "'d' should be in the cache");
-      assert(cache.size() === 3, "Cache size should still be 3");
-    }
-
-    // Test 3: Updating existing key
-  {
-      const cache = new LRUCache<string, number>(3);
-      cache.put("a", 1);
-      cache.put("b", 2);
-      cache.put("c", 3);
-      cache.put("a", 4);
-
-      assert(cache.get("a") === 4, "'a' should be updated to 4");
-      assert(cache.size() === 3, "Cache size should still be 3");
-    }
-
-    // Test 4: Get updates order
-  {
-      const cache = new LRUCache<string, number>(3);
-      cache.put("a", 1);
-      cache.put("b", 2);
-      cache.put("c", 3);
-      cache.get("a");
-      cache.put("d", 4);
-
-      assert(cache.get("b") === undefined, "'b' should have been evicted");
-      assert(cache.get("a") === 1, "'a' should still be in the cache");
-    }
-
-    // Test 5: Delete functionality
-  {
-      const cache = new LRUCache<string, number>(3);
-      cache.put("a", 1);
-      cache.put("b", 2);
-      cache.put("c", 3);
-
-      assert(cache.delete("b") === true, "Delete should return true for existing key");
-      assert(cache.get("b") === undefined, "'b' should no longer be in the cache");
-      assert(cache.size() === 2, "Cache size should be 2 after deletion");
-      assert(cache.delete("d") === false, "Delete should return false for non-existing key");
-    }
-
-    // Test 6: Clear functionality
-  {
-      const cache = new LRUCache<string, number>(3);
-      cache.put("a", 1);
-      cache.put("b", 2);
-      cache.clear();
-
-      assert(cache.size() === 0, "Cache should be empty after clear");
-      assert(cache.get("a") === undefined, "All items should be removed after clear");
-    }
-
-    // Test 7: Handling of capacity 0
-  {
-      const cache = new LRUCache<string, number>(0);
-      cache.put("a", 1);
-
-      assert(cache.size() === 0, "Cache with capacity 0 should always be empty");
-      assert(cache.get("a") === undefined, "Cache with capacity 0 should not store items");
-    }
-
-    // Test 8: Entries method
-  {
-      const cache = new LRUCache<string, number>(3);
-      cache.put("a", 1);
-      cache.put("b", 2);
-      cache.put("c", 3);
-
-      const entries = cache.entries();
-      assert(entries.length === 3, "Entries should return all items");
-      assert(entries.some(([k, v]) => k === "a" && v === 1), "Entries should contain ['a', 1]");
-      assert(entries.some(([k, v]) => k === "b" && v === 2), "Entries should contain ['b', 2]");
-      assert(entries.some(([k, v]) => k === "c" && v === 3), "Entries should contain ['c', 3]");
-    }
-
-    console.log("All LRUCache tests passed successfully!");
+    eq(cache.get("a"), 1, "Should retrieve correct value for 'a'");
+    eq(cache.get("b"), 2, "Should retrieve correct value for 'b'");
+    eq(cache.get("c"), 3, "Should retrieve correct value for 'c'");
+    eq(cache.size(), 3, "Cache size should be 3");
   }
 
-  // Run the tests
-  runLRUCacheTests();
+  // Test 2: Eviction of least recently used item
+  {
+    const cache = new LRUCache<string, number>(3);
+    cache.put("a", 1);
+    cache.put("b", 2);
+    cache.put("c", 3);
+    cache.put("d", 4);
 
+    eq(cache.get("a"), undefined, "'a' should have been evicted");
+    eq(cache.get("d"), 4, "'d' should be in the cache");
+    eq(cache.size(), 3, "Cache size should still be 3");
+  }
+
+  // Test 3: Updating existing key
+  {
+    const cache = new LRUCache<string, number>(3);
+    cache.put("a", 1);
+    cache.put("b", 2);
+    cache.put("c", 3);
+    cache.put("a", 4);
+
+    eq(cache.get("a"), 4, "'a' should be updated to 4");
+    eq(cache.size(), 3, "Cache size should still be 3");
+  }
+
+  // Test 4: Get updates order
+  {
+    const cache = new LRUCache<string, number>(3);
+    cache.put("a", 1);
+    cache.put("b", 2);
+    cache.put("c", 3);
+    cache.get("a");
+    cache.put("d", 4);
+
+    eq(cache.get("b"), undefined, "'b' should have been evicted");
+    eq(cache.get("a"), 1, "'a' should still be in the cache");
+  }
+
+  // Test 5: Delete functionality
+  {
+    const cache = new LRUCache<string, number>(3);
+    cache.put("a", 1);
+    cache.put("b", 2);
+    cache.put("c", 3);
+
+    eq(cache.delete("b"), true, "Delete should return true for existing key");
+    eq(cache.get("b"), undefined, "'b' should no longer be in the cache");
+    eq(cache.size(), 2, "Cache size should be 2 after deletion");
+    eq(cache.delete("d"), false, "Delete should return false for non-existing key");
+  }
+
+  // Test 6: Clear functionality
+  {
+    const cache = new LRUCache<string, number>(3);
+    cache.put("a", 1);
+    cache.put("b", 2);
+    cache.clear();
+
+    eq(cache.size(), 0, "Cache should be empty after clear");
+    eq(cache.get("a"), undefined, "All items should be removed after clear");
+  }
+
+  // Test 7: Handling of capacity 0
+  {
+    const cache = new LRUCache<string, number>(0);
+    cache.put("a", 1);
+
+    eq(cache.size(), 0, "Cache with capacity 0 should always be empty");
+    eq(cache.get("a"), undefined, "Cache with capacity 0 should not store items");
+  }
+
+  // Test 8: Entries method
+  {
+    const cache = new LRUCache<string, number>(3);
+    cache.put("a", 1);
+    cache.put("b", 2);
+    cache.put("c", 3);
+
+    const entries = cache.entries();
+    eq(entries.length, 3, "Entries should return all items");
+    eq(entries.some(([k, v]) => k === "a" && v === 1), true, "Entries should contain ['a', 1]");
+    eq(entries.some(([k, v]) => k === "b" && v === 2), true, "Entries should contain ['b', 2]");
+    eq(entries.some(([k, v]) => k === "c" && v === 3), true, "Entries should contain ['c', 3]");
+  }
+
+  l("All LRUCache tests completed");
 });
 
 
