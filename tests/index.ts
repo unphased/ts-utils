@@ -881,6 +881,68 @@ export const LRUCache_020_non_string_keys = test('LRUCache', ({l, a: {eq, is}}) 
   eq(cache.get(key1), undefined, "First inserted symbol key should be evicted");
 });
 
+export const LRUCache_021_performance_benchmark = test('LRUCache', ({l, a: {is}}) => {
+  // Test 21: Performance benchmark to confirm O(1) operation runtime
+  const cache = new LRUCache<number, number>(1000000);
+  const iterations = 1000000;
+
+  // Measure put operation
+  const startPut = performance.now();
+  for (let i = 0; i < iterations; i++) {
+    cache.put(i, i);
+  }
+  const endPut = performance.now();
+  const putTime = endPut - startPut;
+
+  // Measure get operation
+  const startGet = performance.now();
+  for (let i = 0; i < iterations; i++) {
+    cache.get(i);
+  }
+  const endGet = performance.now();
+  const getTime = endGet - startGet;
+
+  // Calculate average time per operation
+  const avgPutTime = putTime / iterations;
+  const avgGetTime = getTime / iterations;
+
+  l(`Average put time: ${avgPutTime.toFixed(9)} ms`);
+  l(`Average get time: ${avgGetTime.toFixed(9)} ms`);
+
+  // Check if operations are roughly constant time
+  // We'll consider it constant time if the average operation time is less than 0.001 ms
+  is(avgPutTime < 0.001, "Put operation should be roughly constant time (O(1))");
+  is(avgGetTime < 0.001, "Get operation should be roughly constant time (O(1))");
+
+  // Additional check: Perform operations on a smaller cache and compare times
+  const smallCache = new LRUCache<number, number>(100);
+  const smallIterations = 10000;
+
+  const startSmallPut = performance.now();
+  for (let i = 0; i < smallIterations; i++) {
+    smallCache.put(i % 100, i);
+  }
+  const endSmallPut = performance.now();
+  const smallPutTime = (endSmallPut - startSmallPut) / smallIterations;
+
+  const startSmallGet = performance.now();
+  for (let i = 0; i < smallIterations; i++) {
+    smallCache.get(i % 100);
+  }
+  const endSmallGet = performance.now();
+  const smallGetTime = (endSmallGet - startSmallGet) / smallIterations;
+
+  l(`Average small cache put time: ${smallPutTime.toFixed(9)} ms`);
+  l(`Average small cache get time: ${smallGetTime.toFixed(9)} ms`);
+
+  // Check if the operation times for the small cache are similar to the large cache
+  // We'll consider them similar if they're within an order of magnitude
+  is(avgPutTime / smallPutTime < 10 && avgPutTime / smallPutTime > 0.1, 
+     "Put operation time should be similar for different cache sizes");
+  is(avgGetTime / smallGetTime < 10 && avgGetTime / smallGetTime > 0.1, 
+     "Get operation time should be similar for different cache sizes");
+});
+
 
 const isProgramLaunchContext = () => {
   return fileURLToPath(import.meta.url) === process.argv[1];
