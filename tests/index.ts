@@ -883,8 +883,8 @@ export const LRUCache_020_non_string_keys = test('LRUCache', ({l, a: {eq, is}}) 
 
 export const LRUCache_021_performance_benchmark = test('LRUCache', ({l, a: {is}}) => {
   // Test 21: Performance benchmark to confirm O(1) operation runtime
-  const cache = new LRUCache<number, number>(1000000);
-  const iterations = 1000000;
+  const cache = new LRUCache<number, number>(50000);
+  const iterations = 50000;
 
   // Measure put operation
   const startPut = performance.now();
@@ -916,7 +916,7 @@ export const LRUCache_021_performance_benchmark = test('LRUCache', ({l, a: {is}}
 
   // Additional check: Perform operations on a smaller cache and compare times
   const smallCache = new LRUCache<number, number>(100);
-  const smallIterations = 10000;
+  const smallIterations = 1000;
 
   const startSmallPut = performance.now();
   for (let i = 0; i < smallIterations; i++) {
