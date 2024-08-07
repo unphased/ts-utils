@@ -738,6 +738,150 @@ export const LRUCache_12 = test('LRUCache', ({l, a: {eq}}) => {
   eq(cache.size(), 4, "Cache should contain all valid entries");
 });
 
+export const LRUCache_013_zero_capacity = test('LRUCache', ({l, a: {eq}}) => {
+  // Test 13: Cache with capacity 0
+  const cache = new LRUCache<number, number>(0);
+
+  cache.put(1, 1);
+  eq(cache.size(), 0, 'Cache size should be 0 with capacity 0');
+  eq(cache.get(1), undefined, 'Getting a key from a cache with capacity 0 should return undefined');
+  cache.delete(1);
+  eq(cache.size(), 0, 'Deleting a key from a cache with capacity 0 should not change the size');
+});
+
+
+export const LRUCache_014_capacity_change = test('LRUCache', ({l, a: {eq}}) => {
+  // Test 14: Changing cache capacity
+  const cache = new LRUCache<string, number>(3);
+  cache.put("a", 1);
+  cache.put("b", 2);
+  cache.put("c", 3);
+
+  eq(cache.size(), 3, "Cache should have 3 items");
+
+  cache.setCapacity(2);
+
+  eq(cache.size(), 2, "Cache should now have 2 items after capacity reduction");
+  eq(cache.get("a"), undefined, "Least recently used item should be evicted");
+  eq(cache.get("b"), 2, "More recently used items should remain");
+  eq(cache.get("c"), 3, "Most recently used item should remain");
+
+  cache.setCapacity(4);
+  cache.put("d", 4);
+  cache.put("e", 5);
+
+  eq(cache.size(), 4, "Cache should now have 4 items after capacity increase");
+  eq(cache.get("b"), 2, "Previously added items should still be present");
+});
+
+export const LRUCache_015_concurrent_operations = test('LRUCache', ({l, a: {eq, is}}) => {
+  // Test 15: Simulating concurrent operations
+  const cache = new LRUCache<string, number>(3);
+
+  cache.put("a", 1);
+  cache.get("a");
+  cache.put("b", 2);
+  cache.delete("a");
+  cache.put("c", 3);
+  cache.get("b");
+  cache.put("d", 4);
+
+  eq(cache.size(), 3, "Cache size should be 3 after concurrent-like operations");
+  eq(cache.get("a"), undefined, "Deleted item should not be present");
+  eq(cache.get("b"), 2, "Item 'b' should be present and have correct value");
+  eq(cache.get("c"), 3, "Item 'c' should be present and have correct value");
+  eq(cache.get("d"), 4, "Item 'd' should be present and have correct value");
+});
+
+export const LRUCache_016_large_capacity = test('LRUCache', ({l, a: {eq, is}}) => {
+  // Test 16: Performance with large capacity
+  const largeCapacity = 1000000;
+  const cache = new LRUCache<number, number>(largeCapacity);
+
+  for (let i = 0; i < largeCapacity; i++) {
+    cache.put(i, i * 2);
+  }
+
+  eq(cache.size(), largeCapacity, "Cache should contain all inserted items");
+  eq(cache.get(500000), 1000000, "Should retrieve correct value for middle item");
+
+  cache.put(largeCapacity, largeCapacity * 2);
+  eq(cache.get(0), undefined, "First inserted item should be evicted");
+  eq(cache.get(1), 2, "Second item should still be present");
+});
+
+export const LRUCache_017_stress_test = test('LRUCache', ({l, a: {eq}}) => {
+  // Test 17: Stress test with repeated operations
+  const cache = new LRUCache<number, number>(1000);
+  const operations = 1000000;
+
+  for (let i = 0; i < operations; i++) {
+    const key = i % 2000;
+    if (i % 2 === 0) {
+      cache.put(key, i);
+    } else {
+      cache.get(key);
+    }
+  }
+
+  eq(cache.size(), 1000, "Cache size should be at capacity after stress test");
+});
+
+export const LRUCache_018_complex_keys_values = test('LRUCache', ({l, a: {eqO, eq}}) => {
+  // Test 18: Complex object keys and values
+  const cache = new LRUCache<{id: number}, {data: string[]}>(2);
+
+  const key1 = {id: 1};
+  const value1 = {data: ['a', 'b', 'c']};
+  const key2 = {id: 2};
+  const value2 = {data: ['d', 'e', 'f']};
+
+  cache.put(key1, value1);
+  cache.put(key2, value2);
+
+  eqO(cache.get(key1), value1, "Should retrieve correct complex value for key1");
+  eqO(cache.get(key2), value2, "Should retrieve correct complex value for key2");
+
+  const key3 = {id: 3};
+  const value3 = {data: ['g', 'h', 'i']};
+  cache.put(key3, value3);
+
+  eq(cache.get(key1), undefined, "First inserted complex key-value should be evicted");
+});
+
+export const LRUCache_019_entries_order = test('LRUCache', ({l, a: {eqO}}) => {
+  // Test 19: Verify entries() method order
+  const cache = new LRUCache<string, number>(3);
+
+  cache.put("a", 1);
+  cache.put("b", 2);
+  cache.put("c", 3);
+  cache.get("a");
+
+  const entries = cache.entries();
+  eqO(entries, [["b", 2], ["c", 3], ["a", 1]], "Entries should be in order from least to most recently used");
+});
+
+export const LRUCache_020_non_string_keys = test('LRUCache', ({l, a: {eq, is}}) => {
+  // Test 20: Non-string, non-numeric keys
+  const cache = new LRUCache<symbol, string>(2);
+
+  const key1 = Symbol('key1');
+  const key2 = Symbol('key2');
+
+  cache.put(key1, "value1");
+  cache.put(key2, "value2");
+
+  eq(cache.get(key1), "value1", "Should retrieve correct value for symbol key1");
+  eq(cache.get(key2), "value2", "Should retrieve correct value for symbol key2");
+
+  const key3 = Symbol('key3');
+  cache.put(key3, "value3");
+
+  eq(cache.get(key1), undefined, "First inserted symbol key should be evicted");
+});
+
+
 const isProgramLaunchContext = () => {
   return fileURLToPath(import.meta.url) === process.argv[1];
 }
