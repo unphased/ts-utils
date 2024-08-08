@@ -612,7 +612,7 @@ export class LRUCacheMap<K, V> {
   entries(): IterableIterator<[K, V]> {
     const entries = this.cache.entries();
     return {
-      [Symbol.iterator]: () => this,
+      [Symbol.iterator]: function() { return this; },
       next: () => {
         const result = entries.next();
         if (result.done) {
