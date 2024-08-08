@@ -543,11 +543,13 @@ export class LRUCacheMap<K, V> {
   private capacity: number;
   private cache: Map<K, { value: V; node: Node<K> }>;
   private list: DoublyLinkedList<K>;
+  private cleanupCallback?: (key: K, value: V) => void;
 
-  constructor(capacity: number) {
+  constructor(capacity: number, cleanupCallback?: (key: K, value: V) => void) {
     this.capacity = Math.max(0, capacity);
     this.cache = new Map();
     this.list = new DoublyLinkedList<K>();
+    this.cleanupCallback = cleanupCallback;
   }
 
   setCapacity(newCapacity: number): void {
@@ -608,7 +610,13 @@ export class LRUCacheMap<K, V> {
   private ensureCapacity(): void {
     while (this.cache.size > this.capacity) {
       const lruKey = this.list.removeLast();
-      if (lruKey !== undefined) this.cache.delete(lruKey);
+      if (lruKey !== undefined) {
+        const item = this.cache.get(lruKey);
+        if (item && this.cleanupCallback) {
+          this.cleanupCallback(lruKey, item.value);
+        }
+        this.cache.delete(lruKey);
+      }
     }
   }
 }
