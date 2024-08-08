@@ -881,7 +881,32 @@ export const LRUCache_20_non_string_keys = test('LRUCacheMap', ({l, a: {eq, is}}
   eq(cache.get(key1), undefined, "First inserted symbol key should be evicted");
 });
 
-export const LRUCache_21_performance_benchmark = test('LRUCacheMap', ({l, a: {is, lt}}) => {
+export const LRUCache_21_cleanup_callback = test('LRUCacheMap', ({l, a: {eq, eqO}}) => {
+  // Test 21: Cleanup callback functionality
+  const evictedItems: [string, number][] = [];
+  const cleanupCallback = (key: string, value: number) => {
+    evictedItems.push([key, value]);
+  };
+
+  const cache = new LRUCacheMap<string, number>(3, cleanupCallback);
+
+  cache.put("a", 1);
+  cache.put("b", 2);
+  cache.put("c", 3);
+  cache.put("d", 4);
+
+  eqO(evictedItems, [["a", 1]], "First item should be evicted");
+
+  cache.put("e", 5);
+  eqO(evictedItems, [["a", 1], ["b", 2]], "Second item should be evicted");
+
+  cache.setCapacity(1);
+  eqO(evictedItems, [["a", 1], ["b", 2], ["c", 3], ["d", 4]], "Items should be evicted when capacity is reduced");
+
+  eq(cache.get("e"), 5, "Last item should remain in cache");
+});
+
+export const LRUCache_22_performance_benchmark = test('LRUCacheMap', ({l, a: {is, lt}}) => {
   // Test 21: Performance benchmark to confirm O(1) operation runtime
   const cache = new LRUCacheMap<number, number>(50000);
   const iterations = 10000;
