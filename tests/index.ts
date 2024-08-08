@@ -764,8 +764,6 @@ export const LRUCache_13_type_safety = test('LRUCacheMap', ({l, a: {eq}}) => {
   eq(cache.size(), 4, "Cache should contain all valid entries");
 });
 
-
-
 export const LRUCache_14_capacity_change = test('LRUCacheMap', ({l, a: {eq}}) => {
   // Test 14: Changing cache capacity
   const cache = new LRUCacheMap<string, number>(3);

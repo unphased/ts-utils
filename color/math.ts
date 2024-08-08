@@ -107,12 +107,21 @@ export const hsluv_palette_and_variant_spaces = test(({t, l}) => {
   // in summary, this approach is not bad at all for generating palettes out of thin air, but some zones in the hue distribution are problematic at certain other levels in this colorspace, the most salient issue is cyan. I may introduce a hack to modify this color space because it is otherwise really beautiful.
 });
 
-const NUM_COLORS = 10;
-const COLOR_GAP = 1;
-const HUE_OFFSET_DEG = -50;
-export const rainbow_hsluv = Array.from({length: NUM_COLORS}, (_, i) => hsluv2rgb((360 * i / (NUM_COLORS + COLOR_GAP) + HUE_OFFSET_DEG + 360) % 360, 100, 70)).reverse();
+const rainbow_hsluv = (num: number, hue_offset = -60, hue_range_ratio = 0.80) => {
+  const NUM_COLORS = num;
+  const HUE_RANGE = hue_range_ratio * 360;
+  const HUE_DEG_PER_STOP = HUE_RANGE / (NUM_COLORS - 1);
+  const hues = Array.from({length: NUM_COLORS}, (_, i) => ((i * HUE_DEG_PER_STOP + hue_offset) + 720) % 360);
+  return hues.map(h => hsluv2rgb(h, 100, 70));
+}
 
 export const rainbow_palette = test(({t, l}) => {
   t('exemptFromAsserting');
-  l(rainbow_hsluv.map(c => colors.truecolor_bg(...c) + '   ').join('') + colors.bg_reset);
+  l(rainbow_hsluv(5).map(c => colors.truecolor_bg(...c) + '   ').join('') + colors.bg_reset);
+  l(rainbow_hsluv(9).map(c => colors.truecolor_bg(...c) + '   ').join('') + colors.bg_reset);
+  l(rainbow_hsluv(20).map(c => colors.truecolor_bg(...c) + '   ').join('') + colors.bg_reset);
+  l(rainbow_hsluv(5,  225, -0.8).map(c => colors.truecolor_bg(...c) + '   ').join('') + colors.bg_reset);
+  l(rainbow_hsluv(9,  225, -0.8).map(c => colors.truecolor_bg(...c) + '   ').join('') + colors.bg_reset);
+  l(rainbow_hsluv(20, 225, -0.8).map(c => colors.truecolor_bg(...c) + '   ').join('') + colors.bg_reset);
+  l(rainbow_hsluv(20).reverse().map(c => colors.truecolor_bg(...c) + '   ').join('') + colors.bg_reset);
 });
