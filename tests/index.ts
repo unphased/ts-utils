@@ -846,7 +846,7 @@ export const LRUCache_19_entries_order = test('LRUCacheMap', ({l, a: {eqO}}) => 
   cache.put("c", 3);
   cache.get("a");
 
-  const entries = cache.entries();
+  const entries = Array.from(cache.entries());
   eqO(entries, [["b", 2], ["c", 3], ["a", 1]], "Entries should be in order from least to most recently used");
 });
 
