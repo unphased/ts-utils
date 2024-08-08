@@ -1,6 +1,6 @@
 import { LaunchTests, test } from 'tst';
 import { fileURLToPath } from 'url';
-import { cartesian_slow, cartesian_enum_vals_slow, cartesianAt, cartesianAll, identical, memoized, timed, Statistics, pick, LRUCache } from '../utils.js';
+import { cartesian_slow, cartesian_enum_vals_slow, cartesianAt, cartesianAll, identical, memoized, timed, Statistics, pick, LRUCacheMap } from '../utils.js';
 import { format } from "../node/format.js";
 import { colors } from '../terminal.js';
 import { Chainable } from 'ts-utils';
@@ -569,9 +569,9 @@ export const pick_tests = test('pick function', ({l, a: {eqO, eq}}) => {
   eqO(pick(obj1, 'a', 'b', 'c', 'd', 'e', 'f', 'g'), obj1);
 });
 
-export const LRUCache_01 = test('LRUCache', ({l, a: {eq}}) => {
+export const LRUCache_01 = test('LRUCacheMap', ({l, a: {eq}}) => {
   // Test 1: Basic functionality
-  const cache = new LRUCache<string, number>(3);
+  const cache = new LRUCacheMap<string, number>(3);
   cache.put("a", 1);
   cache.put("b", 2);
   cache.put("c", 3);
@@ -582,9 +582,9 @@ export const LRUCache_01 = test('LRUCache', ({l, a: {eq}}) => {
   eq(cache.size(), 3, "Cache size should be 3");
 });
 
-export const LRUCache_02 = test('LRUCache', ({l, a: {eq}}) => {
+export const LRUCache_02 = test('LRUCacheMap', ({l, a: {eq}}) => {
   // Test 2: Eviction of least recently used item
-  const cache = new LRUCache<string, number>(3);
+  const cache = new LRUCacheMap<string, number>(3);
   cache.put("a", 1);
   cache.put("b", 2);
   cache.put("c", 3);
@@ -595,9 +595,9 @@ export const LRUCache_02 = test('LRUCache', ({l, a: {eq}}) => {
   eq(cache.size(), 3, "Cache size should still be 3");
 });
 
-export const LRUCache_03 = test('LRUCache', ({l, a: {eq}}) => {
+export const LRUCache_03 = test('LRUCacheMap', ({l, a: {eq}}) => {
   // Test 3: Updating existing key
-  const cache = new LRUCache<string, number>(3);
+  const cache = new LRUCacheMap<string, number>(3);
   cache.put("a", 1);
   cache.put("b", 2);
   cache.put("c", 3);
@@ -607,9 +607,9 @@ export const LRUCache_03 = test('LRUCache', ({l, a: {eq}}) => {
   eq(cache.size(), 3, "Cache size should still be 3");
 });
 
-export const LRUCache_04 = test('LRUCache', ({l, a: {eq}}) => {
+export const LRUCache_04 = test('LRUCacheMap', ({l, a: {eq}}) => {
   // Test 4: Get updates order
-  const cache = new LRUCache<string, number>(3);
+  const cache = new LRUCacheMap<string, number>(3);
   cache.put("a", 1);
   cache.put("b", 2);
   cache.put("c", 3);
@@ -620,9 +620,9 @@ export const LRUCache_04 = test('LRUCache', ({l, a: {eq}}) => {
   eq(cache.get("a"), 1, "'a' should still be in the cache");
 });
 
-export const LRUCache_05 = test('LRUCache', ({l, a: {eq}}) => {
+export const LRUCache_05 = test('LRUCacheMap', ({l, a: {eq}}) => {
   // Test 5: Delete functionality
-  const cache = new LRUCache<string, number>(3);
+  const cache = new LRUCacheMap<string, number>(3);
   cache.put("a", 1);
   cache.put("b", 2);
   cache.put("c", 3);
@@ -633,9 +633,9 @@ export const LRUCache_05 = test('LRUCache', ({l, a: {eq}}) => {
   eq(cache.delete("d"), false, "Delete should return false for non-existing key");
 });
 
-export const LRUCache_06 = test('LRUCache', ({l, a: {eq}}) => {
+export const LRUCache_06 = test('LRUCacheMap', ({l, a: {eq}}) => {
   // Test 6: Clear functionality
-  const cache = new LRUCache<string, number>(3);
+  const cache = new LRUCacheMap<string, number>(3);
   cache.put("a", 1);
   cache.put("b", 2);
   cache.clear();
@@ -644,18 +644,18 @@ export const LRUCache_06 = test('LRUCache', ({l, a: {eq}}) => {
   eq(cache.get("a"), undefined, "All items should be removed after clear");
 });
 
-export const LRUCache_07 = test('LRUCache', ({l, a: {eq}}) => {
+export const LRUCache_07 = test('LRUCacheMap', ({l, a: {eq}}) => {
   // Test 7: Handling of capacity 0
-  const cache = new LRUCache<string, number>(0);
+  const cache = new LRUCacheMap<string, number>(0);
   cache.put("a", 1);
 
   eq(cache.size(), 0, "Cache with capacity 0 should always be empty");
   eq(cache.get("a"), undefined, "Cache with capacity 0 should not store items");
 });
 
-export const LRUCache_08 = test('LRUCache', ({l, a: {eq, is}}) => {
+export const LRUCache_08 = test('LRUCacheMap', ({l, a: {eq, is}}) => {
   // Test 8: Entries method
-  const cache = new LRUCache<string, number>(3);
+  const cache = new LRUCacheMap<string, number>(3);
   cache.put("a", 1);
   cache.put("b", 2);
   cache.put("c", 3);
@@ -667,9 +667,9 @@ export const LRUCache_08 = test('LRUCache', ({l, a: {eq, is}}) => {
   is(entries.some(([k, v]) => k === "c" && v === 3), "Entries should contain ['c', 3]");
 });
 
-export const LRUCache_09 = test('LRUCache', ({l, a: {eq}}) => {
+export const LRUCache_09 = test('LRUCacheMap', ({l, a: {eq}}) => {
   // Test 9: Large capacity
-  const cache = new LRUCache<number, number>(1000);
+  const cache = new LRUCacheMap<number, number>(1000);
   for (let i = 0; i < 1000; i++) {
     cache.put(i, i * 2);
   }
@@ -680,9 +680,9 @@ export const LRUCache_09 = test('LRUCache', ({l, a: {eq}}) => {
   eq(cache.get(1), 2, "Second item should still be present");
 });
 
-export const LRUCache_10 = test('LRUCache', ({l, a: {eq, is}}) => {
+export const LRUCache_10 = test('LRUCacheMap', ({l, a: {eq, is}}) => {
   // Test 10: Random operations
-  const cache = new LRUCache<number, number>(100);
+  const cache = new LRUCacheMap<number, number>(100);
   const operations = 10000;
   let putCount = 0, getCount = 0, deleteCount = 0;
 
@@ -706,27 +706,27 @@ export const LRUCache_10 = test('LRUCache', ({l, a: {eq, is}}) => {
   l(`Put: ${putCount}, Get: ${getCount}, Delete: ${deleteCount}`);
 });
 
-export const LRUCache_11 = test('LRUCache', ({l, a: {eq}}) => {
+export const LRUCache_11 = test('LRUCacheMap', ({l, a: {eq}}) => {
   // Test 11: Edge cases
-  const cache1 = new LRUCache<string, number>(1);
+  const cache1 = new LRUCacheMap<string, number>(1);
   cache1.put("key1", 1);
   cache1.put("key2", 2);
   eq(cache1.get("key1"), undefined, "First key should be evicted");
   eq(cache1.get("key2"), 2, "Second key should be present");
 
-  const zeroCache = new LRUCache<string, number>(0);
+  const zeroCache = new LRUCacheMap<string, number>(0);
   zeroCache.put("key", 1);
   eq(zeroCache.size(), 0, "Zero capacity cache should always be empty");
   eq(zeroCache.get("key"), undefined, "Zero capacity cache should not store items");
 
-  const negativeCache = new LRUCache<string, number>(-5);
+  const negativeCache = new LRUCacheMap<string, number>(-5);
   negativeCache.put("key", 1);
   eq(negativeCache.size(), 0, "Negative capacity should be treated as zero");
 });
 
-export const LRUCache_12 = test('LRUCache', ({l, a: {eq}}) => {
+export const LRUCache_12 = test('LRUCacheMap', ({l, a: {eq}}) => {
   // Test 12: Type safety
-  const cache = new LRUCache<string, number | string>(5);
+  const cache = new LRUCacheMap<string, number | string>(5);
   cache.put("num", 42);
   cache.put("str", "hello");
   eq(cache.get("num"), 42, "Should store and retrieve number correctly");
@@ -738,9 +738,9 @@ export const LRUCache_12 = test('LRUCache', ({l, a: {eq}}) => {
   eq(cache.size(), 4, "Cache should contain all valid entries");
 });
 
-export const LRUCache_13_zero_capacity = test('LRUCache', ({l, a: {eq}}) => {
+export const LRUCache_13_zero_capacity = test('LRUCacheMap', ({l, a: {eq}}) => {
   // Test 13: Cache with capacity 0
-  const cache = new LRUCache<number, number>(0);
+  const cache = new LRUCacheMap<number, number>(0);
 
   cache.put(1, 1);
   eq(cache.size(), 0, 'Cache size should be 0 with capacity 0');
@@ -750,9 +750,9 @@ export const LRUCache_13_zero_capacity = test('LRUCache', ({l, a: {eq}}) => {
 });
 
 
-export const LRUCache_14_capacity_change = test('LRUCache', ({l, a: {eq}}) => {
+export const LRUCache_14_capacity_change = test('LRUCacheMap', ({l, a: {eq}}) => {
   // Test 14: Changing cache capacity
-  const cache = new LRUCache<string, number>(3);
+  const cache = new LRUCacheMap<string, number>(3);
   cache.put("a", 1);
   cache.put("b", 2);
   cache.put("c", 3);
@@ -774,9 +774,9 @@ export const LRUCache_14_capacity_change = test('LRUCache', ({l, a: {eq}}) => {
   eq(cache.get("b"), 2, "Previously added items should still be present");
 });
 
-export const LRUCache_15_concurrent_operations = test('LRUCache', ({l, a: {eq, is}}) => {
+export const LRUCache_15_concurrent_operations = test('LRUCacheMap', ({l, a: {eq, is}}) => {
   // Test 15: Simulating concurrent operations
-  const cache = new LRUCache<string, number>(3);
+  const cache = new LRUCacheMap<string, number>(3);
 
   cache.put("a", 1);
   cache.get("a");
@@ -793,10 +793,10 @@ export const LRUCache_15_concurrent_operations = test('LRUCache', ({l, a: {eq, i
   eq(cache.get("d"), 4, "Item 'd' should be present and have correct value");
 });
 
-export const LRUCache_16_large_capacity = test('LRUCache', ({l, a: {eq, is}}) => {
+export const LRUCache_16_large_capacity = test('LRUCacheMap', ({l, a: {eq, is}}) => {
   // Test 16: Performance with large capacity
   const largeCapacity = 100000;
-  const cache = new LRUCache<number, number>(largeCapacity);
+  const cache = new LRUCacheMap<number, number>(largeCapacity);
 
   for (let i = 0; i < largeCapacity; i++) {
     cache.put(i, i * 2);
@@ -810,9 +810,9 @@ export const LRUCache_16_large_capacity = test('LRUCache', ({l, a: {eq, is}}) =>
   eq(cache.get(1), 2, "Second item should still be present");
 });
 
-export const LRUCache_17_stress_test = test('LRUCache', ({l, a: {eq}}) => {
+export const LRUCache_17_stress_test = test('LRUCacheMap', ({l, a: {eq}}) => {
   // Test 17: Stress test with repeated operations
-  const cache = new LRUCache<number, number>(1000);
+  const cache = new LRUCacheMap<number, number>(1000);
   const operations = 1000000;
 
   for (let i = 0; i < operations; i++) {
@@ -827,9 +827,9 @@ export const LRUCache_17_stress_test = test('LRUCache', ({l, a: {eq}}) => {
   eq(cache.size(), 1000, "Cache size should be at capacity after stress test");
 });
 
-export const LRUCache_18_complex_keys_values = test('LRUCache', ({l, a: {eqO, eq}}) => {
+export const LRUCache_18_complex_keys_values = test('LRUCacheMap', ({l, a: {eqO, eq}}) => {
   // Test 18: Complex object keys and values
-  const cache = new LRUCache<{id: number}, {data: string[]}>(2);
+  const cache = new LRUCacheMap<{id: number}, {data: string[]}>(2);
 
   const key1 = {id: 1};
   const value1 = {data: ['a', 'b', 'c']};
@@ -849,9 +849,9 @@ export const LRUCache_18_complex_keys_values = test('LRUCache', ({l, a: {eqO, eq
   eq(cache.get(key1), undefined, "First inserted complex key-value should be evicted");
 });
 
-export const LRUCache_19_entries_order = test('LRUCache', ({l, a: {eqO}}) => {
+export const LRUCache_19_entries_order = test('LRUCacheMap', ({l, a: {eqO}}) => {
   // Test 19: Verify entries() method order
-  const cache = new LRUCache<string, number>(3);
+  const cache = new LRUCacheMap<string, number>(3);
 
   cache.put("a", 1);
   cache.put("b", 2);
@@ -862,9 +862,9 @@ export const LRUCache_19_entries_order = test('LRUCache', ({l, a: {eqO}}) => {
   eqO(entries, [["b", 2], ["c", 3], ["a", 1]], "Entries should be in order from least to most recently used");
 });
 
-export const LRUCache_20_non_string_keys = test('LRUCache', ({l, a: {eq, is}}) => {
+export const LRUCache_20_non_string_keys = test('LRUCacheMap', ({l, a: {eq, is}}) => {
   // Test 20: Non-string, non-numeric keys
-  const cache = new LRUCache<symbol, string>(2);
+  const cache = new LRUCacheMap<symbol, string>(2);
 
   const key1 = Symbol('key1');
   const key2 = Symbol('key2');
@@ -881,9 +881,9 @@ export const LRUCache_20_non_string_keys = test('LRUCache', ({l, a: {eq, is}}) =
   eq(cache.get(key1), undefined, "First inserted symbol key should be evicted");
 });
 
-export const LRUCache_21_performance_benchmark = test('LRUCache', ({l, a: {is, lt}}) => {
+export const LRUCache_21_performance_benchmark = test('LRUCacheMap', ({l, a: {is, lt}}) => {
   // Test 21: Performance benchmark to confirm O(1) operation runtime
-  const cache = new LRUCache<number, number>(50000);
+  const cache = new LRUCacheMap<number, number>(50000);
   const iterations = 10000;
 
   // Measure put operation
@@ -915,7 +915,7 @@ export const LRUCache_21_performance_benchmark = test('LRUCache', ({l, a: {is, l
   lt(avgGetTime, 0.0005, "ditto for get operations");
 
   // Additional check: Perform operations on a smaller cache and compare times
-  const smallCache = new LRUCache<number, number>(100);
+  const smallCache = new LRUCacheMap<number, number>(100);
   const smallIterations = 10000;
 
   const startSmallPut = performance.now();
