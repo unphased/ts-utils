@@ -569,7 +569,7 @@ export const pick_tests = test('pick function', ({l, a: {eqO, eq}}) => {
   eqO(pick(obj1, 'a', 'b', 'c', 'd', 'e', 'f', 'g'), obj1);
 });
 
-export const LRUCache_01 = test('LRUCacheMap', ({l, a: {eq}}) => {
+export const LRUCache_01_basic_functionality = test('LRUCacheMap', ({l, a: {eq}}) => {
   // Test 1: Basic functionality
   const cache = new LRUCacheMap<string, number>(3);
   cache.put("a", 1);
@@ -582,7 +582,7 @@ export const LRUCache_01 = test('LRUCacheMap', ({l, a: {eq}}) => {
   eq(cache.size(), 3, "Cache size should be 3");
 });
 
-export const LRUCache_02 = test('LRUCacheMap', ({l, a: {eq}}) => {
+export const LRUCache_02_eviction = test('LRUCacheMap', ({l, a: {eq}}) => {
   // Test 2: Eviction of least recently used item
   const cache = new LRUCacheMap<string, number>(3);
   cache.put("a", 1);
@@ -595,7 +595,7 @@ export const LRUCache_02 = test('LRUCacheMap', ({l, a: {eq}}) => {
   eq(cache.size(), 3, "Cache size should still be 3");
 });
 
-export const LRUCache_03 = test('LRUCacheMap', ({l, a: {eq}}) => {
+export const LRUCache_03_updating_existing_key = test('LRUCacheMap', ({l, a: {eq}}) => {
   // Test 3: Updating existing key
   const cache = new LRUCacheMap<string, number>(3);
   cache.put("a", 1);
@@ -607,7 +607,7 @@ export const LRUCache_03 = test('LRUCacheMap', ({l, a: {eq}}) => {
   eq(cache.size(), 3, "Cache size should still be 3");
 });
 
-export const LRUCache_04 = test('LRUCacheMap', ({l, a: {eq}}) => {
+export const LRUCache_04_get_updates_order = test('LRUCacheMap', ({l, a: {eq}}) => {
   // Test 4: Get updates order
   const cache = new LRUCacheMap<string, number>(3);
   cache.put("a", 1);
@@ -620,7 +620,7 @@ export const LRUCache_04 = test('LRUCacheMap', ({l, a: {eq}}) => {
   eq(cache.get("a"), 1, "'a' should still be in the cache");
 });
 
-export const LRUCache_05 = test('LRUCacheMap', ({l, a: {eq}}) => {
+export const LRUCache_05_delete_functionality = test('LRUCacheMap', ({l, a: {eq}}) => {
   // Test 5: Delete functionality
   const cache = new LRUCacheMap<string, number>(3);
   cache.put("a", 1);
@@ -633,7 +633,7 @@ export const LRUCache_05 = test('LRUCacheMap', ({l, a: {eq}}) => {
   eq(cache.delete("d"), false, "Delete should return false for non-existing key");
 });
 
-export const LRUCache_06 = test('LRUCacheMap', ({l, a: {eq}}) => {
+export const LRUCache_06_clear_functionality = test('LRUCacheMap', ({l, a: {eq}}) => {
   // Test 6: Clear functionality
   const cache = new LRUCacheMap<string, number>(3);
   cache.put("a", 1);
@@ -644,7 +644,7 @@ export const LRUCache_06 = test('LRUCacheMap', ({l, a: {eq}}) => {
   eq(cache.get("a"), undefined, "All items should be removed after clear");
 });
 
-export const LRUCache_07 = test('LRUCacheMap', ({l, a: {eq}}) => {
+export const LRUCache_07_zero_capacity = test('LRUCacheMap', ({l, a: {eq}}) => {
   // Test 7: Handling of capacity 0
   const cache = new LRUCacheMap<string, number>(0);
   cache.put("a", 1);
@@ -653,7 +653,7 @@ export const LRUCache_07 = test('LRUCacheMap', ({l, a: {eq}}) => {
   eq(cache.get("a"), undefined, "Cache with capacity 0 should not store items");
 });
 
-export const LRUCache_08 = test('LRUCacheMap', ({l, a: {eq, is}}) => {
+export const LRUCache_08_entries_method = test('LRUCacheMap', ({l, a: {eq, is}}) => {
   // Test 8: Entries method
   const cache = new LRUCacheMap<string, number>(3);
   cache.put("a", 1);
@@ -667,7 +667,7 @@ export const LRUCache_08 = test('LRUCacheMap', ({l, a: {eq, is}}) => {
   is(entries.some(([k, v]) => k === "c" && v === 3), "Entries should contain ['c', 3]");
 });
 
-export const LRUCache_09 = test('LRUCacheMap', ({l, a: {eq}}) => {
+export const LRUCache_09_large_capacity = test('LRUCacheMap', ({l, a: {eq}}) => {
   // Test 9: Large capacity
   const cache = new LRUCacheMap<number, number>(1000);
   for (let i = 0; i < 1000; i++) {
