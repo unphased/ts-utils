@@ -680,7 +680,7 @@ export const LRUCache_09 = test('LRUCacheMap', ({l, a: {eq}}) => {
   eq(cache.get(1), 2, "Second item should still be present");
 });
 
-export const LRUCache_10 = test('LRUCacheMap', ({l, a: {eq, is}}) => {
+export const LRUCache_10_random_operations = test('LRUCacheMap', ({l, a: {eq, is}}) => {
   // Test 10: Random operations
   const cache = new LRUCacheMap<number, number>(100);
   const operations = 10000;
@@ -706,7 +706,7 @@ export const LRUCache_10 = test('LRUCacheMap', ({l, a: {eq, is}}) => {
   l(`Put: ${putCount}, Get: ${getCount}, Delete: ${deleteCount}`);
 });
 
-export const LRUCache_11 = test('LRUCacheMap', ({l, a: {eq}}) => {
+export const LRUCache_11_edge_cases = test('LRUCacheMap', ({l, a: {eq}}) => {
   // Test 11: Edge cases
   const cache1 = new LRUCacheMap<string, number>(1);
   cache1.put("key1", 1);
@@ -724,7 +724,7 @@ export const LRUCache_11 = test('LRUCacheMap', ({l, a: {eq}}) => {
   eq(negativeCache.size(), 0, "Negative capacity should be treated as zero");
 });
 
-export const LRUCache_12 = test('LRUCacheMap', ({l, a: {eq}}) => {
+export const LRUCache_12_type_safety = test('LRUCacheMap', ({l, a: {eq}}) => {
   // Test 12: Type safety
   const cache = new LRUCacheMap<string, number | string>(5);
   cache.put("num", 42);
