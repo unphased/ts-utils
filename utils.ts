@@ -609,8 +609,8 @@ export class LRUCacheMap<K, V> {
     return this.cache.size;
   }
 
-  entries(): [K, V][] {
-    return this.list.toArray().reverse().map(key => [key, this.cache.get(key)!.value]);
+  entries(): IterableIterator<[K, V]> {
+    return this.cache.entries();
   }
 
   private ensureCapacity(): void {
