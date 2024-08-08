@@ -488,7 +488,7 @@ export const statistics_class_tests = test('Statistics class', ({l, a: {eq, eqO}
   eq(cachedStats.mean(), 5); // Should recalculate
 });
 
-export * from '../color/math.js';
+export * from '../color/tests.js';
 export * from './test_minimatch_regex.js';
 
 export const chainable_tests = test('Chainable class', ({l, a: {eqO}}) => {

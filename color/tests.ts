@@ -1,27 +1,9 @@
-import { Hsluv } from 'hsluv';
 import { test } from 'tst';
 import { colors } from '../terminal/colors.js';
 import { half_block } from '../terminal.js';
+import { rainbow_hsluv } from './rainbow_hsluv.js';
+import { hsluv2rgb, rgb2hsluv } from './hsluv_conversion.js';
 
-const hsluv_instance = new Hsluv();
-export const hsluv2rgb = (h: number, s: number, l: number) => {
-  hsluv_instance.hsluv_h = h;
-  hsluv_instance.hsluv_s = s;
-  hsluv_instance.hsluv_l = l;
-  hsluv_instance.hsluvToRgb();
-  const {rgb_r, rgb_g, rgb_b} = hsluv_instance;
-  return [rgb_r * 255, rgb_g * 255, rgb_b * 255] as const;
-};
-
-export const rgb2hsluv = (r: number, g: number, b: number) => {
-  hsluv_instance.rgb_r = r/255;
-  hsluv_instance.rgb_g = g/255;
-  hsluv_instance.rgb_b = b/255;
-  hsluv_instance.rgbToHsluv();
-  const {hsluv_h: h, hsluv_s: s, hsluv_l: l} = hsluv_instance;
-  return [h, s, l] as const;
-};
- 
 export const hsluv_rgb_round_trip = test(({a: {eqE}}) => {
   for (let i = 0; i < 10000; ++i) {
     const [r, g, b] = Array.from({length: 3}, _ => Math.random() * 255);
@@ -106,14 +88,6 @@ export const hsluv_palette_and_variant_spaces = test(({t, l}) => {
 
   // in summary, this approach is not bad at all for generating palettes out of thin air, but some zones in the hue distribution are problematic at certain other levels in this colorspace, the most salient issue is cyan. I may introduce a hack to modify this color space because it is otherwise really beautiful.
 });
-
-const rainbow_hsluv = (num: number, hue_offset = -60, hue_range_ratio = 0.80) => {
-  const NUM_COLORS = num;
-  const HUE_RANGE = hue_range_ratio * 360;
-  const HUE_DEG_PER_STOP = HUE_RANGE / (NUM_COLORS - 1);
-  const hues = Array.from({length: NUM_COLORS}, (_, i) => ((i * HUE_DEG_PER_STOP + hue_offset) + 720) % 360);
-  return hues.map(h => hsluv2rgb(h, 100, 70));
-}
 
 export const rainbow_palette = test(({t, l}) => {
   t('exemptFromAsserting');
