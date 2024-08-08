@@ -722,6 +722,34 @@ export const LRUCache_11_edge_cases = test('LRUCacheMap', ({l, a: {eq}}) => {
   eq(cache.get("a"), undefined, "Cache with capacity 0 should not store items");
 });
 
+export const LRUCache_12_sequence_validation = test('LRUCacheMap', ({l, a: {eq, eqO}}) => {
+  // Test 12: Sequence validation
+  const cache = new LRUCacheMap<string, number>(3);
+
+  cache.put("A", 1);
+  cache.put("B", 2);
+  cache.put("C", 3);
+  eqO(cache.getOrderedEntries(), [["C", 3], ["B", 2], ["A", 1]], "Initial state after putting 3 items");
+
+  cache.get("A");
+  eqO(cache.getOrderedEntries(), [["A", 1], ["C", 3], ["B", 2]], "After accessing 'A'");
+
+  cache.put("D", 4);
+  eqO(cache.getOrderedEntries(), [["D", 4], ["A", 1], ["C", 3]], "After adding 'D', 'B' should be evicted");
+
+  cache.put("E", 5);
+  eqO(cache.getOrderedEntries(), [["E", 5], ["D", 4], ["A", 1]], "After adding 'E', 'C' should be evicted");
+
+  cache.get("A");
+  eqO(cache.getOrderedEntries(), [["A", 1], ["E", 5], ["D", 4]], "After accessing 'A' again");
+
+  cache.put("F", 6);
+  eqO(cache.getOrderedEntries(), [["F", 6], ["A", 1], ["E", 5]], "After adding 'F', 'D' should be evicted");
+
+  eq(cache.get("D"), undefined, "'D' should have been evicted");
+  eq(cache.size(), 3, "Cache size should still be 3");
+});
+
 export const LRUCache_12_type_safety = test('LRUCacheMap', ({l, a: {eq}}) => {
   // Test 12: Type safety
   const cache = new LRUCacheMap<string, number | string>(5);
