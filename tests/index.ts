@@ -645,18 +645,18 @@ export const LRUCache_06_clear_functionality = test('LRUCacheMap', ({l, a: {eq}}
 });
 
 
-export const LRUCache_08_entries_method = test('LRUCacheMap', ({l, a: {eq, is}}) => {
+export const LRUCache_08_entries_method = test('LRUCacheMap', ({a: {eq, is}}) => {
   // Test 8: Entries method
   const cache = new LRUCacheMap<string, number>(3);
   cache.put("a", 1);
   cache.put("b", 2);
   cache.put("c", 3);
 
-  const entries = cache.entries();
-  eq(entries.length, 3, "Entries should return all items");
-  is(entries.some(([k, v]) => k === "a" && v === 1), "Entries should contain ['a', 1]");
-  is(entries.some(([k, v]) => k === "b" && v === 2), "Entries should contain ['b', 2]");
-  is(entries.some(([k, v]) => k === "c" && v === 3), "Entries should contain ['c', 3]");
+  const entriesArray = Array.from(cache.entries());
+  eq(entriesArray.length, 3, "Entries should return all items");
+  is(entriesArray.some(([k, v]) => k === "a" && v === 1), "Entries should contain ['a', 1]");
+  is(entriesArray.some(([k, v]) => k === "b" && v === 2), "Entries should contain ['b', 2]");
+  is(entriesArray.some(([k, v]) => k === "c" && v === 3), "Entries should contain ['c', 3]");
 });
 
 export const LRUCache_09_large_capacity = test('LRUCacheMap', ({l, a: {eq}}) => {
