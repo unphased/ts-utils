@@ -539,6 +539,7 @@ class DoublyLinkedList<T> {
     return result;
   }
 }
+
 export class LRUCacheMap<K, V> {
   private capacity: number;
   private cache: Map<K, { value: V; node: Node<K> }>;
