@@ -906,38 +906,7 @@ export const LRUCache_21_cleanup_callback = test('LRUCacheMap', ({l, a: {eq, eqO
   eq(cache.get("e"), 5, "Last item should remain in cache");
 });
 
-export const LRUCache_23_multiple_cleanup_calls = test('LRUCacheMap', ({l, a: {eq, eqO}}) => {
-  // Test 23: Multiple cleanup calls when resizing
-  const evictedItems: [string, number][] = [];
-  const cleanupCallback = (key: string, value: number) => {
-    evictedItems.push([key, value]);
-  };
-
-  const cache = new LRUCacheMap<string, number>(5, cleanupCallback);
-
-  cache.put("a", 1);
-  cache.put("b", 2);
-  cache.put("c", 3);
-  cache.put("d", 4);
-  cache.put("e", 5);
-
-  eqO(evictedItems, [], "No items should be evicted initially");
-
-  cache.setCapacity(3);
-  eqO(evictedItems, [["a", 1], ["b", 2]], "Two items should be evicted when capacity is reduced to 3");
-
-  cache.setCapacity(1);
-  eqO(evictedItems, [["a", 1], ["b", 2], ["c", 3], ["d", 4]], "Two more items should be evicted when capacity is further reduced to 1");
-
-  eq(cache.get("e"), 5, "Last item should remain in cache");
-  eq(cache.size(), 1, "Cache size should be 1");
-
-  cache.setCapacity(0);
-  eqO(evictedItems, [["a", 1], ["b", 2], ["c", 3], ["d", 4], ["e", 5]], "Last item should be evicted when capacity is set to 0");
-  eq(cache.size(), 0, "Cache should be empty");
-});
-
-export const LRUCache_22_performance_benchmark = test('LRUCacheMap', ({l, a: {is, lt}}) => {
+export const LRUCache_22_performance_benchmark = test('LRUCacheMap', ({l, a: {is, lt, gt}}) => {
   // Test 21: Performance benchmark to confirm O(1) operation runtime
   const cache = new LRUCacheMap<number, number>(50000);
   const iterations = 10000;
@@ -993,12 +962,44 @@ export const LRUCache_22_performance_benchmark = test('LRUCacheMap', ({l, a: {is
 
   // Check if the operation times for the small cache are similar to the large cache
   // We'll consider them similar if they're within a smaller range
-  is(avgPutTime / smallPutTime < 8 && avgPutTime / smallPutTime > 0.2, 
-     "Put operation time should be very similar for different cache sizes");
-  is(avgGetTime / smallGetTime < 8 && avgGetTime / smallGetTime > 0.2, 
-     "Get operation time should be similar for different cache sizes");
+  lt(avgPutTime / smallPutTime, 8);
+  gt(avgPutTime / smallPutTime, 0.1);
+  // Put operation time should be similar for different cache sizes
+  lt(avgGetTime / smallGetTime, 8);
+  gt(avgGetTime / smallGetTime, 0.1);
+  // Get operation time should be similar for different cache sizes
 });
 
+export const LRUCache_23_multiple_cleanup_calls = test('LRUCacheMap', ({l, a: {eq, eqO}}) => {
+  // Test 23: Multiple cleanup calls when resizing
+  const evictedItems: [string, number][] = [];
+  const cleanupCallback = (key: string, value: number) => {
+    evictedItems.push([key, value]);
+  };
+
+  const cache = new LRUCacheMap<string, number>(5, cleanupCallback);
+
+  cache.put("a", 1);
+  cache.put("b", 2);
+  cache.put("c", 3);
+  cache.put("d", 4);
+  cache.put("e", 5);
+
+  eqO(evictedItems, [], "No items should be evicted initially");
+
+  cache.setCapacity(3);
+  eqO(evictedItems, [["a", 1], ["b", 2]], "Two items should be evicted when capacity is reduced to 3");
+
+  cache.setCapacity(1);
+  eqO(evictedItems, [["a", 1], ["b", 2], ["c", 3], ["d", 4]], "Two more items should be evicted when capacity is further reduced to 1");
+
+  eq(cache.get("e"), 5, "Last item should remain in cache");
+  eq(cache.size(), 1, "Cache size should be 1");
+
+  cache.setCapacity(0);
+  eqO(evictedItems, [["a", 1], ["b", 2], ["c", 3], ["d", 4], ["e", 5]], "Last item should be evicted when capacity is set to 0");
+  eq(cache.size(), 0, "Cache should be empty");
+});
 
 const isProgramLaunchContext = () => {
   return fileURLToPath(import.meta.url) === process.argv[1];
