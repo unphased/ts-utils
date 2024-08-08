@@ -953,11 +953,11 @@ export const LRUCache_22_performance_benchmark = test('LRUCacheMap', ({l, a: {is
 
   // Check if the operation times for the small cache are similar to the large cache
   // We'll consider them similar if they're within a smaller range
-  lt(avgPutTime / smallPutTime, 8);
-  gt(avgPutTime / smallPutTime, 0.1);
+  lt(avgPutTime / smallPutTime, 8, "Put operation time should be similar for different cache sizes", avgPutTime, smallPutTime);
+  gt(avgPutTime / smallPutTime, 0.1, "Put operation time should be similar for different cache sizes", avgPutTime, smallPutTime);
   // Put operation time should be similar for different cache sizes
-  lt(avgGetTime / smallGetTime, 8);
-  gt(avgGetTime / smallGetTime, 0.1);
+  lt(avgGetTime / smallGetTime, 8, "Get operation time should be similar for different cache sizes", avgGetTime, smallGetTime);
+  gt(avgGetTime / smallGetTime, 0.1, "Get operation time should be similar for different cache sizes", avgGetTime, smallGetTime);
   // Get operation time should be similar for different cache sizes
 });
 
