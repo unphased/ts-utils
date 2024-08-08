@@ -579,7 +579,13 @@ export class LRUCacheMap<K, V> {
       if (this.cache.size >= this.capacity) {
         // Remove least recently used item
         const lruKey = this.list.removeLast();
-        if (lruKey !== undefined) this.cache.delete(lruKey);
+        if (lruKey !== undefined) {
+          const evictedItem = this.cache.get(lruKey);
+          if (evictedItem && this.cleanupCallback) {
+            this.cleanupCallback(lruKey, evictedItem.value);
+          }
+          this.cache.delete(lruKey);
+        }
       }
       const node = this.list.addToFront(key);
       this.cache.set(key, { value, node });
