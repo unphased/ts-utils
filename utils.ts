@@ -625,6 +625,31 @@ export class LRUCacheMap<K, V> {
     };
   }
 
+  getOrderedEntries(): [K, V][] {
+    const orderedEntries = this.list.toArray().map(key => {
+      const item = this.cache.get(key);
+      if (!item) {
+        throw new Error(`Integrity check failed: key ${String(key)} found in list but not in cache`);
+      }
+      return [key, item.value] as [K, V];
+    });
+
+    // Integrity check: ensure cache and list have the same size
+    if (orderedEntries.length !== this.cache.size) {
+      throw new Error(`Integrity check failed: list size (${orderedEntries.length}) does not match cache size (${this.cache.size})`);
+    }
+
+    // Integrity check: ensure all cache keys are in the list
+    const listKeys = new Set(this.list.toArray());
+    for (const key of this.cache.keys()) {
+      if (!listKeys.has(key)) {
+        throw new Error(`Integrity check failed: key ${String(key)} found in cache but not in list`);
+      }
+    }
+
+    return orderedEntries;
+  }
+
   private ensureCapacity(): void {
     while (this.cache.size > this.capacity) {
       const lruKey = this.list.removeLast();
