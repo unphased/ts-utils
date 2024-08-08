@@ -644,14 +644,6 @@ export const LRUCache_06_clear_functionality = test('LRUCacheMap', ({l, a: {eq}}
   eq(cache.get("a"), undefined, "All items should be removed after clear");
 });
 
-export const LRUCache_07_zero_capacity = test('LRUCacheMap', ({l, a: {eq}}) => {
-  // Test 7: Handling of capacity 0
-  const cache = new LRUCacheMap<string, number>(0);
-  cache.put("a", 1);
-
-  eq(cache.size(), 0, "Cache with capacity 0 should always be empty");
-  eq(cache.get("a"), undefined, "Cache with capacity 0 should not store items");
-});
 
 export const LRUCache_08_entries_method = test('LRUCacheMap', ({l, a: {eq, is}}) => {
   // Test 8: Entries method
@@ -722,6 +714,12 @@ export const LRUCache_11_edge_cases = test('LRUCacheMap', ({l, a: {eq}}) => {
   const negativeCache = new LRUCacheMap<string, number>(-5);
   negativeCache.put("key", 1);
   eq(negativeCache.size(), 0, "Negative capacity should be treated as zero");
+
+  // Incorporating test from LRUCache_07_zero_capacity
+  const cache = new LRUCacheMap<string, number>(0);
+  cache.put("a", 1);
+  eq(cache.size(), 0, "Cache with capacity 0 should always be empty");
+  eq(cache.get("a"), undefined, "Cache with capacity 0 should not store items");
 });
 
 export const LRUCache_12_type_safety = test('LRUCacheMap', ({l, a: {eq}}) => {
@@ -738,16 +736,6 @@ export const LRUCache_12_type_safety = test('LRUCacheMap', ({l, a: {eq}}) => {
   eq(cache.size(), 4, "Cache should contain all valid entries");
 });
 
-export const LRUCache_13_zero_capacity = test('LRUCacheMap', ({l, a: {eq}}) => {
-  // Test 13: Cache with capacity 0
-  const cache = new LRUCacheMap<number, number>(0);
-
-  cache.put(1, 1);
-  eq(cache.size(), 0, 'Cache size should be 0 with capacity 0');
-  eq(cache.get(1), undefined, 'Getting a key from a cache with capacity 0 should return undefined');
-  cache.delete(1);
-  eq(cache.size(), 0, 'Deleting a key from a cache with capacity 0 should not change the size');
-});
 
 
 export const LRUCache_14_capacity_change = test('LRUCacheMap', ({l, a: {eq}}) => {
