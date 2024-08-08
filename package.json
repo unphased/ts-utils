@@ -5,12 +5,14 @@
   "exports": {
     ".": "./dist/utils.js",
     "./terminal": "./dist/terminal.js",
-    "./node/format": "./dist/node/format.js"
+    "./node/format": "./dist/node/format.js",
+    "./color": "./dist/color/index.js"
   },
   "types": {
     ".": "./dist/utils.d.ts",
     "./terminal": "./dist/terminal.d.ts",
-    "./node/format": "./dist/node/format.d.ts"
+    "./node/format": "./dist/node/format.d.ts",
+    "./color": "./dist/color/index.d.ts"
   },
   "type": "module",
   "scripts": {

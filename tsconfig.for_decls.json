@@ -9,7 +9,8 @@
   "files": [
     "utils.ts",
     "terminal.ts",
-    "node/format.ts"
+    "node/format.ts",
+    "color/index.ts"
   ]
 }
 
