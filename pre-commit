@@ -1,0 +1,5 @@
+#!/bin/sh
+set -e
+npm run lint-errors || true # not gating commit on our lint
+# do gate commit on build, which includes building type decls.
+npm run build
