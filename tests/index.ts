@@ -750,7 +750,7 @@ export const LRUCache_12_sequence_validation = test('LRUCacheMap', ({l, a: {eq, 
   eq(cache.size(), 3, "Cache size should still be 3");
 });
 
-export const LRUCache_12_type_safety = test('LRUCacheMap', ({l, a: {eq}}) => {
+export const LRUCache_13_type_safety = test('LRUCacheMap', ({l, a: {eq}}) => {
   // Test 12: Type safety
   const cache = new LRUCacheMap<string, number | string>(5);
   cache.put("num", 42);
