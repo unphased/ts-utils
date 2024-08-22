@@ -1018,6 +1018,14 @@ export const LRUCache_23_multiple_cleanup_calls = test('LRUCacheMap', ({l, a: {e
   eq(cache.size(), 0, "Cache should be empty");
 });
 
+// export const LRUCache_24_cleanup_callback_with_custom_cache = test('LRUCacheMap', ({l, a: {eq, eqO}}) => {
+//   // Test 24: Cleanup callback with custom cache
+//   const evictedItems: [string, number][] = [];
+//   const cleanupCallback = (key: string, value: number) => {
+//     evictedItems.push([key, value]);
+//   };
+//   
+
 const isProgramLaunchContext = () => {
   return fileURLToPath(import.meta.url) === process.argv[1];
 }
