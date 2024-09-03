@@ -3,7 +3,7 @@ import { fileURLToPath } from 'url';
 import { cartesian_slow, cartesian_enum_vals_slow, cartesianAt, cartesianAll, identical, memoized, timed, Statistics, pick, LRUCacheMap } from '../utils.js';
 import { format } from "../node/format.js";
 import { colors } from '../terminal.js';
-import { Chainable } from 'ts-utils';
+import { Chainable } from '../utils.js';
 
 // this tests/index.ts body is generally for testing stuff from utils. For simplicity, has the entry point for testing and re-export of other deps using tests at the bottom.
 
@@ -268,8 +268,8 @@ export const memoizer_check_via_prime_computation = test('memoize', ({l, a:{eq, 
 
 });
 
-import { renderHorizBar, renderBarRatioComparisonLowerIsBetter } from '../terminal/precision-bars.js';
-import { lexAnsi } from '../terminal/ansi-parse.js';
+import { renderHorizBar, renderBarRatioComparisonLowerIsBetter } from '../src/terminal/precision-bars.js';
+import { lexAnsi } from '../src/terminal/ansi-parse.js';
 
 export const visual_check_comparison = test('terminal precision bar rendering', ({ t, l, a: { eq } }) => {
   t('exemptFromAsserting', true);
