@@ -1,8 +1,8 @@
 import { test } from 'tst';
 import { colors } from '../terminal/colors.js';
 import { half_block } from '../terminal.js';
-import { rainbow_hsluv } from './rainbow_hsluv.js';
-import { hsluv2rgb, rgb2hsluv } from './hsluv_conversion.js';
+import { rainbow_hsluv } from '../color/rainbow_hsluv.js';
+import { hsluv2rgb, rgb2hsluv } from '../color/hsluv_conversion.js';
 
 export const hsluv_rgb_round_trip = test(({a: {eqE}}) => {
   for (let i = 0; i < 10000; ++i) {
