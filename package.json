@@ -1,7 +1,10 @@
 {
-  "name": "@slu/ts-utils",
+  "name": "@unphased/ts-utils",
   "version": "0.2.0",
   "description": "A collection of typescript utilities",
+  "files": [
+    "dist/"
+  ],
   "exports": {
     ".": "./dist/utils.js",
     "./terminal": "./dist/terminal.js",
