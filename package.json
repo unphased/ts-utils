@@ -1,7 +1,7 @@
 {
-  "name": "ts-utils",
-  "version": "0.1.0",
-  "description": "Slu's typescript utils",
+  "name": "@slu/ts-utils",
+  "version": "0.2.0",
+  "description": "A collection of typescript utilities",
   "exports": {
     ".": "./dist/utils.js",
     "./terminal": "./dist/terminal.js",
@@ -19,7 +19,7 @@
     "./web": "./dist/web/htmlify.d.ts"
   },
 
-  "//": [ "TODO: make web .d.ts live somewhere less awkward" ],
+  "typesComments": [ "TODO: make web .d.ts live somewhere less awkward" ],
 
   "type": "module",
   "scripts": {
@@ -46,7 +46,7 @@
     "helpers"
   ],
   "author": "Steven Lu",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/unphased/ts-utils/issues"
   },

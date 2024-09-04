@@ -6,3 +6,7 @@ test-results/
 .aider*
 # Git hooks
 .git/hooks/
+
+tst-results/
+
+test-context.json
