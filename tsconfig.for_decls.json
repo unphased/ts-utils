@@ -7,10 +7,11 @@
     "downlevelIteration": true
   },
   "files": [
-    "utils.ts",
-    "terminal.ts",
-    "node/format.ts",
-    "color/index.ts"
+    "src/utils.ts",
+    "src/terminal.ts",
+    "src/node/format.ts",
+    "src/color/index.ts",
+    "src/web/htmlify.ts"
   ]
 }
 

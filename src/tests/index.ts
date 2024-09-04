@@ -268,8 +268,8 @@ export const memoizer_check_via_prime_computation = test('memoize', ({l, a:{eq, 
 
 });
 
-import { renderHorizBar, renderBarRatioComparisonLowerIsBetter } from '../src/terminal/precision-bars.js';
-import { lexAnsi } from '../src/terminal/ansi-parse.js';
+import { renderHorizBar, renderBarRatioComparisonLowerIsBetter } from '../terminal/precision-bars.js';
+import { lexAnsi } from '../terminal/ansi-parse.js';
 
 export const visual_check_comparison = test('terminal precision bar rendering', ({ t, l, a: { eq } }) => {
   t('exemptFromAsserting', true);

@@ -20,7 +20,7 @@ function resolveBinding(item: Item, opts?: Options, key?: string): HTMLElement {
 
   if (newbindp === '') {
     const input = document.createElement('input');
-    input[opts.input_binding.type === 'checkbox' ? 'checked' : 'value']
+    (input as any)[opts.input_binding.type === 'checkbox' ? 'checked' : 'value']
       = opts.input_binding.ref[opts.input_binding.prop];
     input.type = opts.input_binding.type;
     input.addEventListener('change', (e) => {
