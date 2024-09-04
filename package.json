@@ -8,7 +8,7 @@
     "./node/format": "./dist/node/format.js",
     "./color": "./dist/color/index.js",
 
-    "./web": "./dist-web"
+    "./web/htmlify": "./dist-web/src/web/htmlify.js"
   },
   "types": {
     ".": "./dist/utils.d.ts",
