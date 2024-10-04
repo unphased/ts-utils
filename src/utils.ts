@@ -664,3 +664,15 @@ export class LRUCacheMap<K, V> {
   }
 }
 
+export function attemptNumberParse(value) {
+  const type = typeof value;
+  if (type !== 'number' && type !== 'string') {
+    return value;
+  }
+  // if it is clearly parseable to a number, then make it one, otherwise leave it as-is (likely a string)
+  const trimmed = value.trim();
+  const number = Number(trimmed);
+  const trailing_leading_zeros_cleaned = trimmed.replace(/\.\d*(0+)$/)
+  if (number.toString() === trimmed) {}
+}
+
