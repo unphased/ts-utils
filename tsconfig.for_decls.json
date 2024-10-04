@@ -11,6 +11,7 @@
     "src/terminal.ts",
     "src/node/format.ts",
     "src/color/index.ts",
+    "src/structures/LRUCacheMap.ts",
     "src/web/htmlify.ts"
   ]
 }

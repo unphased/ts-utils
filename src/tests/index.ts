@@ -5,6 +5,12 @@ import { format } from "../node/format.js";
 import { colors } from '../terminal.js';
 import { Chainable } from '../utils.js';
 
+// TODO automate this
+export * from './color.js';
+export * from './test_minimatch_regex.js';
+export * from './web.js';
+export * from './LRUCacheMap.js';
+
 // this tests/index.ts body is generally for testing stuff from utils. For simplicity, has the entry point for testing and re-export of other deps using tests at the bottom.
 
 export const cartesian_simple = test(({l, a:{eq}}) => {
@@ -487,10 +493,6 @@ export const statistics_class_tests = test('Statistics class', ({l, a: {eq, eqO}
   cachedStats.setData([1, 3, 5, 7, 9]);
   eq(cachedStats.mean(), 5); // Should recalculate
 });
-
-export * from './color.js';
-export * from './test_minimatch_regex.js';
-export * from './web.js';
 
 export const chainable_tests = test('Chainable class', ({l, a: {eqO}}) => {
   const chain = new Chainable({});

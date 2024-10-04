@@ -11,6 +11,7 @@
     "./terminal": "./dist/terminal.js",
     "./node/format": "./dist/node/format.js",
     "./color": "./dist/color/index.js",
+    "./LRUCacheMap": "./dist/structures/LRUCacheMap.js",
 
     "./web/htmlify": "./dist-web/src/web/htmlify.js"
   },
@@ -19,6 +20,7 @@
     "./terminal": "./dist/terminal.d.ts",
     "./node/format": "./dist/node/format.d.ts",
     "./color": "./dist/color/index.d.ts",
+    "./LRUCacheMap": "./dist/structures/LRUCacheMap.d.ts",
 
     "./web": "./dist/web/htmlify.d.ts"
   },
@@ -29,7 +31,7 @@
   "scripts": {
     "test": "npm run build && npm run build-test && node --enable-source-maps dist/tests.js --import-js-only",
     "build-test": "esbuild src/tests/index.ts --bundle --sourcemap --platform=node --format=esm --outfile=dist/tests.js --inject:src/shims/htmlify-shim.js --external:tst --external:jsdom",
-    "build": "cp pre-commit .git/hooks && rm -rf dist dist-web && for file in terminal.ts utils.ts node/format.ts color/index.ts; do esbuild src/$file --bundle --sourcemap --platform=node --format=esm --outfile=dist/${file%.ts}.js; done && for file in src/web/*.ts; do esbuild $file --bundle --sourcemap --platform=browser --format=esm --outfile=dist-web/${file%.ts}.js; done",
+    "build": "cp pre-commit .git/hooks && rm -rf dist dist-web && for file in terminal.ts utils.ts node/format.ts color/index.ts structures/LRUCacheMap.ts; do esbuild src/$file --bundle --sourcemap --platform=node --format=esm --outfile=dist/${file%.ts}.js; done && for file in src/web/*.ts; do esbuild $file --bundle --sourcemap --platform=browser --format=esm --outfile=dist-web/${file%.ts}.js; done",
     "postbuild": "time tsc -p tsconfig.for_decls.json",
     "watch": "watchexec --exts ts,json -- npm run build",
     "watch-test": "watchexec -w src -w package.json -e ts,js,json -r --stop-signal=INT -- npm run test \"$@\"",
@@ -64,7 +66,6 @@
     "eslint": "^8.57.0",
     "jsdom": "^25.0.0",
     "tst": "file:../tst",
-    "tsx": "^4.7.1",
     "typescript": "^5.3.3"
   },
   "dependencies": {

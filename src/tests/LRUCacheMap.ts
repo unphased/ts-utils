@@ -1,6 +1,5 @@
 import { test } from 'tst';
-import { LRUCacheMap } from '../utils.js';
-
+import { LRUCacheMap } from '../structures/LRUCacheMap.js';
 
 export const LRUCache_01_basic_functionality = test('LRUCacheMap', ({ l, a: { eq } }) => {
   // Test 1: Basic functionality
