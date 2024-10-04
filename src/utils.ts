@@ -5,7 +5,7 @@ export const emph_arrow = (color: string) => `${color}${colors.curly_underline}=
 // this effectively also converts from win path.sep to unix ("/").
 // Note, this code ideally I could figure out how to share... but I can't and it's duplicated in 2 more places:
 // (1) client.ts (2) babel log plugin
-export const pathShortName = (pth: string, pathSegments = 1) => {
+export function pathShortName(pth: string, pathSegments = 1) {
   if (pth.match(/index\.ts$/)) {
     pathSegments++;
   }
@@ -77,7 +77,7 @@ export const sum = (arr: number[]) => arr.reduce((a, b) => a + b, 0);
 
 // first array needs to be one larger than second array. join into one array like zipping a zipper. First array becomes
 // even indices. Final array length is always odd
-export const zipper = (arr1: any[], arr2: any[]) => {
+export function zipper(arr1: any[], arr2: any[]) {
   const result: any[] = [];
   for (let i = 0; i < arr2.length; ++i) {
     result.push(arr1[i]);
@@ -85,7 +85,7 @@ export const zipper = (arr1: any[], arr2: any[]) => {
   }
   result.push(arr1[arr2.length]);
   return result;
-};
+}
 export const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 // a twist on util.inspect
@@ -172,10 +172,8 @@ type PickByValueTypes<T, ValueType> = {
   [K in keyof T as T[K] extends ValueType ? K : never]: T[K]
 };
 
-export const groupBy = <T, P extends keyof PickByValueTypes<T, PropertyKey>>(
-  arr: T[],
-  prop: P
-) => {
+export function groupBy<T, P extends keyof PickByValueTypes<T, PropertyKey>>(arr: T[],
+  prop: P) {
   const result: Record<PropertyKey, T[]> = {};
   arr.forEach(item => {
     const key = item[prop] as PropertyKey; // Trust that T[P] is a PropertyKey
@@ -185,7 +183,7 @@ export const groupBy = <T, P extends keyof PickByValueTypes<T, PropertyKey>>(
     result[key].push(item);
   });
   return result;
-};
+}
 
 export function pick<T extends object, K extends keyof T>(obj: T, ...keys: K[]): Pick<T, K> {
   return keys.reduce((result, key) => {
@@ -196,20 +194,22 @@ export function pick<T extends object, K extends keyof T>(obj: T, ...keys: K[]):
   }, {} as Pick<T, K>);
 }
 
-export const mapObjectProps = <T, V>(obj: { [k: string]: T; }, cb: (k: string, v: T) => V, filter = (k, v) => k !== undefined): V[] => {
-  let e = Object.entries(obj)
+export function mapObjectProps<T, V>(obj: { [k: string]: T; }, cb: (k: string, v: T) => V, filter = (k, v) => k !== undefined): V[] {
+  let e = Object.entries(obj);
   if (filter) e = e.filter(([k, v]) => filter(k, v));
   return e.map(([k, v]) => cb(k, v));
-};
+}
 
 // a bit like json but more readable
-export const kvString = (x: { [k: PropertyKey]: any }) => mapObjectProps(x, (k, v) => `${k}=${v}`).join(' ');
+export function kvString(x: { [k: PropertyKey]: any; }) {
+  return mapObjectProps(x, (k, v) => `${k}=${v}`).join(' ');
+}
 
 // TODO make it use a deep equal
-export const identical = <T>(a: T[]) => {
+export function identical<T>(a: T[]) {
   const v0 = JSON.stringify(a[0]);
   return a.every((v) => JSON.stringify(v) === v0);
-};
+}
 
 // thanks to @jcalz https://stackoverflow.com/questions/78169579/how-to-transfer-type-from-variadic-parameters-into-a-different-shape-in-the-retu?noredirect=1#comment137810613_78169579
 
@@ -238,11 +238,19 @@ function recursivelyGenerateCartesianProduct(groups: any[][], prefix: any[] = []
 }
 
 // only use on small cardinalities please. very computationally inefficient
-export const cartesian_slow = <T extends EnumOrArray[]>(...inputs: T): { [I in keyof T]: ConvertArrayToElementAndEnumToKey<T[I]> }[] => recursivelyGenerateCartesianProduct(inputs.map(inp => Array.isArray(inp) ? inp : enum_to_keys(inp))) as any;
+export function cartesian_slow<T extends EnumOrArray[]>(...inputs: T): {
+  [I in keyof T]: ConvertArrayToElementAndEnumToKey<T[I]>;
+}[] {
+  return recursivelyGenerateCartesianProduct(inputs.map(inp => Array.isArray(inp) ? inp : enum_to_keys(inp))) as any;
+}
 
-export const cartesian_enum_vals_slow = <T extends EnumOrArray[]>(...inputs: T): { [I in keyof T]: ConvertEnumOrArrayToElement<T[I]> }[] => recursivelyGenerateCartesianProduct(inputs.map(inp => Array.isArray(inp) ? inp : enum_to_values(inp))) as any;
+export function cartesian_enum_vals_slow<T extends EnumOrArray[]>(...inputs: T): {
+  [I in keyof T]: ConvertEnumOrArrayToElement<T[I]>;
+}[] {
+  return recursivelyGenerateCartesianProduct(inputs.map(inp => Array.isArray(inp) ? inp : enum_to_values(inp))) as any;
+}
 
-const sanity_check = () => {
+function sanity_check() {
   enum Color {
     Red = 'red',
     Green = 'green',
@@ -255,10 +263,10 @@ const sanity_check = () => {
   }
   const xx = enum_to_values(ColorNum);
   const yy = enum_to_keys(ColorNum);
-  const xy = recursivelyGenerateCartesianProduct([xx,yy, ['a','b','c']]);
+  const xy = recursivelyGenerateCartesianProduct([xx, yy, ['a', 'b', 'c']]);
   console.log('xxxyyy', x, y, xx, yy, xy);
-  const z = cartesian_slow(Color, ColorNum, ['a','b','c'] as const);
-  const zz = cartesian_enum_vals_slow(Color, ColorNum, ['a','b','c'] as const);
+  const z = cartesian_slow(Color, ColorNum, ['a', 'b', 'c'] as const);
+  const zz = cartesian_enum_vals_slow(Color, ColorNum, ['a', 'b', 'c'] as const);
   console.log('cartesians', z, zz);
 
   // this works
@@ -277,11 +285,13 @@ const sanity_check = () => {
   type ccc = ConvertToArrayElement<typeof colsconst>;
   const combos2 = cartesian_slow(colsconst, numbers, size, OtherColors);
 
-  console.log('combos', combos)
-  console.log('combos2', combos2)
+  console.log('combos', combos);
+  console.log('combos2', combos2);
 }
 
-export const cartesianAt = <T extends EnumOrArray[]>(inputs: T, i: number): { [I in keyof T]: ConvertArrayToElementAndEnumToKey<T[I]> } => {
+export function cartesianAt<T extends EnumOrArray[]>(inputs: T, i: number): {
+  [I in keyof T]: ConvertArrayToElementAndEnumToKey<T[I]>;
+} {
   // for enums, yield their keys per usual preference
   const input_arrs = inputs.map(inp => Array.isArray(inp) ? inp : enum_to_keys(inp));
   const input_lens = input_arrs.map(arr => arr.length);
@@ -297,7 +307,7 @@ export const cartesianAt = <T extends EnumOrArray[]>(inputs: T, i: number): { [I
   }
   // progressively modulo index walking backward in cpc
   const quots: number[] = [];
-  let curi = i
+  let curi = i;
   for (let j = cum_prod_counts.length - 1; j >= 0; j--) {
     const cpcj = cum_prod_counts[j];
     quots.push(Math.floor(curi / cpcj));
@@ -313,14 +323,18 @@ export const cartesianAt = <T extends EnumOrArray[]>(inputs: T, i: number): { [I
 }
 
 // suppose you want to sample from some cart product, need the len to be able to do a uniform random sample on the set.
-export const cartesianLen = <T extends EnumOrArray[]>(...inputs: T): number => {
+export function cartesianLen<T extends EnumOrArray[]>(...inputs: T): number {
   return inputs.reduce((acc, inp) => acc * (Array.isArray(inp) ? inp.length : enum_to_keys(inp).length), 1);
 }
 
-export const cartesianAll = <T extends EnumOrArray[]>(...inputs: T): { [I in keyof T]: ConvertArrayToElementAndEnumToKey<T[I]> }[] => {
+export function cartesianAll<T extends EnumOrArray[]>(...inputs: T): {
+  [I in keyof T]: ConvertArrayToElementAndEnumToKey<T[I]>;
+}[] {
   const len = cartesianLen(...inputs);
   console.error('len', len);
-  const result: { [I in keyof T]: ConvertArrayToElementAndEnumToKey<T[I]> }[] = [];
+  const result: {
+    [I in keyof T]: ConvertArrayToElementAndEnumToKey<T[I]>;
+  }[] = [];
   for (let i = 0; i < len; i++) {
     result.push(cartesianAt(inputs, i));
   }
@@ -331,7 +345,7 @@ export const cartesianAll = <T extends EnumOrArray[]>(...inputs: T): { [I in key
 
 // This is not going to be useful for the common case of the target function being a recursive function. we
 // generally cannot modify recursive calls to inject memoization. Be warned.
-export const memoized = <T extends any[], U>(fn: (...args: T) => U) => {
+export function memoized<T extends any[], U>(fn: (...args: T) => U) {
   const cache = new Map<string, U>();
   // let hits = 0
   return (...args: T): U => {
@@ -349,9 +363,9 @@ export const memoized = <T extends any[], U>(fn: (...args: T) => U) => {
     // console.error('cache size hits', cache.size, hits);
     return result;
   };
-};
+}
 
-export const timed = <T extends any[], U>(fn: (...args: T) => U) => {
+export function timed<T extends any[], U>(fn: (...args: T) => U) {
   return (...args: T): [U, string] => {
     const start = process.hrtime();
     const result = fn(...args);
@@ -360,7 +374,7 @@ export const timed = <T extends any[], U>(fn: (...args: T) => U) => {
   };
 }
 
-export const timedMs = <T extends any[], U>(fn: (...args: T) => U) => {
+export function timedMs<T extends any[], U>(fn: (...args: T) => U) {
   return (...args: T): [U, number] => {
     const start = process.hrtime();
     const result = fn(...args);
