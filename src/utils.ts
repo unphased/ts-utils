@@ -495,65 +495,6 @@ export class Chainable<T> {
   }
 }
 
-export class Node<T> {
-  constructor(public value: T, public prev: Node<T> | null = null, public next: Node<T> | null = null) {}
-}
-
-export class DoublyLinkedList<T> {
-  private head: Node<T> | null = null;
-  private tail: Node<T> | null = null;
-
-  addToFront(value: T): Node<T> {
-    const newNode = new Node(value);
-    if (!this.head) {
-      this.head = this.tail = newNode;
-    } else {
-      newNode.next = this.head;
-      this.head.prev = newNode;
-      this.head = newNode;
-    }
-    return newNode;
-  }
-
-  moveToFront(node: Node<T>): void {
-    if (node === this.head) return;
-    this.remove(node);
-    node.next = this.head;
-    node.prev = null;
-    if (this.head) this.head.prev = node;
-    this.head = node;
-    if (!this.tail) this.tail = node;
-  }
-
-  removeLast(): T | undefined {
-    if (!this.tail) return undefined;
-    const value = this.tail.value;
-    this.remove(this.tail);
-    return value;
-  }
-
-  remove(node: Node<T>): void {
-    if (node.prev) node.prev.next = node.next;
-    if (node.next) node.next.prev = node.prev;
-    if (node === this.head) this.head = node.next;
-    if (node === this.tail) this.tail = node.prev;
-  }
-
-  clear(): void {
-    this.head = this.tail = null;
-  }
-
-  toArray(): T[] {
-    const result: T[] = [];
-    let current = this.head;
-    while (current) {
-      result.push(current.value);
-      current = current.next;
-    }
-    return result;
-  }
-}
-
 export function attemptNumberParse(value) {
   const type = typeof value;
   if (type !== 'number' && type !== 'string') {
