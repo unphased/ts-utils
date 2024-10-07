@@ -1,5 +1,5 @@
 import { LaunchTests, test } from 'tst';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import { cartesian_slow, cartesian_enum_vals_slow, cartesianAt, cartesianAll, identical, memoized, timed, Statistics, pick, isMain } from '../utils.js';
 import { format } from "../node/format.js";
 import { colors } from '../terminal.js';
@@ -10,6 +10,7 @@ export * from './color.js';
 export * from './test_minimatch_regex.js';
 export * from './web.js';
 export * from './LRUCacheMap.js';
+export * from './isMain_test.js';
 
 // this tests/index.ts body is generally for testing stuff from utils. For simplicity, has the entry point for testing and re-export of other deps using tests at the bottom.
 
@@ -276,6 +277,7 @@ export const memoizer_check_via_prime_computation = test('memoize', ({l, a:{eq, 
 
 import { renderHorizBar, renderBarRatioComparisonLowerIsBetter } from '../terminal/precision-bars.js';
 import { lexAnsi } from '../terminal/ansi-parse.js';
+import { mkdtemp } from 'fs/promises';
 
 export const visual_check_comparison = test('terminal precision bar rendering', ({ t, l, a: { eq } }) => {
   t('exemptFromAsserting', true);
@@ -572,29 +574,4 @@ export const pick_tests = test('pick function', ({l, a: {eqO, eq}}) => {
   eqO(pick(obj1, 'a', 'b', 'c', 'd', 'e', 'f', 'g'), obj1);
 });
 
-// export const LRUCache_24_cleanup_callback_with_custom_cache = test('LRUCacheMap', ({l, a: {eq, eqO}}) => {
-//   // Test 24: Cleanup callback with custom cache
-//   const evictedItems: [string, number][] = [];
-//   const cleanupCallback = (key: string, value: number) => {
-//     evictedItems.push([key, value]);
-//   };
-//   
-
-export const isMain_test = test('isMain function', ({l, a: {eq}}) => {
-  // Test when the module is the main module
-  const originalArgv = process.argv;
-  const originalImportMetaUrl = import.meta.url;
-  
-  process.argv[1] = fileURLToPath(import.meta.url);
-  eq(isMain(), true, 'Should return true when the module is the main module');
-
-  // Test when the module is not the main module
-  process.argv[1] = 'some/other/path.js';
-  eq(isMain(), false, 'Should return false when the module is not the main module');
-
-  // Restore original values
-  process.argv = originalArgv;
-  import.meta.url = originalImportMetaUrl;
-});
-
-isMain() && LaunchTests('./dist/', {echo_test_logging: true});
+isMain(import.meta.url).then(is_main => is_main && LaunchTests('./dist/', {echo_test_logging: true}));

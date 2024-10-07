@@ -496,9 +496,12 @@ export class Chainable<T> {
 }
 
 import { fileURLToPath } from 'url';
+import { promises as fsp } from 'fs';
 
 /** Use me with *import.meta.url* to determine if the current module is the main module. */
-export function isMain(import_meta_url: string): boolean {
-  return process.argv[1] === fileURLToPath(import_meta_url);
+export async function isMain(import_meta_url: string) {
+  if (process.argv.length < 2) return false;
+  const res = await Promise.all([fsp.realpath(process.argv[1]), fsp.realpath(fileURLToPath(import_meta_url))]);
+  return res[0] === res[1];
 }
 
