@@ -1,6 +1,6 @@
 import { LaunchTests, test } from 'tst';
 import { fileURLToPath } from 'url';
-import { cartesian_slow, cartesian_enum_vals_slow, cartesianAt, cartesianAll, identical, memoized, timed, Statistics, pick } from '../utils.js';
+import { cartesian_slow, cartesian_enum_vals_slow, cartesianAt, cartesianAll, identical, memoized, timed, Statistics, pick, isMain } from '../utils.js';
 import { format } from "../node/format.js";
 import { colors } from '../terminal.js';
 import { Chainable } from '../utils.js';
@@ -580,25 +580,21 @@ export const pick_tests = test('pick function', ({l, a: {eqO, eq}}) => {
 //   };
 //   
 
-const isProgramLaunchContext = () => {
-  return fileURLToPath(import.meta.url) === process.argv[1];
-}
-
 export const isMain_test = test('isMain function', ({l, a: {eq}}) => {
   // Test when the module is the main module
   const originalArgv = process.argv;
   const originalImportMetaUrl = import.meta.url;
   
   process.argv[1] = fileURLToPath(import.meta.url);
-  eq(isProgramLaunchContext(), true, 'Should return true when the module is the main module');
+  eq(isMain(), true, 'Should return true when the module is the main module');
 
   // Test when the module is not the main module
   process.argv[1] = 'some/other/path.js';
-  eq(isProgramLaunchContext(), false, 'Should return false when the module is not the main module');
+  eq(isMain(), false, 'Should return false when the module is not the main module');
 
   // Restore original values
   process.argv = originalArgv;
   import.meta.url = originalImportMetaUrl;
 });
 
-isProgramLaunchContext() && LaunchTests('./dist/', {echo_test_logging: true});
+isMain() && LaunchTests('./dist/', {echo_test_logging: true});
