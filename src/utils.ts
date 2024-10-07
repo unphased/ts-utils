@@ -495,15 +495,10 @@ export class Chainable<T> {
   }
 }
 
-export function attemptNumberParse(value) {
-  const type = typeof value;
-  if (type !== 'number' && type !== 'string') {
-    return value;
-  }
-  // if it is clearly parseable to a number, then make it one, otherwise leave it as-is (likely a string)
-  const trimmed = value.trim();
-  const number = Number(trimmed);
-  const trailing_leading_zeros_cleaned = trimmed.replace(/\.\d*(0+)$/)
-  if (number.toString() === trimmed) {}
+import { fileURLToPath } from 'url';
+
+/** Use me with *import.meta.url* to determine if the current module is the main module. */
+export function isMain(import_meta_url: string): boolean {
+  return process.argv[1] === fileURLToPath(import_meta_url);
 }
 
