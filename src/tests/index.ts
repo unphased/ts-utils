@@ -584,4 +584,21 @@ const isProgramLaunchContext = () => {
   return fileURLToPath(import.meta.url) === process.argv[1];
 }
 
+export const isMain_test = test('isMain function', ({l, a: {eq}}) => {
+  // Test when the module is the main module
+  const originalArgv = process.argv;
+  const originalImportMetaUrl = import.meta.url;
+  
+  process.argv[1] = fileURLToPath(import.meta.url);
+  eq(isProgramLaunchContext(), true, 'Should return true when the module is the main module');
+
+  // Test when the module is not the main module
+  process.argv[1] = 'some/other/path.js';
+  eq(isProgramLaunchContext(), false, 'Should return false when the module is not the main module');
+
+  // Restore original values
+  process.argv = originalArgv;
+  import.meta.url = originalImportMetaUrl;
+});
+
 isProgramLaunchContext() && LaunchTests('./dist/', {echo_test_logging: true});
