@@ -29,7 +29,26 @@ console.log("argv:", process.argv, "i.m.u:", import.meta.url, "result:", isMain(
   await fsp.writeFile(tmpCodeFilePth, code);
 
   // launch directly should be isMain true
+  const directOut = await spawn('node', ['--input-type=module', tmpCodeFilePth], { bufferStdout: true });
+  l('output from direct file execution:', directOut.stdout);
+  match(directOut.stdout, /result: true/);
 
+  // Clean up the temporary file
+  await fsp.unlink(tmpCodeFilePth);
 
+  // Test with a different file as the main module
+  const differentMainCode = /* typescript */ `
+import { isMain } from "./dist/utils.js";
+import("file://${tmpCodeFilePth}");
+`;
+  const differentMainFilePath = path.join(tmpdir, 'ts-utils-temp-different-main.ts');
+  await fsp.writeFile(differentMainFilePath, differentMainCode);
+
+  const differentMainOut = await spawn('node', ['--input-type=module', differentMainFilePath], { bufferStdout: true });
+  l('output from different main file:', differentMainOut.stdout);
+  match(differentMainOut.stdout, /result: false/);
+
+  // Clean up the different main file
+  await fsp.unlink(differentMainFilePath);
 });
 
