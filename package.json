@@ -1,6 +1,6 @@
 {
   "name": "@unphased/ts-utils",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "A collection of typescript utilities",
   "files": [
     "dist/",
@@ -13,7 +13,8 @@
     "./color": "./dist/color/index.js",
     "./LRUCacheMap": "./dist/structures/LRUCacheMap.js",
 
-    "./web/htmlify": "./dist-web/src/web/htmlify.js"
+    "./web/htmlify": "./dist-web/src/web/htmlify.js",
+    "./network": "./dist/network/index.js"
   },
   "types": {
     ".": "./dist/utils.d.ts",
@@ -22,7 +23,8 @@
     "./color": "./dist/color/index.d.ts",
     "./LRUCacheMap": "./dist/structures/LRUCacheMap.d.ts",
 
-    "./web": "./dist/web/htmlify.d.ts"
+    "./web": "./dist/web/htmlify.d.ts",
+    "./network": "./dist/network/index.d.ts"
   },
 
   "typesComments": [ "TODO: make web .d.ts live somewhere less awkward" ],
@@ -31,7 +33,7 @@
   "scripts": {
     "test": "npm run build && npm run build-test && node --enable-source-maps dist/tests.js --import-js-only",
     "build-test": "esbuild src/tests/index.ts --bundle --sourcemap --platform=node --format=esm --outfile=dist/tests.js --inject:src/shims/htmlify-shim.js --external:tst --external:jsdom",
-    "build": "cp pre-commit .git/hooks && rm -rf dist dist-web && for file in terminal.ts utils.ts node/format.ts color/index.ts structures/LRUCacheMap.ts; do esbuild src/$file --bundle --sourcemap --platform=node --format=esm --outfile=dist/${file%.ts}.js; done && for file in src/web/*.ts; do esbuild $file --bundle --sourcemap --platform=browser --format=esm --outfile=dist-web/${file%.ts}.js; done",
+    "build": "cp pre-commit .git/hooks && rm -rf dist dist-web && for file in terminal.ts utils.ts node/format.ts color/index.ts structures/LRUCacheMap.ts network/index.ts; do esbuild src/$file --bundle --sourcemap --platform=node --format=esm --outfile=dist/${file%.ts}.js; done && for file in src/web/*.ts; do esbuild $file --bundle --sourcemap --platform=browser --format=esm --outfile=dist-web/${file%.ts}.js; done",
     "postbuild": "time tsc -p tsconfig.for_decls.json",
     "watch": "watchexec --exts ts,json -- npm run build",
     "watch-test": "watchexec -w src -w package.json -e ts,js,json -r --stop-signal=INT -- npm run test \"$@\"",
