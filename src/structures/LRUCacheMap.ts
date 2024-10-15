@@ -57,6 +57,8 @@ class DoublyLinkedList<T> {
   }
 }
 
+import util from 'util';
+
 export class LRUCacheMap<K, V> {
   private capacity: number;
   private cache: Map<K, { value: V; node: Node<K>; }>;
@@ -68,6 +70,21 @@ export class LRUCacheMap<K, V> {
     this.cache = new Map();
     this.list = new DoublyLinkedList<K>();
     this.cleanupCallback = cleanupCallback;
+  }
+
+  toString(): string {
+    const size = this.cache.size;
+    const mru = this.list.head?.value;
+    const lru = this.list.tail?.value;
+    const mruValue = mru !== undefined ? this.cache.get(mru)?.value : undefined;
+    const lruValue = lru !== undefined ? this.cache.get(lru)?.value : undefined;
+
+    return util.inspect({
+      size,
+      capacity: this.capacity,
+      mru: mru !== undefined ? { key: mru, value: mruValue } : 'empty',
+      lru: lru !== undefined ? { key: lru, value: lruValue } : 'empty',
+    }, { colors: true, depth: 1, breakLength: Infinity });
   }
 
   setCapacity(newCapacity: number): void {
