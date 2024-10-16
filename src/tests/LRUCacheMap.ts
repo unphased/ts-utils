@@ -460,45 +460,45 @@ export const LRUCache_24_toString_output = test('LRUCacheMap', ({ l, a: { includ
   let output = cache.toString();
   l("Empty cache:", output);
   const cleanedOutput = lexAnsi(output).cleaned[0];
-  includes(cleanedOutput, 'size: 0', "Empty cache should show size 0");
-  includes(cleanedOutput, 'capacity: 3', "Empty cache should show capacity 3");
-  includes(cleanedOutput, 'mru: "empty"', "Empty cache should show MRU as empty");
-  includes(cleanedOutput, 'lru: "empty"', "Empty cache should show LRU as empty");
+  includes(cleanedOutput, 'size: 0', 'Empty cache should show size 0');
+  includes(cleanedOutput, 'capacity: 3', 'Empty cache should show capacity 3');
+  includes(cleanedOutput, "mru: 'empty'", 'Empty cache should show MRU as empty');
+  includes(cleanedOutput, "lru: 'empty'", 'Empty cache should show LRU as empty');
 
   // Add one item
-  cache.put("a", 1);
+  cache.put('a', 1);
   output = cache.toString();
-  l("Cache with one item:", output);
+  l('Cache with one item:', output);
   const cleanedOneItem = lexAnsi(output).cleaned[0];
-  includes(cleanedOneItem, 'size: 1', "Cache with one item should show size 1");
-  includes(cleanedOneItem, 'mru: { key: "a", value: 1 }', "Cache with one item should show correct MRU");
-  includes(cleanedOneItem, 'lru: { key: "a", value: 1 }', "Cache with one item should show correct LRU");
+  includes(cleanedOneItem, 'size: 1', 'Cache with one item should show size 1');
+  includes(cleanedOneItem, "mru: { key: 'a', value: 1 }", 'Cache with one item should show correct MRU');
+  includes(cleanedOneItem, "lru: { key: 'a', value: 1 }", 'Cache with one item should show correct LRU');
 
   // Add more items
-  cache.put("b", 2);
-  cache.put("c", 3);
+  cache.put('b', 2);
+  cache.put('c', 3);
   output = cache.toString();
-  l("Full cache:", output);
+  l('Full cache:', output);
   const cleanedFull = lexAnsi(output).cleaned[0];
-  includes(cleanedFull, 'size: 3', "Full cache should show size 3");
-  includes(cleanedFull, 'mru: { key: "c", value: 3 }', "Full cache should show correct MRU");
-  includes(cleanedFull, 'lru: { key: "a", value: 1 }', "Full cache should show correct LRU");
+  includes(cleanedFull, 'size: 3', 'Full cache should show size 3');
+  includes(cleanedFull, "mru: { key: 'c', value: 3 }", 'Full cache should show correct MRU');
+  includes(cleanedFull, "lru: { key: 'a', value: 1 }", 'Full cache should show correct LRU');
 
   // Access least recently used item
-  cache.get("a");
+  cache.get('a');
   output = cache.toString();
-  l("Cache after accessing LRU:", output);
+  l('Cache after accessing LRU:', output);
   const cleanedAfterAccess = lexAnsi(output).cleaned[0];
-  includes(cleanedAfterAccess, 'mru: { key: "a", value: 1 }', "Cache should show updated MRU after accessing LRU");
-  includes(cleanedAfterAccess, 'lru: { key: "b", value: 2 }', "Cache should show updated LRU after accessing previous LRU");
+  includes(cleanedAfterAccess, "mru: { key: 'a', value: 1 }", 'Cache should show updated MRU after accessing LRU');
+  includes(cleanedAfterAccess, "lru: { key: 'b', value: 2 }", 'Cache should show updated LRU after accessing previous LRU');
 
   // Exceed capacity
-  cache.put("d", 4);
+  cache.put('d', 4);
   output = cache.toString();
-  l("Cache after exceeding capacity:", output);
+  l('Cache after exceeding capacity:', output);
   const cleanedExceeded = lexAnsi(output).cleaned[0];
-  includes(cleanedExceeded, 'size: 3', "Cache should maintain size after exceeding capacity");
-  includes(cleanedExceeded, 'mru: { key: "d", value: 4 }', "Cache should show new item as MRU");
-  includes(cleanedExceeded, 'lru: { key: "c", value: 3 }', "Cache should show correct LRU after eviction");
+  includes(cleanedExceeded, 'size: 3', 'Cache should maintain size after exceeding capacity');
+  includes(cleanedExceeded, "mru: { key: 'd', value: 4 }", 'Cache should show new item as MRU');
+  includes(cleanedExceeded, "lru: { key: 'c', value: 3 }", 'Cache should show correct LRU after eviction');
 });
 
