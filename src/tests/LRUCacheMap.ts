@@ -450,14 +450,14 @@ export const LRUCache_23_multiple_cleanup_calls = test('LRUCacheMap', ({ l, a: {
   eq(cache.size(), 0, "Cache should be empty");
 });
 
-export const LRUCache_24_toString_output = test('LRUCacheMap', ({ l, a: { is } }) => {
+export const LRUCache_24_toString_output = test('LRUCacheMap', ({ l, a: { includes } }) => {
   // Test 24: Verify toString() output
   const cache = new LRUCacheMap<string, number>(3);
 
   // Empty cache
   let output = cache.toString();
   l("Empty cache:", output);
-  is(output.includes('"size": 0'), "Empty cache should show size 0");
+  is(output.includes('size: 0'), "Empty cache should show size 0");
   is(output.includes('"capacity": 3'), "Empty cache should show capacity 3");
   is(output.includes('"mru": "empty"'), "Empty cache should show MRU as empty");
   is(output.includes('"lru": "empty"'), "Empty cache should show LRU as empty");
