@@ -1,5 +1,6 @@
 // Pulled out of https://github.com/Automattic/util-inspect/blob/master/index.js
 
+// I had to adjust it somewhat significantly for typescript to be happy here.
 
 /**
  * Module dependencies.

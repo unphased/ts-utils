@@ -1,4 +1,4 @@
-import * as util from 'util';
+import { inspect } from './util-inspect.js';
 
 const inspectSymbol = Symbol.for('nodejs.util.inspect.custom');
 
@@ -93,7 +93,7 @@ export class LRUCacheMap<K, V> {
     const mruValue = mru !== undefined ? this.cache.get(mru)?.value : undefined;
     const lruValue = lru !== undefined ? this.cache.get(lru)?.value : undefined;
 
-    return util.inspect({
+    return inspect({
       size,
       capacity: this.capacity,
       mru: mru !== undefined ? { key: mru, value: mruValue } : 'empty',
