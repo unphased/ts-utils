@@ -457,41 +457,41 @@ export const LRUCache_24_toString_output = test('LRUCacheMap', ({ l, a: { includ
   // Empty cache
   let output = cache.toString();
   l("Empty cache:", output);
-  is(output.includes('size: 0'), "Empty cache should show size 0");
-  is(output.includes('"capacity": 3'), "Empty cache should show capacity 3");
-  is(output.includes('"mru": "empty"'), "Empty cache should show MRU as empty");
-  is(output.includes('"lru": "empty"'), "Empty cache should show LRU as empty");
+  includes(output, 'size: 0', "Empty cache should show size 0");
+  includes(output, '"capacity": 3', "Empty cache should show capacity 3");
+  includes(output, '"mru": "empty"', "Empty cache should show MRU as empty");
+  includes(output, '"lru": "empty"', "Empty cache should show LRU as empty");
 
   // Add one item
   cache.put("a", 1);
   output = cache.toString();
   l("Cache with one item:", output);
-  is(output.includes('"size": 1'), "Cache with one item should show size 1");
-  is(output.includes('"mru": { "key": "a", "value": 1 }'), "Cache with one item should show correct MRU");
-  is(output.includes('"lru": { "key": "a", "value": 1 }'), "Cache with one item should show correct LRU");
+  includes(output, '"size": 1', "Cache with one item should show size 1");
+  includes(output, '"mru": { "key": "a", "value": 1 }', "Cache with one item should show correct MRU");
+  includes(output, '"lru": { "key": "a", "value": 1 }', "Cache with one item should show correct LRU");
 
   // Add more items
   cache.put("b", 2);
   cache.put("c", 3);
   output = cache.toString();
   l("Full cache:", output);
-  is(output.includes('"size": 3'), "Full cache should show size 3");
-  is(output.includes('"mru": { "key": "c", "value": 3 }'), "Full cache should show correct MRU");
-  is(output.includes('"lru": { "key": "a", "value": 1 }'), "Full cache should show correct LRU");
+  includes(output, '"size": 3', "Full cache should show size 3");
+  includes(output, '"mru": { "key": "c", "value": 3 }', "Full cache should show correct MRU");
+  includes(output, '"lru": { "key": "a", "value": 1 }', "Full cache should show correct LRU");
 
   // Access least recently used item
   cache.get("a");
   output = cache.toString();
   l("Cache after accessing LRU:", output);
-  is(output.includes('"mru": { "key": "a", "value": 1 }'), "Cache should show updated MRU after accessing LRU");
-  is(output.includes('"lru": { "key": "b", "value": 2 }'), "Cache should show updated LRU after accessing previous LRU");
+  includes(output, '"mru": { "key": "a", "value": 1 }', "Cache should show updated MRU after accessing LRU");
+  includes(output, '"lru": { "key": "b", "value": 2 }', "Cache should show updated LRU after accessing previous LRU");
 
   // Exceed capacity
   cache.put("d", 4);
   output = cache.toString();
   l("Cache after exceeding capacity:", output);
-  is(output.includes('"size": 3'), "Cache should maintain size after exceeding capacity");
-  is(output.includes('"mru": { "key": "d", "value": 4 }'), "Cache should show new item as MRU");
-  is(output.includes('"lru": { "key": "c", "value": 3 }'), "Cache should show correct LRU after eviction");
+  includes(output, '"size": 3', "Cache should maintain size after exceeding capacity");
+  includes(output, '"mru": { "key": "d", "value": 4 }', "Cache should show new item as MRU");
+  includes(output, '"lru": { "key": "c", "value": 3 }', "Cache should show correct LRU after eviction");
 });
 
