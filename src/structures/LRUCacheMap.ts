@@ -8,6 +8,14 @@ class DoublyLinkedList<T> {
   private head: Node<T> | null = null;
   private tail: Node<T> | null = null;
 
+  getHead(): T | undefined {
+    return this.head?.value;
+  }
+
+  getTail(): T | undefined {
+    return this.tail?.value;
+  }
+
   addToFront(value: T): Node<T> {
     const newNode = new Node(value);
     if (!this.head) {
@@ -74,8 +82,8 @@ export class LRUCacheMap<K, V> {
 
   toString(): string {
     const size = this.cache.size;
-    const mru = this.list.head?.value;
-    const lru = this.list.tail?.value;
+    const mru = this.list.getHead();
+    const lru = this.list.getTail();
     const mruValue = mru !== undefined ? this.cache.get(mru)?.value : undefined;
     const lruValue = lru !== undefined ? this.cache.get(lru)?.value : undefined;
 
