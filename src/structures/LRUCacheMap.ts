@@ -1,5 +1,7 @@
 import * as util from 'util';
 
+const inspectSymbol = Symbol.for('nodejs.util.inspect.custom');
+
 class Node<T> {
   constructor(public value: T, public prev: Node<T> | null = null, public next: Node<T> | null = null) { }
 }
@@ -81,6 +83,10 @@ export class LRUCacheMap<K, V> {
   }
 
   toString(): string {
+    return this[inspectSymbol]();
+  }
+
+  [inspectSymbol](): string {
     const size = this.cache.size;
     const mru = this.list.getHead();
     const lru = this.list.getTail();
