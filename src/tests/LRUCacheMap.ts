@@ -459,6 +459,7 @@ export const LRUCache_24_toString_output = test('LRUCacheMap', ({ l, a: { includ
   // Empty cache
   let output = cache.toString();
   l("Empty cache:", output);
+  l("Empty cache:", cache);
   const cleanedOutput = lexAnsi(output).cleaned[0];
   includes(cleanedOutput, 'size: 0', 'Empty cache should show size 0');
   includes(cleanedOutput, 'capacity: 3', 'Empty cache should show capacity 3');
