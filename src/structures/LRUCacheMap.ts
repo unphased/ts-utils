@@ -74,12 +74,14 @@ export class LRUCacheMap<K, V> {
   private cache: Map<K, { value: V; node: Node<K>; }>;
   private list: DoublyLinkedList<K>;
   private cleanupCallback?: (key: K, value: V) => void;
+  private useColors: boolean;
 
-  constructor(capacity: number, cleanupCallback?: (key: K, value: V) => void) {
+  constructor(capacity: number, cleanupCallback?: (key: K, value: V) => void, useColors: boolean = false) {
     this.capacity = Math.max(0, capacity);
     this.cache = new Map();
     this.list = new DoublyLinkedList<K>();
     this.cleanupCallback = cleanupCallback;
+    this.useColors = useColors;
   }
 
   toString(): string {
@@ -98,7 +100,7 @@ export class LRUCacheMap<K, V> {
       capacity: this.capacity,
       mru: mru !== undefined ? { key: mru, value: mruValue } : 'empty',
       lru: lru !== undefined ? { key: lru, value: lruValue } : 'empty',
-    }, { colors: false, depth: 1, breakLength: Infinity });
+    }, { colors: this.useColors, depth: 1, breakLength: Infinity });
   }
 
   setCapacity(newCapacity: number): void {
