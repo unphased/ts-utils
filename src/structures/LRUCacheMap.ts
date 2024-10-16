@@ -76,7 +76,7 @@ export class LRUCacheMap<K, V> {
   private cleanupCallback?: (key: K, value: V) => void;
   private useColors: boolean;
 
-  constructor(capacity: number, cleanupCallback?: (key: K, value: V) => void, useColors: boolean = false) {
+  constructor(capacity: number, cleanupCallback?: (key: K, value: V) => void, useColors: boolean = true) {
     this.capacity = Math.max(0, capacity);
     this.cache = new Map();
     this.list = new DoublyLinkedList<K>();
