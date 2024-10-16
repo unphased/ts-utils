@@ -98,7 +98,7 @@ export class LRUCacheMap<K, V> {
       capacity: this.capacity,
       mru: mru !== undefined ? { key: mru, value: mruValue } : 'empty',
       lru: lru !== undefined ? { key: lru, value: lruValue } : 'empty',
-    }, { colors: true, depth: 1, breakLength: Infinity });
+    }, { colors: false, depth: 1, breakLength: Infinity });
   }
 
   setCapacity(newCapacity: number): void {
