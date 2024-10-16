@@ -5,13 +5,13 @@
  * Module dependencies.
  */
 
-import map from 'array-map';
-import indexOf from 'indexof';
-import isArray from 'isarray';
-import forEach from 'foreach';
-import reduce from 'array-reduce';
-import getObjectKeys from 'object-keys';
-import JSON from 'json3';
+// Native implementations of utility functions
+const map = (arr: any[], fn: (value: any, index: number, array: any[]) => any) => arr.map(fn);
+const indexOf = (arr: any[], searchElement: any, fromIndex?: number) => arr.indexOf(searchElement, fromIndex);
+const isArray = Array.isArray;
+const forEach = (arr: any[], fn: (value: any, index: number, array: any[]) => void) => arr.forEach(fn);
+const reduce = (arr: any[], fn: (previousValue: any, currentValue: any, currentIndex: number, array: any[]) => any, initialValue?: any) => arr.reduce(fn, initialValue);
+const getObjectKeys = Object.keys;
 
 /**
  * Make sure `Object.keys` work for `undefined`
@@ -21,9 +21,8 @@ import JSON from 'json3';
  * @api private
  */
 
-function objectKeys(val){
-  if (Object.keys) return Object.keys(val);
-  return getObjectKeys(val);
+function objectKeys(val: any) {
+  return Object.keys(val);
 }
 
 /**
