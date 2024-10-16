@@ -35,15 +35,22 @@ function objectKeys(val: any) {
  */
 /* legacy: obj, showHidden, depth, colors*/
 
-export function inspect(obj, opts) {
+export function inspect(obj: any, opts?: any): string {
   // default options
-  var ctx = {
+  var ctx: {
+    seen: any[];
+    stylize: (str: any, styleType: any) => any;
+    depth?: number;
+    colors?: boolean;
+    showHidden?: boolean;
+    customInspect?: boolean;
+  } = {
     seen: [],
     stylize: stylizeNoColor
   };
   // legacy...
-  if (arguments.length >= 3) ctx.depth = arguments[2];
-  if (arguments.length >= 4) ctx.colors = arguments[3];
+  if (arguments.length >= 3) ctx.depth = arguments[2] as number;
+  if (arguments.length >= 4) ctx.colors = arguments[3] as boolean;
   if (isBoolean(opts)) {
     // legacy...
     ctx.showHidden = opts;
