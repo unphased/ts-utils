@@ -1,6 +1,6 @@
 {
   "name": "@unphased/ts-utils",
-  "version": "0.3.3",
+  "version": "0.3.5",
   "description": "A collection of typescript utilities",
   "files": [
     "dist/",

@@ -10,3 +10,4 @@ test-results/
 tst-results/
 
 test-context.json
+.env
