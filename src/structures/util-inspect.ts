@@ -5,13 +5,13 @@
  * Module dependencies.
  */
 
-var map = require('array-map');
-var indexOf = require('indexof');
-var isArray = require('isarray');
-var forEach = require('foreach');
-var reduce = require('array-reduce');
-var getObjectKeys = require('object-keys');
-var JSON = require('json3');
+import map from 'array-map';
+import indexOf from 'indexof';
+import isArray from 'isarray';
+import forEach from 'foreach';
+import reduce from 'array-reduce';
+import getObjectKeys from 'object-keys';
+import JSON from 'json3';
 
 /**
  * Make sure `Object.keys` work for `undefined`
