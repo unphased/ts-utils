@@ -5,30 +5,9 @@ import { format } from "../node/format.js";
 import { colors } from '../terminal.js';
 import { Chainable } from '../utils.js';
 
-// Dynamically import all test files
-import { readdir } from 'fs/promises';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
+// Import test files statically
 import { fetchWithProgress_test } from './fetchWithProgress.js';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
-// Import all .js files in the tests directory except index.js
-const testFiles = await readdir(__dirname)
-  .then(files => files
-    .filter(file => file.endsWith('.js') && file !== 'index.js')
-    .map(file => `./` + file)
-  );
-
-// Collect all exports from test files
-const testExports = {};
-await Promise.all(testFiles.map(async file => {
-  const module = await import(file);
-  Object.assign(testExports, module);
-}));
-
-// Export all collected test exports
-export const allTests = testExports;
+import { htmlify_simple } from './web.js';
 
 // this tests/index.ts body is generally for testing stuff from utils. For simplicity, has the entry point for testing and re-export of other deps using tests at the bottom.
 
