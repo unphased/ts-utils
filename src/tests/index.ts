@@ -19,10 +19,15 @@ const testFiles = await readdir(__dirname)
     .map(file => `./` + file)
   );
 
-// Export everything from each test file
+// Collect all exports from test files
+const testExports = {};
 await Promise.all(testFiles.map(async file => {
-  await import(file).then(module => Object.assign(exports, module));
+  const module = await import(file);
+  Object.assign(testExports, module);
 }));
+
+// Export all collected test exports
+export const allTests = testExports;
 
 // this tests/index.ts body is generally for testing stuff from utils. For simplicity, has the entry point for testing and re-export of other deps using tests at the bottom.
 
