@@ -1,15 +1,6 @@
 import { test } from "tst";
 import { createServer } from 'http';
 import { fetchWithProgress } from '../web/fetchWithProgress.js';
-import fetch from 'node-fetch';
-import { Response, ReadableStream } from 'node-fetch';
-
-// Polyfill fetch and related APIs if not available
-if (!global.fetch) {
-  global.fetch = fetch as any;
-  global.Response = Response as any;
-  global.ReadableStream = ReadableStream as any;
-}
 
 export const fetchWithProgress_test = test('fetchWithProgress', async ({ l, a: { eq } }) => {
   // Create a test server that slowly sends data
