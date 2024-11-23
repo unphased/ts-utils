@@ -11,6 +11,7 @@ export * from './test_minimatch_regex.js';
 export * from './web.js';
 export * from './LRUCacheMap.js';
 export * from './isMain_test.js';
+export * from './fetchWithProgress.js';
 
 // this tests/index.ts body is generally for testing stuff from utils. For simplicity, has the entry point for testing and re-export of other deps using tests at the bottom.
 
