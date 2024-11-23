@@ -9,6 +9,7 @@ import { Chainable } from '../utils.js';
 import { readdir } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { fetchWithProgress_test } from './fetchWithProgress.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
