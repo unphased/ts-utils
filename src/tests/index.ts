@@ -5,9 +5,12 @@ import { format } from "../node/format.js";
 import { colors } from '../terminal.js';
 import { Chainable } from '../utils.js';
 
-// Import test files statically
-import { fetchWithProgress_test } from './fetchWithProgress.js';
-import { htmlify_simple } from './web.js';
+// TODO automate this
+export * from './color.js';
+export * from './test_minimatch_regex.js';
+export * from './web.js';
+export * from './LRUCacheMap.js';
+export * from './isMain_test.js';
 
 // this tests/index.ts body is generally for testing stuff from utils. For simplicity, has the entry point for testing and re-export of other deps using tests at the bottom.
 
@@ -571,12 +574,4 @@ export const pick_tests = test('pick function', ({l, a: {eqO, eq}}) => {
   eqO(pick(obj1, 'a', 'b', 'c', 'd', 'e', 'f', 'g'), obj1);
 });
 
-isMain(import.meta.url).then(is_main => {
-  if (is_main) {
-    LaunchTests('./dist/', {echo_test_logging: true})
-      .catch(err => {
-        console.error('Test execution failed:', err);
-        process.exit(1);
-      });
-  }
-});
+isMain(import.meta.url).then(is_main => is_main && LaunchTests('./dist/', {echo_test_logging: true}));

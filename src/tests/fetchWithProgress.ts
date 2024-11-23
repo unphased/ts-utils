@@ -38,10 +38,7 @@ export const fetchWithProgress_test = test('fetchWithProgress', async ({ l, a: {
         progressValues.push(progress);
         l('Progress:', progress);
       }
-    ).catch(err => {
-      l('Fetch failed:', err);
-      throw err;
-    });
+    );
     
     const text = await response.text();
     eq(text, 'Hello World');
