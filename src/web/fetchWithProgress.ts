@@ -1,4 +1,8 @@
-export function fetchWithProgress(url, options = {}, onProgress) {
+export function fetchWithProgress(
+  url: string, 
+  options: RequestInit = {}, 
+  onProgress?: (progress: number) => void
+) {
   return fetch(url, options).then(response => {
     const contentLength = response.headers.get('Content-Length');
 
