@@ -5,12 +5,24 @@ import { format } from "../node/format.js";
 import { colors } from '../terminal.js';
 import { Chainable } from '../utils.js';
 
-// TODO automate this
-export * from './color.js';
-export * from './test_minimatch_regex.js';
-export * from './web.js';
-export * from './LRUCacheMap.js';
-export * from './isMain_test.js';
+// Dynamically import all test files
+import { readdir } from 'fs/promises';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// Import all .js files in the tests directory except index.js
+const testFiles = await readdir(__dirname)
+  .then(files => files
+    .filter(file => file.endsWith('.js') && file !== 'index.js')
+    .map(file => `./` + file)
+  );
+
+// Export everything from each test file
+await Promise.all(testFiles.map(async file => {
+  await import(file).then(module => Object.assign(exports, module));
+}));
 
 // this tests/index.ts body is generally for testing stuff from utils. For simplicity, has the entry point for testing and re-export of other deps using tests at the bottom.
 
