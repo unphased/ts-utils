@@ -591,4 +591,12 @@ export const pick_tests = test('pick function', ({l, a: {eqO, eq}}) => {
   eqO(pick(obj1, 'a', 'b', 'c', 'd', 'e', 'f', 'g'), obj1);
 });
 
-isMain(import.meta.url).then(is_main => is_main && LaunchTests('./dist/', {echo_test_logging: true}));
+isMain(import.meta.url).then(is_main => {
+  if (is_main) {
+    LaunchTests('./dist/', {echo_test_logging: true})
+      .catch(err => {
+        console.error('Test execution failed:', err);
+        process.exit(1);
+      });
+  }
+});
