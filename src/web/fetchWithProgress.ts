@@ -1,7 +1,12 @@
+interface ProgressOptions {
+  debounceInterval?: number; // in milliseconds
+}
+
 export function fetchWithProgress(
   url: string, 
   options: RequestInit = {}, 
-  onProgress?: (progress: number) => void
+  onProgress?: (progress: number) => void,
+  progressOptions: ProgressOptions = { debounceInterval: 100 }
 ) {
   return fetch(url, options).then(response => {
     const contentLength = response.headers.get('Content-Length');
@@ -26,9 +31,13 @@ export function fetchWithProgress(
             loaded += value.byteLength;
             const progress = (loaded / total) * 100;
 
-            // Call the onProgress callback with the progress value
+            // Debounced progress reporting
             if (onProgress && typeof onProgress === 'function') {
-              onProgress(progress);
+              if (!push['lastCall'] || 
+                  Date.now() - push['lastCall'] >= (progressOptions.debounceInterval ?? 100)) {
+                onProgress(progress);
+                push['lastCall'] = Date.now();
+              }
             }
 
             controller.enqueue(value);

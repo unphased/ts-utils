@@ -43,7 +43,8 @@ export const fetchWithProgress_test = test('fetchWithProgress', async ({ l, a: {
       (progress) => {
         progressValues.push(progress);
         l('Progress:', progress);
-      }
+      },
+      { debounceInterval: 50 } // Add a small debounce for testing
     );
     
     const text = await response.text();
