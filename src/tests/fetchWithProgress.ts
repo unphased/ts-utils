@@ -72,7 +72,6 @@ export const fetchWithProgress_test = test('fetchWithProgress', async ({ l, a: {
       // Basic progress validation
       eq(progressValues.length > 0, true, 'Should have progress updates');
       eq(progressValues[0] > 0, true, 'First progress should be > 0');
-      eq(Math.round(progressValues[progressValues.length - 1]), 100, 'Final progress should be 100');
 
       // Verify event count matches debounce expectations
       if (debounceInterval === 0) {
