@@ -4,8 +4,14 @@ import { fetchWithProgress } from '../web/fetchWithProgress.js';
 
 export const fetchWithProgress_test = test('fetchWithProgress', async ({ l, a: { eq } }) => {
   // Create a test server that slowly sends data
+
+  const chunks = ['Hello', ' ', 'World', 'lorem ipsum'];
+  for (let i = 0; i < 90; ++i) {
+    chunks.push(Array.from({length: Math.round(Math.random() * 10) + 2}, (_) => String.fromCharCode('a'.charCodeAt(0) + i % 26)).join(''));
+  }
+  console.log('chunks:', chunks);
+
   const server = createServer((req, res) => {
-    const chunks = ['Hello', ' ', 'World'];
     const totalSize = chunks.join('').length;
     
     res.setHeader('Content-Length', totalSize);
@@ -15,7 +21,7 @@ export const fetchWithProgress_test = test('fetchWithProgress', async ({ l, a: {
       if (i < chunks.length) {
         res.write(chunks[i]);
         i++;
-        setTimeout(sendChunk, 100);
+        setTimeout(sendChunk, 4);
       } else {
         res.end();
       }
@@ -41,7 +47,7 @@ export const fetchWithProgress_test = test('fetchWithProgress', async ({ l, a: {
     );
     
     const text = await response.text();
-    eq(text, 'Hello World');
+    eq(text, chunks.join(''));
     
     // Verify we got multiple progress updates
     eq(progressValues.length > 1, true);
