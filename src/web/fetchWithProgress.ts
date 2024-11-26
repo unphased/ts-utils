@@ -6,7 +6,7 @@ export function fetchWithProgress(
   url: string, 
   options: RequestInit = {}, 
   onProgress?: (progress: number) => void,
-  progressOptions: ProgressOptions = { debounceInterval: 100 }
+  progressOptions?: ProgressOptions = { debounceInterval: 100 }
 ) {
   return fetch(url, options).then(response => {
     const contentLength = response.headers.get('Content-Length');
@@ -34,7 +34,7 @@ export function fetchWithProgress(
             // Debounced progress reporting
             if (onProgress && typeof onProgress === 'function') {
               if (!push['lastCall'] || 
-                  Date.now() - push['lastCall'] >= (progressOptions.debounceInterval ?? 100)) {
+                  Date.now() - push['lastCall'] >= (progressOptions?.debounceInterval ?? 50)) {
                 onProgress(progress);
                 push['lastCall'] = Date.now();
               }
