@@ -89,12 +89,17 @@ export const fetchWithProgress_local_server = test('fetchWithProgress', async ({
   }
 });
 
-export const fetchWithProgress_internet_resource = test('fetchWithProgress', async ({ l, a: { eq, is } }) => {
+export const fetchWithProgress_internet_resource = test('fetchWithProgress', async ({ l, t, a: { gt } }) => {
   // a known sluggish network resource
   const url = 'https://api.weather.gov/radar/stations';
-  const ret = await fetchWithProgress(url, {}, (progress) => {
-    l('progress:', progress);
-  }, { debounceInterval: 1 });
-  l('ret', ret);
-  l(await ret.json());
+  let progCount = 0;
+  const cb = (progress: number) => {
+    l('progress', progress);
+    progCount += 1;
+  };
+  const ret = await fetchWithProgress(url, {}, cb, { debounceInterval: 1 });
+  const buffer = await ret.arrayBuffer();
+  l("Radar Stations Byte Length:", buffer.byteLength);
+  l(`progCount: ${progCount}`);
+  gt(progCount, 2, `Amount of times progress was provided: ${progCount}`);
 });
